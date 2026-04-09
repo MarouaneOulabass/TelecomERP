@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_telecom_ao_technicien,telecom.ao.technicien,model_telecom_ao,telecom_base.group_telecom_technicien,1,0,0,0
+access_telecom_ao_chef_chantier,telecom.ao.chef,model_telecom_ao,telecom_base.group_telecom_chef_chantier,1,0,0,0
+access_telecom_ao_charge_affaires,telecom.ao.charge,model_telecom_ao,telecom_base.group_telecom_charge_affaires,1,1,1,0
+access_telecom_ao_responsable,telecom.ao.responsable,model_telecom_ao,telecom_base.group_telecom_responsable,1,1,1,1
+access_telecom_ao_admin,telecom.ao.admin,model_telecom_ao,telecom_base.group_telecom_admin,1,1,1,1
+access_telecom_bpu_charge_affaires,telecom.bpu.ligne.charge,model_telecom_bpu_ligne,telecom_base.group_telecom_charge_affaires,1,1,1,0
+access_telecom_bpu_responsable,telecom.bpu.ligne.responsable,model_telecom_bpu_ligne,telecom_base.group_telecom_responsable,1,1,1,1
+access_telecom_bpu_admin,telecom.bpu.ligne.admin,model_telecom_bpu_ligne,telecom_base.group_telecom_admin,1,1,1,1

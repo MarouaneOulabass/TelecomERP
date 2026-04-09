@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         REPORT ACTION — "Fiche Véhicule"
+    ================================================================ -->
+
+    <record id="action_report_telecom_vehicle" model="ir.actions.report">
+        <field name="name">Fiche Véhicule</field>
+        <field name="model">telecom.vehicle</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">telecom_fleet.report_telecom_vehicle_document</field>
+        <field name="report_file">telecom_fleet.report_telecom_vehicle_document</field>
+        <field name="print_report_name">
+            'Fiche_vehicule_%s' % (object.immatriculation or 'vehicule')
+        </field>
+        <field name="binding_model_id" ref="model_telecom_vehicle"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- ================================================================
+         QWEB TEMPLATE — Fiche Véhicule PDF
+    ================================================================ -->
+
+    <template id="report_telecom_vehicle_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="vehicle">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- ============================================================
+                             HEADER: Title + Vehicle photo
+                        ============================================================ -->
+                        <div class="row mb-4">
+                            <div class="col-8">
+                                <h2 class="text-primary" style="font-size:1.6em;font-weight:bold;">
+                                    FICHE VÉHICULE
+                                </h2>
+                                <h3 style="margin-top:4px;">
+                                    <t t-esc="vehicle.immatriculation"/>
+                                    <span class="text-muted" style="font-size:0.85em;">
+                                        — <t t-esc="vehicle.marque"/> <t t-esc="vehicle.modele"/>
+                                    </span>
+                                </h3>
+                                <!-- State badge -->
+                                <span t-attf-style="
+                                    display:inline-block;
+                                    padding:3px 10px;
+                                    border-radius:12px;
+                                    font-size:0.82em;
+                                    font-weight:bold;
+                                    background:#{
+                                        'disponible' in vehicle.state and '#28a745' or
+                                        'en_mission' in vehicle.state and '#007bff' or
+                                        'en_entretien' in vehicle.state and '#ffc107' or
+                                        'hors_service' in vehicle.state and '#dc3545' or '#6c757d'
+                                    };
+                                    color:white;">
+                                    <t t-esc="dict(vehicle._fields['state'].selection).get(vehicle.state, vehicle.state)"/>
+                                </span>
+                            </div>
+                            <div class="col-4 text-end">
+                                <t t-if="vehicle.photo">
+                                    <img t-att-src="'data:image/png;base64,' + vehicle.photo.decode('utf-8') if isinstance(vehicle.photo, bytes) else vehicle.photo"
+                                         style="max-height:110px;max-width:160px;object-fit:cover;border:1px solid #dee2e6;border-radius:6px;"
+                                         alt="Photo véhicule"/>
+                                </t>
+                                <t t-else="">
+                                    <div style="width:160px;height:110px;background:#f8f9fa;border:1px solid #dee2e6;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;">
+                                        <span style="color:#aaa;font-size:2em;">🚛</span>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- ============================================================
+                             SECTION 1: Identification
+                        ============================================================ -->
+                        <div style="margin-bottom:18px;">
+                            <h4 style="background:#f0f4f8;padding:6px 10px;border-left:4px solid #007bff;margin-bottom:8px;">
+                                1. Identification du véhicule
+                            </h4>
+                            <table style="width:100%;border-collapse:collapse;font-size:0.9em;">
+                                <tr>
+                                    <td style="width:25%;padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Immatriculation</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;"><t t-esc="vehicle.immatriculation"/></td>
+                                    <td style="width:25%;padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Catégorie</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                        <t t-esc="dict(vehicle._fields['vehicle_category'].selection).get(vehicle.vehicle_category, '-')"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Marque</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;"><t t-esc="vehicle.marque or '-'"/></td>
+                                    <td style="padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Modèle</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;"><t t-esc="vehicle.modele or '-'"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Année</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;"><t t-esc="vehicle.annee or '-'"/></td>
+                                    <td style="padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Couleur</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;"><t t-esc="vehicle.couleur or '-'"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Carburant</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                        <t t-esc="dict(vehicle._fields['carburant'].selection).get(vehicle.carburant, '-') if vehicle.carburant else '-'"/>
+                                    </td>
+                                    <td style="padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Puissance (CV)</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;"><t t-esc="vehicle.puissance_cv or '-'"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Kilométrage actuel</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                        <t t-esc="'{:,}'.format(vehicle.kilometrage).replace(',', ' ')"/> km
+                                    </td>
+                                    <td style="padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Société</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;"><t t-esc="vehicle.company_id.name or '-'"/></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- ============================================================
+                             SECTION 2: Technicien assigné
+                        ============================================================ -->
+                        <div style="margin-bottom:18px;">
+                            <h4 style="background:#f0f4f8;padding:6px 10px;border-left:4px solid #28a745;margin-bottom:8px;">
+                                2. Technicien assigné
+                            </h4>
+                            <table style="width:100%;border-collapse:collapse;font-size:0.9em;">
+                                <tr>
+                                    <td style="width:25%;padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Technicien</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                        <t t-esc="vehicle.chauffeur_id.name if vehicle.chauffeur_id else 'Non assigné'"/>
+                                    </td>
+                                    <td style="width:25%;padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Date d'affectation</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                        <t t-esc="vehicle.date_affectation.strftime('%d/%m/%Y') if vehicle.date_affectation else '-'"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="vehicle.chauffeur_id">
+                                    <td style="padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Poste</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                        <t t-esc="vehicle.chauffeur_id.job_id.name if vehicle.chauffeur_id.job_id else '-'"/>
+                                    </td>
+                                    <td style="padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Département</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                        <t t-esc="vehicle.chauffeur_id.department_id.name if vehicle.chauffeur_id.department_id else '-'"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- ============================================================
+                             SECTION 3: Documents légaux (avec alertes visuelles)
+                        ============================================================ -->
+                        <div style="margin-bottom:18px;">
+                            <h4 style="background:#f0f4f8;padding:6px 10px;border-left:4px solid #ffc107;margin-bottom:8px;">
+                                3. Documents légaux
+                            </h4>
+                            <table style="width:100%;border-collapse:collapse;font-size:0.9em;">
+                                <thead>
+                                    <tr style="background:#e9ecef;">
+                                        <th style="padding:6px 8px;border:1px solid #dee2e6;text-align:left;">Document</th>
+                                        <th style="padding:6px 8px;border:1px solid #dee2e6;text-align:left;">Date d'expiration</th>
+                                        <th style="padding:6px 8px;border:1px solid #dee2e6;text-align:left;">Détails</th>
+                                        <th style="padding:6px 8px;border:1px solid #dee2e6;text-align:center;">Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Assurance -->
+                                    <tr t-attf-style="background:#{vehicle.assurance_expiring and '#fff3cd' or 'white'};">
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;font-weight:bold;">Assurance</td>
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                            <t t-esc="vehicle.assurance_expiration.strftime('%d/%m/%Y') if vehicle.assurance_expiration else '-'"/>
+                                        </td>
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                            <t t-esc="vehicle.assurance_compagnie or ''"/>
+                                            <t t-if="vehicle.assurance_numero_police">
+                                                — Police : <t t-esc="vehicle.assurance_numero_police"/>
+                                            </t>
+                                        </td>
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;text-align:center;">
+                                            <t t-if="vehicle.assurance_expiring">
+                                                <span style="color:#856404;font-weight:bold;">⚠ Bientôt</span>
+                                            </t>
+                                            <t t-elif="not vehicle.assurance_expiration">
+                                                <span style="color:#6c757d;">—</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span style="color:#155724;font-weight:bold;">✓ Valide</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <!-- Carte grise / Visite technique -->
+                                    <tr t-attf-style="background:#{vehicle.visite_technique_expiring and '#fff3cd' or 'white'};">
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;font-weight:bold;">Visite technique / Carte grise</td>
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                            <t t-esc="vehicle.carte_grise_expiration.strftime('%d/%m/%Y') if vehicle.carte_grise_expiration else '-'"/>
+                                        </td>
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;">—</td>
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;text-align:center;">
+                                            <t t-if="vehicle.visite_technique_expiring">
+                                                <span style="color:#856404;font-weight:bold;">⚠ Bientôt</span>
+                                            </t>
+                                            <t t-elif="not vehicle.carte_grise_expiration">
+                                                <span style="color:#6c757d;">—</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span style="color:#155724;font-weight:bold;">✓ Valide</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <!-- Vignette fiscale -->
+                                    <tr t-attf-style="background:#{vehicle.vignette_expiring and '#fff3cd' or 'white'};">
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;font-weight:bold;">Vignette fiscale</td>
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                            <t t-esc="vehicle.vignette_expiration.strftime('%d/%m/%Y') if vehicle.vignette_expiration else '-'"/>
+                                        </td>
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;">—</td>
+                                        <td style="padding:5px 8px;border:1px solid #dee2e6;text-align:center;">
+                                            <t t-if="vehicle.vignette_expiring">
+                                                <span style="color:#856404;font-weight:bold;">⚠ Bientôt</span>
+                                            </t>
+                                            <t t-elif="not vehicle.vignette_expiration">
+                                                <span style="color:#6c757d;">—</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span style="color:#155724;font-weight:bold;">✓ Valide</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- ============================================================
+                             SECTION 4: Maintenance (last 5 entries)
+                        ============================================================ -->
+                        <div style="margin-bottom:18px;">
+                            <h4 style="background:#f0f4f8;padding:6px 10px;border-left:4px solid #6f42c1;margin-bottom:8px;">
+                                4. Historique maintenance (5 dernières interventions)
+                            </h4>
+
+                            <!-- Maintenance KPIs -->
+                            <table style="width:100%;border-collapse:collapse;font-size:0.9em;margin-bottom:10px;">
+                                <tr>
+                                    <td style="width:25%;padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Dernier entretien</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                        <t t-esc="vehicle.date_dernier_entretien.strftime('%d/%m/%Y') if vehicle.date_dernier_entretien else '-'"/>
+                                        <t t-if="vehicle.km_dernier_entretien">
+                                            — à <t t-esc="'{:,}'.format(vehicle.km_dernier_entretien).replace(',', ' ')"/> km
+                                        </t>
+                                    </td>
+                                    <td style="width:25%;padding:5px 8px;font-weight:bold;background:#fafafa;border:1px solid #dee2e6;">Prochain entretien</td>
+                                    <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                        <t t-if="vehicle.date_prochain_entretien">
+                                            <t t-esc="vehicle.date_prochain_entretien.strftime('%d/%m/%Y')"/>
+                                        </t>
+                                        <t t-if="vehicle.km_prochain_entretien">
+                                            à <t t-esc="'{:,}'.format(vehicle.km_prochain_entretien).replace(',', ' ')"/> km
+                                        </t>
+                                        <t t-if="not vehicle.date_prochain_entretien and not vehicle.km_prochain_entretien">-</t>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Alerte entretien km -->
+                            <t t-if="vehicle.entretien_km_alerte">
+                                <div style="background:#f8d7da;border:1px solid #f5c6cb;border-radius:4px;padding:8px 12px;margin-bottom:10px;color:#721c24;font-size:0.88em;">
+                                    ⚠ <strong>Alerte :</strong> le kilométrage actuel approche du seuil du prochain entretien.
+                                </div>
+                            </t>
+
+                            <!-- Last 5 maintenance records table -->
+                            <t t-set="last_entretiens" t-value="vehicle.entretien_ids.sorted(key=lambda r: r.date, reverse=True)[:5]"/>
+                            <t t-if="last_entretiens">
+                                <table style="width:100%;border-collapse:collapse;font-size:0.85em;">
+                                    <thead>
+                                        <tr style="background:#e9ecef;">
+                                            <th style="padding:6px 8px;border:1px solid #dee2e6;text-align:left;">Date</th>
+                                            <th style="padding:6px 8px;border:1px solid #dee2e6;text-align:left;">Libellé</th>
+                                            <th style="padding:6px 8px;border:1px solid #dee2e6;text-align:left;">Type</th>
+                                            <th style="padding:6px 8px;border:1px solid #dee2e6;text-align:right;">Km</th>
+                                            <th style="padding:6px 8px;border:1px solid #dee2e6;text-align:left;">Garage</th>
+                                            <th style="padding:6px 8px;border:1px solid #dee2e6;text-align:right;">Coût</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="last_entretiens" t-as="ent">
+                                            <tr t-attf-style="background:#{ent_odd and '#fafafa' or 'white'};">
+                                                <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                                    <t t-esc="ent.date.strftime('%d/%m/%Y') if ent.date else '-'"/>
+                                                </td>
+                                                <td style="padding:5px 8px;border:1px solid #dee2e6;"><t t-esc="ent.name or '-'"/></td>
+                                                <td style="padding:5px 8px;border:1px solid #dee2e6;">
+                                                    <t t-esc="dict(ent._fields['entretien_type'].selection).get(ent.entretien_type, '-') if ent.entretien_type else '-'"/>
+                                                </td>
+                                                <td style="padding:5px 8px;border:1px solid #dee2e6;text-align:right;">
+                                                    <t t-esc="'{:,}'.format(ent.kilometrage).replace(',', ' ') if ent.kilometrage else '-'"/>
+                                                </td>
+                                                <td style="padding:5px 8px;border:1px solid #dee2e6;"><t t-esc="ent.garage or '-'"/></td>
+                                                <td style="padding:5px 8px;border:1px solid #dee2e6;text-align:right;">
+                                                    <t t-if="ent.cout">
+                                                        <t t-esc="'{:,.2f}'.format(ent.cout)"/> <t t-esc="ent.currency_id.name or 'MAD'"/>
+                                                    </t>
+                                                    <t t-else="">—</t>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+                            <t t-else="">
+                                <p class="text-muted" style="font-style:italic;font-size:0.9em;">
+                                    Aucun entretien enregistré pour ce véhicule.
+                                </p>
+                            </t>
+                        </div>
+
+                        <!-- ============================================================
+                             FOOTER: Signature / Date impression
+                        ============================================================ -->
+                        <div style="margin-top:30px;border-top:1px solid #dee2e6;padding-top:12px;font-size:0.8em;color:#6c757d;">
+                            <div class="row">
+                                <div class="col-6">
+                                    Document généré le :
+                                    <strong>
+                                        <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y à %H:%M')"/>
+                                    </strong>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>TelecomERP</strong> — Gestion Flotte Terrain
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- /page -->
+                </t><!-- /external_layout -->
+            </t><!-- /foreach -->
+        </t><!-- /html_container -->
+    </template>
+
+</odoo>

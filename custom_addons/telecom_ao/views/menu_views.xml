@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         Top-level "Commercial" submenu under TelecomERP root
+    ============================================================ -->
+    <menuitem id="menu_telecom_commercial"
+              name="Commercial"
+              parent="telecom_base.menu_telecom_root"
+              sequence="20"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+    <!-- ============================================================
+         Appels d'Offres
+    ============================================================ -->
+    <menuitem id="menu_telecom_ao"
+              name="Appels d'Offres"
+              parent="menu_telecom_commercial"
+              action="action_telecom_ao"
+              sequence="10"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+    <!-- ============================================================
+         BPU — standalone list
+    ============================================================ -->
+    <menuitem id="menu_telecom_bpu"
+              name="BPU — Bordereau de Prix"
+              parent="menu_telecom_commercial"
+              action="action_telecom_bpu_ligne"
+              sequence="20"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+</odoo>

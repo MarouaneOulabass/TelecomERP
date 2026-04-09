@@ -1,0 +1,31 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.egg-info/
+.eggs/
+
+# Environment
+.env
+*.env.local
+
+# Odoo
+*.log
+*.pot
+filestore/
+sessions/
+
+# Editor
+*.swp
+*.swo
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes (ne pas versionner les données)
+pgdata/
+odoo_data/

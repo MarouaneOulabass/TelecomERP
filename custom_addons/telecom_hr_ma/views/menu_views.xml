@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         RH Terrain — main menu under TelecomERP root
+    ================================================================ -->
+
+    <menuitem id="menu_telecom_rh"
+              name="RH Terrain"
+              parent="telecom_base.menu_telecom_root"
+              sequence="20"
+              groups="telecom_base.group_telecom_technicien"/>
+
+    <!-- Level 1: Employés terrain -->
+    <menuitem id="menu_employes_terrain"
+              name="Employés terrain"
+              parent="menu_telecom_rh"
+              action="action_employes_terrain"
+              sequence="10"
+              groups="telecom_base.group_telecom_chef_chantier"/>
+
+    <!-- Level 1: Pointage chantier -->
+    <menuitem id="menu_pointage_chantier"
+              name="Pointage chantier"
+              parent="menu_telecom_rh"
+              action="action_pointage_chantier"
+              sequence="20"
+              groups="telecom_base.group_telecom_technicien"/>
+
+    <!-- Level 1: Bulletins de paie -->
+    <menuitem id="menu_paie_bulletin"
+              name="Bulletins de paie"
+              parent="menu_telecom_rh"
+              action="action_paie_bulletin"
+              sequence="30"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+    <!-- Level 1: Habilitations -->
+    <menuitem id="menu_habilitations"
+              name="Habilitations"
+              parent="menu_telecom_rh"
+              action="action_habilitation_employee"
+              sequence="40"
+              groups="telecom_base.group_telecom_chef_chantier"/>
+
+    <!-- Level 1: EPI -->
+    <menuitem id="menu_epi_dotations"
+              name="EPI"
+              parent="menu_telecom_rh"
+              action="action_epi_dotation"
+              sequence="50"
+              groups="telecom_base.group_telecom_chef_chantier"/>
+
+    <!-- Configuration sub-menu (under TelecomERP global config) -->
+    <menuitem id="menu_telecom_rh_config"
+              name="RH — Configuration"
+              parent="telecom_base.menu_telecom_config"
+              sequence="20"
+              groups="telecom_base.group_telecom_admin"/>
+
+    <menuitem id="menu_config_habilitation_types"
+              name="Types d'habilitations"
+              parent="menu_telecom_rh_config"
+              action="action_habilitation_type"
+              sequence="10"
+              groups="telecom_base.group_telecom_admin"/>
+
+    <menuitem id="menu_config_epi_types"
+              name="Types EPI"
+              parent="menu_telecom_rh_config"
+              action="action_epi_type"
+              sequence="20"
+              groups="telecom_base.group_telecom_admin"/>
+
+</odoo>

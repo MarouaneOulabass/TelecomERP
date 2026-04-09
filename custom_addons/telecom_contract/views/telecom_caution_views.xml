@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         telecom.caution.bancaire — standalone list view
+    ============================================================ -->
+    <record id="view_telecom_caution_list" model="ir.ui.view">
+        <field name="name">telecom.caution.bancaire.list</field>
+        <field name="model">telecom.caution.bancaire</field>
+        <field name="arch" type="xml">
+            <list string="Cautions bancaires"
+                  default_order="date_expiration asc"
+                  decoration-danger="state == 'expired'"
+                  decoration-warning="state == 'expiring_soon'"
+                  decoration-success="state == 'liberee'"
+                  decoration-muted="state == 'liberee'">
+                <field name="reference_bancaire"/>
+                <field name="contract_id"/>
+                <field name="caution_type"/>
+                <field name="montant"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="banque"/>
+                <field name="date_emission" optional="show"/>
+                <field name="date_expiration"/>
+                <field name="date_liberation" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'expiring_soon'"
+                       decoration-danger="state == 'expired'"
+                       decoration-muted="state == 'liberee'"/>
+                <field name="beneficiaire_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.caution.bancaire — form view
+    ============================================================ -->
+    <record id="view_telecom_caution_form" model="ir.ui.view">
+        <field name="name">telecom.caution.bancaire.form</field>
+        <field name="model">telecom.caution.bancaire</field>
+        <field name="arch" type="xml">
+            <form string="Caution bancaire">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="reference_bancaire" string="Référence bancaire"/>
+                        <h1>
+                            <field name="reference_bancaire"
+                                   placeholder="Ex : GAR-2024-00123"/>
+                        </h1>
+                        <field name="state" widget="badge"
+                               decoration-success="state == 'active'"
+                               decoration-warning="state == 'expiring_soon'"
+                               decoration-danger="state == 'expired'"
+                               decoration-muted="state == 'liberee'"/>
+                    </div>
+
+                    <group>
+                        <group string="Identification">
+                            <field name="contract_id"/>
+                            <field name="caution_type"/>
+                            <field name="banque"/>
+                            <field name="beneficiaire_id"/>
+                        </group>
+                        <group string="Montant &amp; Dates">
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="montant"/>
+                            <field name="date_emission"/>
+                            <field name="date_expiration"/>
+                            <field name="date_liberation"/>
+                        </group>
+                    </group>
+
+                    <group string="Document">
+                        <field name="document" filename="document_filename" widget="binary"/>
+                        <field name="document_filename"/>
+                    </group>
+
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.caution.bancaire — search view
+    ============================================================ -->
+    <record id="view_telecom_caution_search" model="ir.ui.view">
+        <field name="name">telecom.caution.bancaire.search</field>
+        <field name="model">telecom.caution.bancaire</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher des cautions">
+                <field name="reference_bancaire"/>
+                <field name="contract_id"/>
+                <field name="banque"/>
+
+                <filter name="filter_active"       string="Actives"         domain="[('state','=','active')]"/>
+                <filter name="filter_expiring"     string="Expire bientôt"  domain="[('state','=','expiring_soon')]"/>
+                <filter name="filter_expired"      string="Expirées"        domain="[('state','=','expired')]"/>
+                <filter name="filter_liberee"      string="Libérées"        domain="[('state','=','liberee')]"/>
+                <separator/>
+                <filter name="filter_provisoire"   string="Provisoires"     domain="[('caution_type','=','provisoire')]"/>
+                <filter name="filter_definitive"   string="Définitives"     domain="[('caution_type','=','definitive')]"/>
+
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_state"    string="Statut"   context="{'group_by': 'state'}"/>
+                    <filter name="group_type"     string="Type"     context="{'group_by': 'caution_type'}"/>
+                    <filter name="group_contract" string="Contrat"  context="{'group_by': 'contract_id'}"/>
+                    <filter name="group_banque"   string="Banque"   context="{'group_by': 'banque'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.caution.bancaire — action
+    ============================================================ -->
+    <record id="action_telecom_caution_bancaire" model="ir.actions.act_window">
+        <field name="name">Cautions bancaires</field>
+        <field name="res_model">telecom.caution.bancaire</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_telecom_caution_search"/>
+        <field name="context">{'search_default_filter_active': 1, 'search_default_filter_expiring': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune caution bancaire enregistrée.
+            </p>
+            <p>
+                Les cautions sont créées depuis les fiches contrat.
+            </p>
+        </field>
+    </record>
+
+</odoo>

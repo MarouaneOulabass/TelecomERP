@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Sequence for payslip numbers: BP/2024/00001 -->
+        <record id="seq_telecom_paie_bulletin" model="ir.sequence">
+            <field name="name">Bulletin de paie TelecomERP</field>
+            <field name="code">telecom.paie.bulletin</field>
+            <field name="prefix">BP/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="use_date_range" eval="True"/>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

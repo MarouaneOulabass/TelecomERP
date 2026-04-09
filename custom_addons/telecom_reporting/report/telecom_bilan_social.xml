@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Report action: Bilan social CNSS / AMO (déclaration mensuelle)
+         Bound to telecom.paie.bulletin — multi-record PDF export.
+         Allows selecting multiple payslips for the same month and
+         generating a single consolidated CNSS/AMO declaration sheet.
+    ================================================================ -->
+
+    <record id="action_report_telecom_bilan_social" model="ir.actions.report">
+        <field name="name">Bilan social CNSS / AMO</field>
+        <field name="model">telecom.paie.bulletin</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">telecom_reporting.report_telecom_bilan_social_template</field>
+        <field name="report_file">telecom_reporting.report_telecom_bilan_social_template</field>
+        <field name="print_report_name">
+            'Bilan_Social_CNSS_%s' % (docs[0].date_from.strftime('%Y_%m') if docs else 'export')
+        </field>
+        <field name="binding_model_id" ref="telecom_hr_ma.model_telecom_paie_bulletin"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ================================================================
+         QWeb PDF template: Bilan social CNSS / AMO
+         One page per company-month batch, with:
+         - Company header (N° CNSS employeur, N° AMO employeur, adresse)
+         - Reporting period (month / year)
+         - Employee table: CIN, N° CNSS, name, salaire_brut,
+           salaire_plafonné_CNSS, CNSS sal, CNSS pat, AMO sal, AMO pat
+         - Totals row
+         - Signature block
+    ================================================================ -->
+
+    <template id="report_telecom_bilan_social_template">
+        <t t-call="web.html_container">
+            <t t-set="company" t-value="docs[0].company_id if docs else env.company"/>
+            <t t-set="period_from" t-value="docs[0].date_from if docs else None"/>
+            <t t-set="period_to" t-value="docs[-1].date_to if docs else None"/>
+
+            <!-- Month label helper (French) -->
+            <t t-set="MONTH_FR" t-value="{
+                1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril',
+                5: 'Mai', 6: 'Juin', 7: 'Juillet', 8: 'Août',
+                9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
+            }"/>
+
+            <!-- Compute totals across all bulletins in the batch -->
+            <t t-set="total_cnss_salarie"   t-value="sum(docs.mapped('cnss_salarie'))"/>
+            <t t-set="total_cnss_patronal"  t-value="sum(docs.mapped('cnss_patronal'))"/>
+            <t t-set="total_amo_salarie"    t-value="sum(docs.mapped('amo_salarie'))"/>
+            <t t-set="total_amo_patronal"   t-value="sum(docs.mapped('amo_patronal'))"/>
+            <t t-set="total_salaire_base"   t-value="sum(docs.mapped('salaire_base'))"/>
+            <t t-set="total_cnss_base"      t-value="sum(docs.mapped('cnss_base'))"/>
+            <t t-set="total_net"            t-value="sum(docs.mapped('salaire_net_a_payer'))"/>
+
+            <t t-call="web.external_layout">
+                <div class="page">
+
+                    <!-- ============================================
+                         PAGE HEADER
+                    ============================================ -->
+                    <div class="row mb-4">
+                        <div class="col-8">
+                            <h3 class="text-uppercase" style="color:#1a5276; border-bottom:2px solid #1a5276; padding-bottom:6px;">
+                                <strong>Déclaration CNSS / AMO — Bilan Social Mensuel</strong>
+                            </h3>
+                            <table class="table table-sm table-borderless" style="font-size:11px; width:auto;">
+                                <tr>
+                                    <td style="width:180px;"><strong>Société :</strong></td>
+                                    <td><t t-esc="company.name"/></td>
+                                </tr>
+                                <tr t-if="company.vat">
+                                    <td><strong>IF (Identifiant Fiscal) :</strong></td>
+                                    <td><t t-esc="company.vat"/></td>
+                                </tr>
+                                <tr t-if="company.street">
+                                    <td><strong>Adresse :</strong></td>
+                                    <td>
+                                        <t t-esc="company.street"/>
+                                        <t t-if="company.city">, <t t-esc="company.city"/></t>
+                                    </td>
+                                </tr>
+                                <tr t-if="company.phone">
+                                    <td><strong>Téléphone :</strong></td>
+                                    <td><t t-esc="company.phone"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-4 text-right" style="font-size:11px;">
+                            <div style="border:1px solid #1a5276; padding:10px; border-radius:4px;">
+                                <p class="mb-1">
+                                    <strong>Période :</strong>
+                                    <t t-if="period_from">
+                                        <t t-esc="MONTH_FR.get(period_from.month, '')"/>
+                                        <t t-esc="period_from.year"/>
+                                    </t>
+                                    <t t-else="">—</t>
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Nb employés :</strong>
+                                    <t t-esc="len(docs)"/>
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Date d'édition :</strong>
+                                    <t t-esc="context_today().strftime('%d/%m/%Y')"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         TAUX DE RÉFÉRENCE (informational)
+                    ============================================ -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <table class="table table-sm table-bordered"
+                                   style="font-size:10px; background-color:#f0f5fb;">
+                                <thead>
+                                    <tr style="background-color:#1a5276; color:white;">
+                                        <th colspan="5" class="text-center">
+                                            Taux de cotisations applicables (exercice en cours)
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Cotisation</th>
+                                        <th class="text-right">Base de calcul</th>
+                                        <th class="text-right">Taux salarié</th>
+                                        <th class="text-right">Taux patronal</th>
+                                        <th class="text-right">Plafond</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>CNSS (Caisse Nationale de Sécurité Sociale)</td>
+                                        <td class="text-right">Salaire brut plafonné</td>
+                                        <td class="text-right">4,48 %</td>
+                                        <td class="text-right">10,64 %</td>
+                                        <td class="text-right">6 000 MAD/mois</td>
+                                    </tr>
+                                    <tr>
+                                        <td>AMO (Assurance Maladie Obligatoire)</td>
+                                        <td class="text-right">Salaire brut total</td>
+                                        <td class="text-right">2,26 %</td>
+                                        <td class="text-right">3,96 %</td>
+                                        <td class="text-right">Sans plafond</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         EMPLOYEE DETAIL TABLE
+                    ============================================ -->
+                    <h5 class="mt-3" style="color:#1a5276; border-bottom:1px solid #1a5276;">
+                        DÉTAIL PAR EMPLOYÉ
+                    </h5>
+                    <table class="table table-sm table-bordered" style="font-size:9.5px;">
+                        <thead class="thead-light">
+                            <tr style="background-color:#d6e4f0;">
+                                <th rowspan="2" class="text-center align-middle">#</th>
+                                <th rowspan="2" class="align-middle">CIN</th>
+                                <th rowspan="2" class="align-middle">N° CNSS</th>
+                                <th rowspan="2" class="align-middle">Nom et prénom</th>
+                                <th rowspan="2" class="text-right align-middle">Salaire brut (MAD)</th>
+                                <th colspan="2" class="text-center">CNSS</th>
+                                <th colspan="2" class="text-center">AMO</th>
+                                <th rowspan="2" class="text-right align-middle">Net à payer (MAD)</th>
+                            </tr>
+                            <tr style="background-color:#d6e4f0;">
+                                <th class="text-right">Base plaf.<br/>(MAD)</th>
+                                <th class="text-right">Sal. (4,48%)<br/>(MAD)</th>
+                                <th class="text-right">Sal. (2,26%)<br/>(MAD)</th>
+                                <th class="text-right">Pat. (3,96%)<br/>(MAD)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="o">
+                                <tr>
+                                    <td class="text-center"><t t-esc="o_index + 1"/></td>
+                                    <td><t t-esc="o.employee_id.cin or '—'"/></td>
+                                    <td><t t-esc="o.employee_id.cnss_number or '—'"/></td>
+                                    <td>
+                                        <strong><t t-esc="o.employee_id.name"/></strong>
+                                        <t t-if="o.employee_id.job_title">
+                                            <br/>
+                                            <small style="color:#666;">
+                                                <t t-esc="o.employee_id.job_title"/>
+                                            </small>
+                                        </t>
+                                    </td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.salaire_base"/></td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.cnss_base"/></td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.cnss_salarie"/></td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.amo_salarie"/></td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.amo_patronal"/></td>
+                                    <td class="text-right">
+                                        <strong><t t-esc="'%.2f' % o.salaire_net_a_payer"/></strong>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+
+                        <!-- Totals row -->
+                        <tfoot>
+                            <tr style="background-color:#1a5276; color:white; font-weight:bold;">
+                                <td colspan="4" class="text-right">TOTAUX</td>
+                                <td class="text-right">
+                                    <t t-esc="'%.2f' % total_salaire_base"/>
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc="'%.2f' % total_cnss_base"/>
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc="'%.2f' % total_cnss_salarie"/>
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc="'%.2f' % total_amo_salarie"/>
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc="'%.2f' % total_amo_patronal"/>
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc="'%.2f' % total_net"/>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <!-- ============================================
+                         SUMMARY — TOTAL CHARGES PATRONALES
+                    ============================================ -->
+                    <div class="row mt-3">
+                        <div class="col-6 offset-6">
+                            <table class="table table-sm table-bordered"
+                                   style="font-size:11px; background-color:#f0f5fb;">
+                                <thead>
+                                    <tr style="background-color:#1a5276; color:white;">
+                                        <th colspan="2" class="text-center">
+                                            Récapitulatif charges patronales
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>CNSS patronal (10,64 %)</td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f' % total_cnss_patronal"/> MAD
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>AMO patronal (3,96 %)</td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f' % total_amo_patronal"/> MAD
+                                        </td>
+                                    </tr>
+                                    <tr style="font-weight:bold; background-color:#d6e4f0;">
+                                        <td>Total charges patronales</td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f' % (total_cnss_patronal + total_amo_patronal)"/> MAD
+                                        </td>
+                                    </tr>
+                                    <tr style="font-weight:bold;">
+                                        <td>Total charges salariales</td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f' % (total_cnss_salarie + total_amo_salarie)"/> MAD
+                                        </td>
+                                    </tr>
+                                    <tr style="font-weight:bold; background-color:#1a5276; color:white;">
+                                        <td>TOTAL MASSE SALARIALE BRUTE</td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f' % total_salaire_base"/> MAD
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         SIGNATURE BLOCK
+                    ============================================ -->
+                    <div class="row mt-5" style="font-size:10px;">
+                        <div class="col-4 text-center">
+                            <p style="border-top:1px solid #333; padding-top:6px; margin-top:40px;">
+                                <strong>Établi par :</strong><br/>
+                                Responsable RH / Paie
+                            </p>
+                        </div>
+                        <div class="col-4 text-center">
+                            <p style="border-top:1px solid #333; padding-top:6px; margin-top:40px;">
+                                <strong>Vérifié par :</strong><br/>
+                                Directeur Financier
+                            </p>
+                        </div>
+                        <div class="col-4 text-center">
+                            <p style="border-top:1px solid #333; padding-top:6px; margin-top:40px;">
+                                <strong>Approuvé par :</strong><br/>
+                                Directeur Général
+                                <br/>
+                                <small>(Cachet + Signature)</small>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         LEGAL NOTICE
+                    ============================================ -->
+                    <div class="row mt-4" style="font-size:8.5px; color:#555;">
+                        <div class="col-12">
+                            <hr/>
+                            <p class="mb-0">
+                                <strong>Base légale :</strong>
+                                Déclaration établie conformément au Dahir portant loi n° 1-72-184
+                                du 15 joumada II 1392 (27 juillet 1972) relatif au régime de sécurité
+                                sociale, tel que modifié et complété.  Taux CNSS : 4,48 % salarié /
+                                10,64 % patronal (plafond 6 000 MAD/mois) — Taux AMO : 2,26 % salarié /
+                                3,96 % patronal (sans plafond).  Ce document doit être conservé pendant
+                                10 ans conformément à la législation marocaine du travail.
+                            </p>
+                        </div>
+                    </div>
+
+                </div><!-- /page -->
+            </t><!-- /web.external_layout -->
+        </t><!-- /web.html_container -->
+    </template>
+
+</odoo>

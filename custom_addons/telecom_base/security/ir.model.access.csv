@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_telecom_certification_technicien,telecom.certification.technicien,model_telecom_certification,group_telecom_technicien,1,0,0,0
+access_telecom_certification_chef,telecom.certification.chef,model_telecom_certification,group_telecom_chef_chantier,1,1,1,0
+access_telecom_certification_admin,telecom.certification.admin,model_telecom_certification,group_telecom_admin,1,1,1,1
+access_telecom_specialite_technicien,telecom.specialite.technicien,model_telecom_specialite,group_telecom_technicien,1,0,0,0
+access_telecom_specialite_admin,telecom.specialite.admin,model_telecom_specialite,group_telecom_admin,1,1,1,1

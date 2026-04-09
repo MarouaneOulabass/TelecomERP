@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_company_form_telecom_inherit" model="ir.ui.view">
+        <field name="name">res.company.form.telecom.inherit</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//page[@name='general_information']" position="after">
+                <page name="telecom_legal_ma" string="Informations légales Maroc">
+                    <group>
+                        <group string="Identifiants fiscaux">
+                            <field name="ice"/>
+                            <field name="if_number"/>
+                            <field name="rc_number"/>
+                            <field name="patente"/>
+                        </group>
+                        <group string="Informations sociales">
+                            <field name="forme_juridique"/>
+                            <field name="capital_social"/>
+                            <field name="cnss_number"/>
+                            <field name="amo_number"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

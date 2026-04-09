@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.site — List view
+    ================================================================ -->
+    <record id="view_telecom_site_list" model="ir.ui.view">
+        <field name="name">telecom.site.list</field>
+        <field name="model">telecom.site</field>
+        <field name="arch" type="xml">
+            <list string="Sites télécom"
+                  decoration-muted="state == 'desactive'"
+                  decoration-success="state == 'livre'"
+                  decoration-warning="bail_expiration_warning == True">
+                <field name="code_interne"/>
+                <field name="name"/>
+                <field name="site_type"/>
+                <field name="wilaya"/>
+                <field name="commune"/>
+                <field name="state"
+                       widget="badge"
+                       decoration-success="state == 'livre'"
+                       decoration-info="state in ('prospection', 'etude')"
+                       decoration-warning="state in ('autorisation', 'deploiement', 'maintenance')"
+                       decoration-danger="state == 'desactive'"/>
+                <field name="operateur_ids" widget="many2many_tags"/>
+                <field name="bail_expiration_warning" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.site — Form view
+    ================================================================ -->
+    <record id="view_telecom_site_form" model="ir.ui.view">
+        <field name="name">telecom.site.form</field>
+        <field name="model">telecom.site</field>
+        <field name="arch" type="xml">
+            <form string="Site télécom">
+                <!-- ── Status bar ── -->
+                <header>
+                    <button name="action_set_etude"
+                            string="Étude technique"
+                            type="object"
+                            invisible="state != 'prospection'"
+                            class="btn-primary"/>
+                    <button name="action_set_autorisation"
+                            string="Lancer autorisation"
+                            type="object"
+                            invisible="state != 'etude'"
+                            class="btn-primary"/>
+                    <button name="action_set_deploiement"
+                            string="Démarrer déploiement"
+                            type="object"
+                            invisible="state != 'autorisation'"
+                            class="btn-primary"/>
+                    <button name="action_set_livre"
+                            string="Marquer livré"
+                            type="object"
+                            invisible="state != 'deploiement'"
+                            class="btn-success"/>
+                    <button name="action_set_maintenance"
+                            string="Mettre en maintenance"
+                            type="object"
+                            invisible="state not in ('livre',)"
+                            class="btn-warning"/>
+                    <button name="action_set_desactive"
+                            string="Désactiver"
+                            type="object"
+                            invisible="state == 'desactive'"
+                            class="btn-secondary"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="prospection,etude,autorisation,deploiement,livre"/>
+                </header>
+
+                <sheet>
+                    <!-- ── Smart buttons ── -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_documents"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o">
+                            <field name="document_count"
+                                   string="Documents"
+                                   widget="statinfo"/>
+                        </button>
+                        <!--
+                            Intervention smart button.
+                            The name "action_view_interventions" will be defined on
+                            telecom.site by the telecom_intervention module.
+                            We keep it here as a placeholder; it is hidden when count = 0.
+                        -->
+                        <button name="action_view_interventions"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-wrench"
+                                invisible="intervention_count == 0">
+                            <field name="intervention_count"
+                                   string="Interventions"
+                                   widget="statinfo"/>
+                        </button>
+                        <button name="action_open_in_maps"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-map-marker"
+                                invisible="not gps_lat or not gps_lng"
+                                title="Voir sur Google Maps">
+                            <span class="o_stat_text">Carte</span>
+                        </button>
+                    </div>
+
+                    <!-- ── Title block ── -->
+                    <div class="oe_title">
+                        <label for="code_interne" class="o_form_label"/>
+                        <h1>
+                            <field name="code_interne"
+                                   placeholder="TLM-001"
+                                   style="width: 30%;"/>
+                        </h1>
+                        <h2>
+                            <field name="name"
+                                   placeholder="Nom du site"
+                                   style="width: 70%;"/>
+                        </h2>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="bail_expiration_warning"
+                                   invisible="1"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Notebook tabs ── -->
+                    <notebook>
+
+                        <!-- Tab 1 : Identification -->
+                        <page string="Identification" name="identification">
+                            <group string="Informations générales">
+                                <group>
+                                    <field name="code_interne"/>
+                                    <field name="code_operateur"/>
+                                    <field name="name"/>
+                                    <field name="site_type"/>
+                                </group>
+                                <group>
+                                    <field name="wilaya"/>
+                                    <field name="commune"/>
+                                    <field name="adresse"/>
+                                </group>
+                            </group>
+                            <group string="Opérateurs &amp; Bailleur">
+                                <group>
+                                    <field name="operateur_ids"
+                                           widget="many2many_tags"
+                                           options="{'color_field': 'color'}"/>
+                                </group>
+                                <group>
+                                    <field name="bailleur_id"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Tab 2 : Localisation -->
+                        <page string="Localisation GPS" name="localisation">
+                            <group string="Coordonnées GPS (WGS84)">
+                                <group>
+                                    <field name="gps_lat"
+                                           string="Latitude"
+                                           placeholder="33.589886"/>
+                                    <field name="gps_lng"
+                                           string="Longitude"
+                                           placeholder="-7.603869"/>
+                                </group>
+                                <group>
+                                    <div class="o_field_widget" colspan="2">
+                                        <p class="text-muted">
+                                            <i class="fa fa-info-circle"/> Renseignez la latitude et la longitude en degrés décimaux (WGS84).
+                                            Utilisez le bouton <strong>Carte</strong> en haut de la fiche pour visualiser la position sur Google Maps.
+                                        </p>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Tab 3 : Bail & Bailleur -->
+                        <page string="Bail &amp; Bailleur" name="bail">
+                            <group string="Contrat de bail">
+                                <group>
+                                    <field name="bailleur_id"/>
+                                    <field name="bail_reference"/>
+                                    <field name="bail_date_debut"/>
+                                    <field name="bail_date_fin"/>
+                                </group>
+                                <group>
+                                    <field name="loyer_mensuel"/>
+                                    <field name="currency_id"
+                                           groups="base.group_multi_currency"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-warning"
+                                 role="alert"
+                                 invisible="not bail_expiration_warning">
+                                <i class="fa fa-exclamation-triangle"/> Le contrat de bail expire dans moins de 3 mois. Veuillez prendre les dispositions nécessaires pour le renouvellement.
+                            </div>
+                        </page>
+
+                        <!-- Tab 4 : Accès & Sécurité -->
+                        <page string="Accès &amp; Sécurité" name="acces">
+                            <group string="Conditions d'accès au site">
+                                <group>
+                                    <field name="acces_h24"/>
+                                    <field name="autorisation_prealable"/>
+                                    <field name="contact_local"
+                                           placeholder="Ex: Mohamed – 06 12 34 56 78"/>
+                                </group>
+                            </group>
+                            <group string="Instructions d'accès">
+                                <field name="acces_instructions"
+                                       nolabel="1"
+                                       placeholder="Décrire l'itinéraire, code cadenas, procédure d'accès, restrictions particulières…"/>
+                            </group>
+                        </page>
+
+                        <!-- Tab 5 : Caractéristiques techniques -->
+                        <page string="Caractéristiques techniques" name="technique">
+                            <group string="Structure &amp; Énergie">
+                                <group>
+                                    <field name="hauteur_pylone"
+                                           invisible="site_type not in ('pylone_greenfield', 'rooftop')"/>
+                                    <field name="puissance_electrique"/>
+                                    <field name="groupe_electrogene"/>
+                                    <field name="batterie_backup"/>
+                                    <field name="climatisation"/>
+                                </group>
+                            </group>
+                            <group string="Technologies déployées">
+                                <field name="technologie_ids"
+                                       widget="many2many_tags"
+                                       nolabel="1"
+                                       options="{'color_field': 'color'}"/>
+                            </group>
+                        </page>
+
+                        <!-- Tab 6 : Documents -->
+                        <page string="Documents" name="documents">
+                            <field name="document_ids"
+                                   nolabel="1">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="document_type"/>
+                                    <field name="date"/>
+                                    <field name="file" widget="binary" filename="filename"/>
+                                    <field name="filename" invisible="1"/>
+                                    <field name="description"
+                                           optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab 7 : Notes -->
+                        <page string="Notes" name="notes">
+                            <field name="notes"
+                                   nolabel="1"
+                                   placeholder="Observations générales, historique du site, contraintes particulières…"/>
+                        </page>
+
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.site — Kanban view
+    ================================================================ -->
+    <record id="view_telecom_site_kanban" model="ir.ui.view">
+        <field name="name">telecom.site.kanban</field>
+        <field name="model">telecom.site</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state"
+                    class="o_kanban_small_column"
+                    records_draggable="0"
+                    sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="code_interne"/>
+                <field name="site_type"/>
+                <field name="wilaya"/>
+                <field name="state"/>
+                <field name="color"/>
+                <field name="technologie_ids"/>
+                <field name="operateur_ids"/>
+                <field name="bail_expiration_warning"/>
+                <progressbar field="state"
+                             colors='{"livre": "success", "maintenance": "warning", "desactive": "danger"}'/>
+                <templates>
+                    <t t-name="kanban-card">
+                        <div t-attf-class="oe_kanban_color_#{record.color.raw_value} oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="code_interne"/>
+                                        </strong>
+                                        <small class="o_kanban_record_subtitle text-muted">
+                                            <field name="name"/>
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div>
+                                        <span class="badge rounded-pill text-bg-secondary">
+                                            <field name="site_type"/>
+                                        </span>
+                                    </div>
+                                    <div t-if="record.wilaya.raw_value" class="mt-1 text-muted">
+                                        <i class="fa fa-map-marker me-1"/>
+                                        <field name="wilaya"/>
+                                    </div>
+                                    <div t-if="record.technologie_ids.raw_value.length" class="mt-1">
+                                        <field name="technologie_ids" widget="many2many_tags"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="operateur_ids" widget="many2many_avatar"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span t-if="record.bail_expiration_warning.raw_value"
+                                              class="badge rounded-pill text-bg-warning"
+                                              title="Bail expire bientôt">
+                                            <i class="fa fa-exclamation-triangle"/>
+                                        </span>
+                                        <field name="state"
+                                               widget="label_selection"
+                                               options="{'classes': {
+                                                   'prospection': 'default',
+                                                   'etude': 'info',
+                                                   'autorisation': 'warning',
+                                                   'deploiement': 'primary',
+                                                   'livre': 'success',
+                                                   'maintenance': 'warning',
+                                                   'desactive': 'danger'
+                                               }}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.site — Search view
+    ================================================================ -->
+    <record id="view_telecom_site_search" model="ir.ui.view">
+        <field name="name">telecom.site.search</field>
+        <field name="model">telecom.site</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un site">
+                <!-- Full-text search fields -->
+                <field name="name" string="Nom"
+                       filter_domain="[('name', 'ilike', self)]"/>
+                <field name="code_interne" string="Code interne"
+                       filter_domain="[('code_interne', 'ilike', self)]"/>
+                <field name="code_operateur" string="Code opérateur"
+                       filter_domain="[('code_operateur', 'ilike', self)]"/>
+                <field name="operateur_ids" string="Opérateur"/>
+                <field name="bailleur_id" string="Bailleur"/>
+                <field name="commune" string="Commune"/>
+
+                <!-- Separator -->
+                <separator/>
+
+                <!-- State filters -->
+                <filter name="filter_prospection"
+                        string="Prospection"
+                        domain="[('state', '=', 'prospection')]"/>
+                <filter name="filter_etude"
+                        string="Étude technique"
+                        domain="[('state', '=', 'etude')]"/>
+                <filter name="filter_deploiement"
+                        string="Déploiement"
+                        domain="[('state', '=', 'deploiement')]"/>
+                <filter name="filter_livre"
+                        string="Opérationnels"
+                        domain="[('state', '=', 'livre')]"/>
+                <filter name="filter_maintenance"
+                        string="En maintenance"
+                        domain="[('state', '=', 'maintenance')]"/>
+                <filter name="filter_desactive"
+                        string="Désactivés"
+                        domain="[('active', '=', False)]"/>
+
+                <separator/>
+
+                <!-- Wilaya filters -->
+                <filter name="filter_casablanca"
+                        string="Casablanca-Settat"
+                        domain="[('wilaya', '=', 'casablanca_settat')]"/>
+                <filter name="filter_rabat"
+                        string="Rabat-Salé-Kénitra"
+                        domain="[('wilaya', '=', 'rabat_sale_kenitra')]"/>
+                <filter name="filter_marrakech"
+                        string="Marrakech-Safi"
+                        domain="[('wilaya', '=', 'marrakech_safi')]"/>
+                <filter name="filter_fes"
+                        string="Fès-Meknès"
+                        domain="[('wilaya', '=', 'fes_meknes')]"/>
+                <filter name="filter_tanger"
+                        string="Tanger-Tétouan"
+                        domain="[('wilaya', '=', 'tanger_tetouan_alhoceima')]"/>
+
+                <separator/>
+
+                <!-- Site type filters -->
+                <filter name="filter_pylone"
+                        string="Pylônes"
+                        domain="[('site_type', '=', 'pylone_greenfield')]"/>
+                <filter name="filter_rooftop"
+                        string="Rooftops"
+                        domain="[('site_type', '=', 'rooftop')]"/>
+                <filter name="filter_cabinet_ftth"
+                        string="Cabinets FTTH"
+                        domain="[('site_type', '=', 'cabinet_ftth')]"/>
+
+                <separator/>
+
+                <!-- Bail warning filter -->
+                <filter name="filter_bail_expiration"
+                        string="Bail expirant bientôt"
+                        domain="[('bail_expiration_warning', '=', True)]"/>
+
+                <!-- Group by -->
+                <group expand="0" string="Grouper par">
+                    <filter name="group_wilaya"
+                            string="Région (Wilaya)"
+                            context="{'group_by': 'wilaya'}"/>
+                    <filter name="group_site_type"
+                            string="Type de site"
+                            context="{'group_by': 'site_type'}"/>
+                    <filter name="group_state"
+                            string="État"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_bailleur"
+                            string="Bailleur"
+                            context="{'group_by': 'bailleur_id'}"/>
+                    <filter name="group_company"
+                            string="Société"
+                            context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.site — Window action
+    ================================================================ -->
+    <record id="action_telecom_site" model="ir.actions.act_window">
+        <field name="name">Sites télécom</field>
+        <field name="res_model">telecom.site</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_telecom_site_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier site télécom
+            </p>
+            <p>
+                Gérez l'ensemble de vos sites physiques : pylônes, rooftops,
+                cabinets FTTH, shelters, datacenters et chambres de tirage.
+            </p>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.technologie — List + Form views (for configuration menu)
+    ================================================================ -->
+    <record id="view_telecom_technologie_list" model="ir.ui.view">
+        <field name="name">telecom.technologie.list</field>
+        <field name="model">telecom.technologie</field>
+        <field name="arch" type="xml">
+            <list string="Technologies" editable="top">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_telecom_technologie_form" model="ir.ui.view">
+        <field name="name">telecom.technologie.form</field>
+        <field name="model">telecom.technologie</field>
+        <field name="arch" type="xml">
+            <form string="Technologie">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="sequence"/>
+                        <field name="color" widget="color_picker"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_telecom_technologie" model="ir.actions.act_window">
+        <field name="name">Technologies télécom</field>
+        <field name="res_model">telecom.technologie</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

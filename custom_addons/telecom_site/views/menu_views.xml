@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Sites main menu — under TelecomERP root
+    ================================================================ -->
+
+    <!-- Level 1 : Sites (top-level item under TelecomERP root) -->
+    <menuitem id="menu_telecom_sites_root"
+              name="Sites"
+              parent="telecom_base.menu_telecom_root"
+              sequence="10"
+              groups="telecom_base.group_telecom_technicien"/>
+
+    <!-- Level 2 : All sites list -->
+    <menuitem id="menu_telecom_sites_all"
+              name="Tous les sites"
+              parent="menu_telecom_sites_root"
+              action="action_telecom_site"
+              sequence="10"
+              groups="telecom_base.group_telecom_technicien"/>
+
+    <!-- ================================================================
+         Configuration sub-entries added to the base config menu
+    ================================================================ -->
+
+    <menuitem id="menu_telecom_technologie_config"
+              name="Technologies télécom"
+              parent="telecom_base.menu_telecom_config"
+              action="action_telecom_technologie"
+              sequence="20"
+              groups="telecom_base.group_telecom_admin"/>
+
+</odoo>

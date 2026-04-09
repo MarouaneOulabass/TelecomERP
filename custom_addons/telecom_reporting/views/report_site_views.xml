@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         report.telecom.site.analysis — List view
+    ================================================================ -->
+    <record id="view_report_site_list" model="ir.ui.view">
+        <field name="name">report.telecom.site.analysis.list</field>
+        <field name="model">report.telecom.site.analysis</field>
+        <field name="arch" type="xml">
+            <list string="Sites" create="false" edit="false" delete="false">
+                <field name="code_interne" string="Code"/>
+                <field name="name" string="Nom du site"/>
+                <field name="wilaya" string="Région"/>
+                <field name="site_type" string="Type"/>
+                <field name="state" string="État"
+                       decoration-success="state == 'livre'"
+                       decoration-warning="state in ('maintenance', 'deploiement')"
+                       decoration-muted="state == 'desactive'"
+                       widget="badge"/>
+                <field name="operateur_count" string="Opérateurs" sum="Total"/>
+                <field name="technologie_count" string="Technologies" sum="Total"/>
+                <field name="intervention_count_total" string="Interventions (total)" sum="Total"/>
+                <field name="intervention_count_month" string="Interventions (mois)" sum="Total"/>
+                <field name="last_intervention_date" string="Dernière intervention"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         report.telecom.site.analysis — Pivot view
+    ================================================================ -->
+    <record id="view_report_site_pivot" model="ir.ui.view">
+        <field name="name">report.telecom.site.analysis.pivot</field>
+        <field name="model">report.telecom.site.analysis</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse portefeuille sites" disable_linking="True">
+                <field name="wilaya" type="row"/>
+                <field name="state" type="col"/>
+                <field name="intervention_count_total" type="measure" string="Interventions (total)"/>
+                <field name="intervention_count_month" type="measure" string="Interventions (mois)"/>
+                <field name="operateur_count" type="measure" string="Opérateurs"/>
+                <field name="technologie_count" type="measure" string="Technologies"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         report.telecom.site.analysis — Graph view (bar by wilaya + state)
+    ================================================================ -->
+    <record id="view_report_site_graph" model="ir.ui.view">
+        <field name="name">report.telecom.site.analysis.graph</field>
+        <field name="model">report.telecom.site.analysis</field>
+        <field name="arch" type="xml">
+            <graph string="Sites par région et état" type="bar" stacked="True">
+                <field name="wilaya" type="row"/>
+                <field name="state" type="col"/>
+                <field name="intervention_count_total" type="measure" string="Nb interventions"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         report.telecom.site.analysis — Search view
+    ================================================================ -->
+    <record id="view_report_site_search" model="ir.ui.view">
+        <field name="name">report.telecom.site.analysis.search</field>
+        <field name="model">report.telecom.site.analysis</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher sites">
+
+                <field name="name" string="Nom du site"/>
+                <field name="code_interne" string="Code interne"/>
+
+                <!-- Filters by state -->
+                <filter string="Livré / Opérationnel"
+                        name="filter_livre"
+                        domain="[('state', '=', 'livre')]"/>
+                <filter string="En maintenance"
+                        name="filter_maintenance"
+                        domain="[('state', '=', 'maintenance')]"/>
+                <filter string="En déploiement"
+                        name="filter_deploiement"
+                        domain="[('state', '=', 'deploiement')]"/>
+                <filter string="Désactivé"
+                        name="filter_desactive"
+                        domain="[('state', '=', 'desactive')]"/>
+                <separator/>
+                <filter string="Avec intervention ce mois"
+                        name="filter_active_month"
+                        domain="[('intervention_count_month', '>', 0)]"/>
+
+                <!-- Group-by options -->
+                <group expand="0" string="Regrouper par">
+                    <filter string="Région (Wilaya)"
+                            name="group_wilaya"
+                            context="{'group_by': 'wilaya'}"/>
+                    <filter string="Type de site"
+                            name="group_type"
+                            context="{'group_by': 'site_type'}"/>
+                    <filter string="État"
+                            name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Société"
+                            name="group_company"
+                            context="{'group_by': 'company_id'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+</odoo>

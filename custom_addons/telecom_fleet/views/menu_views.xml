@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- TOP-LEVEL FLOTTE MENU under TelecomERP root -->
+
+    <menuitem id="menu_telecom_flotte"
+              name="Flotte"
+              parent="telecom_base.menu_telecom_root"
+              sequence="30"/>
+
+    <!-- Flotte - Vehicules kanban default -->
+
+    <menuitem id="menu_telecom_vehicles"
+              name="Véhicules"
+              parent="menu_telecom_flotte"
+              action="action_telecom_vehicle"
+              sequence="10"/>
+
+    <!-- Flotte - Historique entretiens -->
+
+    <menuitem id="menu_telecom_entretiens"
+              name="Historique entretiens"
+              parent="menu_telecom_flotte"
+              action="action_telecom_vehicle_entretien"
+              sequence="20"/>
+
+</odoo>

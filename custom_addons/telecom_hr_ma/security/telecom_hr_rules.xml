@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Record rules for telecom.pointage.chantier
+        ============================================================ -->
+
+        <!-- Technicien can only see their own pointage records -->
+        <record id="rule_pointage_technicien_own" model="ir.rule">
+            <field name="name">Pointage : technicien — ses propres pointages uniquement</field>
+            <field name="model_id" ref="model_telecom_pointage_chantier"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_technicien'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Chef de chantier can see pointages they are the validator on,
+             plus their own. The technicien rule above is also implied for
+             chef (due to group inheritance), so chef rule overrides with
+             broader access: their team (chef_validation_id == their employee). -->
+        <record id="rule_pointage_chef_team" model="ir.rule">
+            <field name="name">Pointage : chef de chantier — son équipe</field>
+            <field name="model_id" ref="model_telecom_pointage_chantier"/>
+            <field name="domain_force">
+                ['|',
+                 ('employee_id.user_id', '=', user.id),
+                 ('chef_validation_id.user_id', '=', user.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_chef_chantier'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Admin: no restriction on pointage -->
+        <record id="rule_pointage_admin_all" model="ir.rule">
+            <field name="name">Pointage : admin — accès complet</field>
+            <field name="model_id" ref="model_telecom_pointage_chantier"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_admin'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- ============================================================
+             Record rules for telecom.habilitation.employee
+        ============================================================ -->
+
+        <!-- Technicien can only see their own habilitations -->
+        <record id="rule_habilitation_technicien_own" model="ir.rule">
+            <field name="name">Habilitation : technicien — ses propres habilitations</field>
+            <field name="model_id" ref="model_telecom_habilitation_employee"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_technicien'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Chef de chantier: see all habilitations of team members -->
+        <record id="rule_habilitation_chef_team" model="ir.rule">
+            <field name="name">Habilitation : chef de chantier — toute son équipe</field>
+            <field name="model_id" ref="model_telecom_habilitation_employee"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_chef_chantier'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Admin: full access -->
+        <record id="rule_habilitation_admin_all" model="ir.rule">
+            <field name="name">Habilitation : admin — accès complet</field>
+            <field name="model_id" ref="model_telecom_habilitation_employee"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_admin'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

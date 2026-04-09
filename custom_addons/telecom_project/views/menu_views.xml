@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Top-level : Projets (under TelecomERP root)
+         ================================================================ -->
+
+    <menuitem id="menu_telecom_projets"
+              name="Projets"
+              parent="telecom_base.menu_telecom_root"
+              sequence="20"/>
+
+    <!-- Projects list (native project.project) -->
+    <menuitem id="menu_telecom_projets_all"
+              name="Tous les projets"
+              parent="menu_telecom_projets"
+              action="project.action_view_all_project"
+              sequence="10"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+    <!-- ================================================================
+         Top-level : Chantiers
+         ================================================================ -->
+
+    <menuitem id="menu_telecom_chantiers"
+              name="Chantiers"
+              parent="telecom_base.menu_telecom_root"
+              sequence="30"/>
+
+    <!-- Sites de projet -->
+    <menuitem id="menu_telecom_chantiers_sites"
+              name="Sites de projet"
+              parent="menu_telecom_chantiers"
+              action="action_telecom_project_site"
+              sequence="10"
+              groups="telecom_base.group_telecom_technicien"/>
+
+    <!-- Lots -->
+    <menuitem id="menu_telecom_chantiers_lots"
+              name="Lots"
+              parent="menu_telecom_chantiers"
+              action="action_telecom_lot"
+              sequence="20"
+              groups="telecom_base.group_telecom_chef_chantier"/>
+
+    <!-- PV de réception -->
+    <menuitem id="menu_telecom_chantiers_pv"
+              name="PV de réception"
+              parent="menu_telecom_chantiers"
+              action="action_telecom_pv_reception"
+              sequence="30"
+              groups="telecom_base.group_telecom_chef_chantier"/>
+
+</odoo>

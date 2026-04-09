@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         LIST VIEW
+         ================================================================ -->
+    <record id="view_telecom_intervention_list" model="ir.ui.view">
+        <field name="name">telecom.intervention.list</field>
+        <field name="model">telecom.intervention</field>
+        <field name="arch" type="xml">
+            <list string="Bons d'Intervention"
+                  decoration-danger="sla_depasse == True"
+                  decoration-warning="priority == '1'"
+                  decoration-bf="priority == '2'">
+                <field name="name"/>
+                <field name="site_id"/>
+                <field name="intervention_type"/>
+                <field name="technician_ids" widget="many2many_tags"
+                       options="{'color_field': 'color'}"/>
+                <field name="date_planifiee"/>
+                <field name="priority" widget="priority"/>
+                <field name="state" widget="badge"
+                       decoration-success="state in ('valide', 'facture')"
+                       decoration-warning="state == 'planifie'"
+                       decoration-info="state == 'en_cours'"
+                       decoration-danger="state == 'annule'"
+                       decoration-muted="state == 'draft'"/>
+                <field name="sla_depasse" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         FORM VIEW
+         ================================================================ -->
+    <record id="view_telecom_intervention_form" model="ir.ui.view">
+        <field name="name">telecom.intervention.form</field>
+        <field name="model">telecom.intervention</field>
+        <field name="arch" type="xml">
+            <form string="Bon d'Intervention">
+
+                <!-- Status bar -->
+                <header>
+                    <button name="action_planifier"
+                            string="Planifier"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_demarrer"
+                            string="Démarrer"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'planifie'"/>
+                    <button name="action_terminer"
+                            string="Terminer (terrain)"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'en_cours'"/>
+                    <button name="action_valider"
+                            string="Valider"
+                            type="object"
+                            class="btn-success"
+                            invisible="state != 'termine'"
+                            groups="telecom_base.group_telecom_chef_chantier,telecom_base.group_telecom_responsable,telecom_base.group_telecom_admin"/>
+                    <button name="action_annuler"
+                            string="Annuler"
+                            type="object"
+                            class="btn-danger"
+                            invisible="state in ('annule', 'facture')"/>
+                    <button name="action_reset_draft"
+                            string="Remettre en brouillon"
+                            type="object"
+                            invisible="state != 'annule'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,planifie,en_cours,termine,valide,facture"/>
+                </header>
+
+                <!-- Smart buttons -->
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_photos"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-camera">
+                        <field name="photo_count" widget="statinfo"
+                               string="Photos"/>
+                    </button>
+                    <button type="object"
+                            name="%(action_telecom_materiel_consomme)d"
+                            class="oe_stat_button"
+                            icon="fa-wrench">
+                        <field name="materiel_count" widget="statinfo"
+                               string="Matériels"/>
+                    </button>
+                    <button name="action_view_invoices"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-file-text-o"
+                            invisible="invoice_count == 0">
+                        <field name="invoice_count" widget="statinfo"
+                               string="Factures"/>
+                    </button>
+                </div>
+
+                <sheet>
+                    <!-- Title row -->
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <field name="priority" widget="priority"/>
+                    </div>
+
+                    <!-- Alert banner: SLA overdue -->
+                    <div class="alert alert-danger" role="alert"
+                         invisible="not sla_depasse">
+                        <strong>SLA dépassé !</strong>
+                        L'échéance contractuelle est dépassée pour ce bon d'intervention.
+                    </div>
+
+                    <!-- Group 1: Site &amp; Type -->
+                    <group>
+                        <group string="Identification">
+                            <field name="site_id" options="{'no_create': True}"/>
+                            <field name="operateur_id"
+                                   options="{'no_create': True}"/>
+                            <field name="intervention_type"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group string="Planning">
+                            <field name="date_planifiee"/>
+                            <field name="duree_estimee"/>
+                            <field name="chef_chantier_id"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <!-- Group 2: SLA -->
+                    <group string="SLA — Délai d'intervention">
+                        <group>
+                            <field name="sla_delai_heures"/>
+                            <field name="sla_echeance"/>
+                        </group>
+                        <group>
+                            <field name="sla_depasse" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+
+                    <!-- Notebook -->
+                    <notebook>
+
+                        <!-- Tab 1: Affectation -->
+                        <page string="Affectation" name="affectation">
+                            <group>
+                                <field name="technician_ids"
+                                       widget="many2many_tags"
+                                       options="{'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="habilitations_requises_text"
+                                       placeholder="Décrivez les habilitations et certifications requises pour cette intervention..."/>
+                            </group>
+                        </page>
+
+                        <!-- Tab 2: Rapport terrain -->
+                        <page string="Rapport terrain" name="rapport">
+                            <group string="Exécution">
+                                <field name="date_debut_reel"/>
+                                <field name="date_fin_reel"/>
+                                <field name="duree_reelle" readonly="1"/>
+                            </group>
+                            <group string="Compte-rendu">
+                                <field name="description_travaux"
+                                       placeholder="Décrivez les travaux effectués..."
+                                       nolabel="1"
+                                       colspan="2"/>
+                            </group>
+                            <group string="Problèmes rencontrés">
+                                <field name="problemes_rencontres"
+                                       placeholder="Anomalies, incidents, difficultés d'accès..."
+                                       nolabel="1"
+                                       colspan="2"/>
+                            </group>
+                            <group string="Travaux restants / Réserves">
+                                <field name="travaux_restants"
+                                       placeholder="Travaux à finaliser, réserves client..."
+                                       nolabel="1"
+                                       colspan="2"/>
+                            </group>
+                        </page>
+
+                        <!-- Tab 3: Matériels consommés -->
+                        <page string="Matériels consommés" name="materiels">
+                            <field name="materiel_consomme_ids">
+                                <list editable="bottom">
+                                    <field name="product_id"
+                                           options="{'no_create': True}"/>
+                                    <field name="designation"/>
+                                    <field name="quantite"/>
+                                    <field name="unite"/>
+                                    <field name="numero_serie"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab 4: Photos -->
+                        <page string="Photos" name="photos">
+                            <field name="photo_ids">
+                                <list editable="bottom">
+                                    <field name="photo_type"/>
+                                    <field name="name"/>
+                                    <field name="photo" widget="image"
+                                           options="{'size': [128, 128]}"/>
+                                    <field name="photo_filename" invisible="1"/>
+                                    <field name="date_prise"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab 5: Signature -->
+                        <page string="Signature" name="signature">
+                            <group>
+                                <group string="Technicien">
+                                    <field name="signature_technicien"
+                                           widget="signature"
+                                           options="{'size': [400, 150]}"/>
+                                </group>
+                                <group string="Représentant client">
+                                    <field name="signature_client"
+                                           widget="signature"
+                                           options="{'size': [400, 150]}"/>
+                                    <field name="nom_signataire_client"/>
+                                    <field name="date_signature"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Tab 6: Facturation -->
+                        <page string="Facturation" name="facturation">
+                            <group>
+                                <field name="sale_order_id"
+                                       options="{'no_create': True}"/>
+                            </group>
+                            <field name="invoice_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"/>
+                        </page>
+
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter -->
+                <chatter/>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         KANBAN VIEW
+         ================================================================ -->
+    <record id="view_telecom_intervention_kanban" model="ir.ui.view">
+        <field name="name">telecom.intervention.kanban</field>
+        <field name="model">telecom.intervention</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state"
+                    class="o_kanban_small_column"
+                    quick_create="false">
+                <field name="name"/>
+                <field name="site_id"/>
+                <field name="intervention_type"/>
+                <field name="date_planifiee"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="sla_depasse"/>
+                <field name="sla_couleur"/>
+                <field name="technician_ids"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-attf-class="oe_kanban_color_#{record.sla_couleur.raw_value}">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                                <field name="priority" widget="priority"/>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div>
+                                    <i class="fa fa-map-marker" role="img"
+                                       aria-label="Site"/> <field name="site_id"/>
+                                </div>
+                                <div>
+                                    <i class="fa fa-calendar" role="img"
+                                       aria-label="Date planifiée"/> <field name="date_planifiee"
+                                       widget="datetime"/>
+                                </div>
+                                <div t-if="record.sla_depasse.raw_value"
+                                     class="text-danger fw-bold">
+                                    <i class="fa fa-exclamation-triangle"/> SLA dépassé
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <field name="state" widget="badge"
+                                           decoration-success="state in ('valide','facture')"
+                                           decoration-warning="state == 'planifie'"
+                                           decoration-info="state == 'en_cours'"
+                                           decoration-danger="state == 'annule'"/>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="technician_ids"
+                                           widget="many2many_avatar_employee"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         CALENDAR VIEW
+         ================================================================ -->
+    <record id="view_telecom_intervention_calendar" model="ir.ui.view">
+        <field name="name">telecom.intervention.calendar</field>
+        <field name="model">telecom.intervention</field>
+        <field name="arch" type="xml">
+            <calendar string="Planning des interventions"
+                      date_start="date_planifiee"
+                      date_stop="date_fin_reel"
+                      color="state"
+                      quick_create="false"
+                      mode="month">
+                <field name="name"/>
+                <field name="site_id"/>
+                <field name="intervention_type"/>
+                <field name="technician_ids" filters="1" avatar_field="image_128"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         SEARCH VIEW
+         ================================================================ -->
+    <record id="view_telecom_intervention_search" model="ir.ui.view">
+        <field name="name">telecom.intervention.search</field>
+        <field name="model">telecom.intervention</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un Bon d'Intervention">
+
+                <!-- Full-text search fields -->
+                <field name="name" string="N° BI"/>
+                <field name="site_id"/>
+                <field name="technician_ids"/>
+                <field name="chef_chantier_id"/>
+                <field name="operateur_id"/>
+
+                <!-- Quick filters -->
+                <filter name="filter_draft"
+                        string="Brouillon"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_planifie"
+                        string="Planifié"
+                        domain="[('state', '=', 'planifie')]"/>
+                <filter name="filter_en_cours"
+                        string="En cours"
+                        domain="[('state', '=', 'en_cours')]"/>
+                <filter name="filter_termine"
+                        string="Terminé"
+                        domain="[('state', '=', 'termine')]"/>
+                <filter name="filter_valide"
+                        string="Validé"
+                        domain="[('state', '=', 'valide')]"/>
+                <filter name="filter_facture"
+                        string="Facturé"
+                        domain="[('state', '=', 'facture')]"/>
+                <filter name="filter_annule"
+                        string="Annulé"
+                        domain="[('state', '=', 'annule')]"/>
+
+                <separator/>
+
+                <filter name="filter_preventive"
+                        string="Préventive"
+                        domain="[('intervention_type', '=', 'preventive')]"/>
+                <filter name="filter_corrective"
+                        string="Corrective"
+                        domain="[('intervention_type', '=', 'corrective')]"/>
+                <filter name="filter_installation"
+                        string="Installation"
+                        domain="[('intervention_type', '=', 'installation')]"/>
+
+                <separator/>
+
+                <filter name="filter_sla_depasse"
+                        string="SLA dépassé"
+                        domain="[('sla_depasse', '=', True)]"/>
+                <filter name="filter_urgent"
+                        string="Urgent / Très urgent"
+                        domain="[('priority', 'in', ['1', '2'])]"/>
+
+                <separator/>
+
+                <filter name="filter_this_week"
+                        string="Cette semaine"
+                        domain="[('date_planifiee', '&gt;=', (context_today() - relativedelta(weeks=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="filter_this_month"
+                        string="Ce mois"
+                        domain="[('date_planifiee', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
+
+                <!-- Group by -->
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_state"
+                            string="État"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_type"
+                            string="Type"
+                            context="{'group_by': 'intervention_type'}"/>
+                    <filter name="group_site"
+                            string="Site"
+                            context="{'group_by': 'site_id'}"/>
+                    <filter name="group_technicien"
+                            string="Technicien"
+                            context="{'group_by': 'technician_ids'}"/>
+                    <filter name="group_mois"
+                            string="Mois"
+                            context="{'group_by': 'date_planifiee:month'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         WINDOW ACTION
+         ================================================================ -->
+    <record id="action_telecom_intervention" model="ir.actions.act_window">
+        <field name="name">Bons d'Intervention</field>
+        <field name="res_model">telecom.intervention</field>
+        <field name="view_mode">list,kanban,form,calendar</field>
+        <field name="search_view_id" ref="view_telecom_intervention_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer un premier Bon d'Intervention
+            </p>
+            <p>
+                Les Bons d'Intervention permettent de planifier et de suivre
+                les travaux terrain effectués sur vos sites télécom.
+            </p>
+        </field>
+    </record>
+
+    <!-- Materiel consomme standalone action (used by smart button) -->
+    <record id="action_telecom_materiel_consomme" model="ir.actions.act_window">
+        <field name="name">Matériels consommés</field>
+        <field name="res_model">telecom.materiel.consomme</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

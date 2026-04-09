@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Report action: Bulletin de paie PDF
+    ================================================================ -->
+
+    <record id="action_report_telecom_paie" model="ir.actions.report">
+        <field name="name">Bulletin de paie</field>
+        <field name="model">telecom.paie.bulletin</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">telecom_hr_ma.report_telecom_paie_bulletin</field>
+        <field name="report_file">telecom_hr_ma.report_telecom_paie_bulletin</field>
+        <field name="print_report_name">'Bulletin_Paie_%s_%s' % (object.employee_id.name.replace(' ', '_'), object.date_from.strftime('%Y_%m'))</field>
+        <field name="binding_model_id" ref="model_telecom_paie_bulletin"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+</odoo>

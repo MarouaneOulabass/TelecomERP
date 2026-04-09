@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         TelecomERP Reporting — Menu structure
+         Parent root: telecom_base.menu_telecom_root
+    ================================================================ -->
+
+    <!-- Level 1: Reporting top-level menu under TelecomERP root -->
+    <menuitem id="menu_telecom_reporting"
+              name="Reporting"
+              parent="telecom_base.menu_telecom_root"
+              sequence="90"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+    <!-- ================================================================
+         Level 2: Sub-menu items
+    ================================================================ -->
+
+    <!-- 2.1 Tableau de bord — main dashboard pivot/graph -->
+    <menuitem id="menu_telecom_reporting_dashboard"
+              name="Tableau de bord"
+              parent="menu_telecom_reporting"
+              action="action_telecom_dashboard"
+              sequence="10"
+              groups="telecom_base.group_telecom_responsable"/>
+
+    <!-- 2.2 Analyse interventions -->
+    <menuitem id="menu_telecom_reporting_interventions"
+              name="Interventions"
+              parent="menu_telecom_reporting"
+              action="action_report_intervention_analysis"
+              sequence="20"
+              groups="telecom_base.group_telecom_responsable"/>
+
+    <!-- 2.3 Analyse sites -->
+    <menuitem id="menu_telecom_reporting_sites"
+              name="Sites"
+              parent="menu_telecom_reporting"
+              action="action_report_site_analysis"
+              sequence="30"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+    <!-- 2.4 Analyse finance -->
+    <menuitem id="menu_telecom_reporting_finance"
+              name="Finance"
+              parent="menu_telecom_reporting"
+              action="action_report_finance_analysis"
+              sequence="40"
+              groups="telecom_base.group_telecom_responsable"/>
+
+    <!-- 2.5 Bilan social CNSS — opens payslip list + PDF report -->
+    <menuitem id="menu_telecom_reporting_bilan_social"
+              name="Bilan social CNSS"
+              parent="menu_telecom_reporting"
+              action="action_bilan_social_cnss"
+              sequence="50"
+              groups="telecom_base.group_telecom_responsable"/>
+
+</odoo>

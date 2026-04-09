@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ACTION -->
+
+    <record id="action_telecom_vehicle" model="ir.actions.act_window">
+        <field name="name">Véhicules</field>
+        <field name="res_model">telecom.vehicle</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Ajoutez votre premier véhicule terrain
+            </p>
+            <p>
+                Gérez la flotte, les documents légaux et les entretiens
+                de vos véhicules terrain.
+            </p>
+        </field>
+    </record>
+
+    <!-- KANBAN VIEW -->
+
+    <record id="view_telecom_vehicle_kanban" model="ir.ui.view">
+        <field name="name">telecom.vehicle.kanban</field>
+        <field name="model">telecom.vehicle</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column"
+                    quick_create="false">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="immatriculation"/>
+                <field name="marque"/>
+                <field name="modele"/>
+                <field name="chauffeur_id"/>
+                <field name="state"/>
+                <field name="photo"/>
+                <field name="assurance_expiring"/>
+                <field name="visite_technique_expiring"/>
+                <field name="vignette_expiring"/>
+                <field name="entretien_km_alerte"/>
+                <field name="kilometrage"/>
+                <field name="vehicle_category"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record"
+                             style="min-width:220px;">
+                            <div class="o_kanban_image" style="height:80px;overflow:hidden;text-align:center;background:#f5f5f5;">
+                                <t t-if="record.photo.raw_value">
+                                    <img t-att-src="kanban_image('telecom.vehicle', 'photo', record.id.raw_value)"
+                                         style="max-height:80px;object-fit:cover;width:100%;" alt="photo"/>
+                                </t>
+                                <t t-else="">
+                                    <span class="fa fa-truck fa-3x text-muted" style="line-height:80px;"/>
+                                </t>
+                            </div>
+                            <div class="oe_kanban_details p-2">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <strong class="text-truncate" style="font-size:1.05em;">
+                                        <t t-esc="record.immatriculation.value"/>
+                                    </strong>
+                                    <span t-attf-class="badge #{record.state.raw_value == 'disponible' ? 'text-bg-success' : record.state.raw_value == 'en_mission' ? 'text-bg-primary' : record.state.raw_value == 'en_entretien' ? 'text-bg-warning' : record.state.raw_value == 'hors_service' ? 'text-bg-danger' : 'text-bg-secondary'} ms-1"
+                                          style="font-size:0.75em;white-space:nowrap;">
+                                        <t t-esc="record.state.value"/>
+                                    </span>
+                                </div>
+                                <div class="text-muted small mb-1">
+                                    <t t-esc="record.marque.value"/>&#160;<t t-esc="record.modele.value"/>
+                                </div>
+                                <div class="small mb-1">
+                                    <span class="fa fa-tachometer me-1"/>
+                                    <t t-esc="record.kilometrage.value"/> km
+                                </div>
+                                <div t-if="record.chauffeur_id.raw_value" class="d-flex align-items-center small mt-1">
+                                    <img t-att-src="kanban_image('hr.employee', 'avatar_128', record.chauffeur_id.raw_value)"
+                                         class="rounded-circle me-1" style="width:20px;height:20px;" alt="tech"/>
+                                    <span class="text-truncate"><t t-esc="record.chauffeur_id.value"/></span>
+                                </div>
+                                <div class="mt-1">
+                                    <t t-if="record.assurance_expiring.raw_value">
+                                        <span class="badge text-bg-warning me-1" title="Assurance expirant bientôt">
+                                            <i class="fa fa-shield"/> Assurance
+                                        </span>
+                                    </t>
+                                    <t t-if="record.visite_technique_expiring.raw_value">
+                                        <span class="badge text-bg-warning me-1" title="Visite technique expirant bientôt">
+                                            <i class="fa fa-id-card"/> Visite tech.
+                                        </span>
+                                    </t>
+                                    <t t-if="record.vignette_expiring.raw_value">
+                                        <span class="badge text-bg-warning me-1" title="Vignette expirant bientôt">
+                                            <i class="fa fa-tag"/> Vignette
+                                        </span>
+                                    </t>
+                                    <t t-if="record.entretien_km_alerte.raw_value">
+                                        <span class="badge text-bg-danger" title="Entretien km à prévoir">
+                                            <i class="fa fa-wrench"/> Entretien
+                                        </span>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- LIST VIEW -->
+
+    <record id="view_telecom_vehicle_list" model="ir.ui.view">
+        <field name="name">telecom.vehicle.list</field>
+        <field name="model">telecom.vehicle</field>
+        <field name="arch" type="xml">
+            <list string="Véhicules"
+                  decoration-warning="assurance_expiring or visite_technique_expiring or vignette_expiring or entretien_km_alerte"
+                  decoration-danger="state == 'hors_service'"
+                  decoration-muted="state == 'vendu'">
+                <field name="immatriculation"/>
+                <field name="marque"/>
+                <field name="modele"/>
+                <field name="vehicle_category"/>
+                <field name="chauffeur_id" optional="show"/>
+                <field name="kilometrage"/>
+                <field name="assurance_expiration" optional="show"/>
+                <field name="carte_grise_expiration" optional="show"/>
+                <field name="vignette_expiration" optional="show"/>
+                <field name="date_prochain_entretien" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'disponible'"
+                       decoration-info="state == 'en_mission'"
+                       decoration-warning="state == 'en_entretien'"
+                       decoration-danger="state == 'hors_service'"/>
+                <field name="assurance_expiring" column_invisible="1"/>
+                <field name="visite_technique_expiring" column_invisible="1"/>
+                <field name="vignette_expiring" column_invisible="1"/>
+                <field name="entretien_km_alerte" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM VIEW -->
+
+    <record id="view_telecom_vehicle_form" model="ir.ui.view">
+        <field name="name">telecom.vehicle.form</field>
+        <field name="model">telecom.vehicle</field>
+        <field name="arch" type="xml">
+            <form string="Véhicule">
+                <header>
+                    <button name="action_affecter_mission"
+                            string="Mettre en mission"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state not in ('disponible', 'en_entretien')"/>
+                    <button name="action_retour"
+                            string="Retour disponible"
+                            type="object"
+                            invisible="state != 'en_mission'"/>
+                    <button name="action_entretien"
+                            string="Mettre en entretien"
+                            type="object"
+                            invisible="state not in ('disponible', 'en_mission')"/>
+                    <button name="action_hors_service"
+                            string="Hors service"
+                            type="object"
+                            class="btn-danger"
+                            invisible="state in ('hors_service', 'vendu')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="disponible,en_mission,en_entretien,hors_service"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_entretiens"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-wrench">
+                            <field name="entretien_count" widget="statinfo"
+                                   string="Entretiens"/>
+                        </button>
+                    </div>
+
+                    <div class="alert alert-warning"
+                         invisible="not (assurance_expiring or visite_technique_expiring or vignette_expiring or entretien_km_alerte)">
+                        <strong><i class="fa fa-exclamation-triangle me-1"/>Alertes véhicule :</strong>
+                        <span invisible="not assurance_expiring"> | Assurance expirant bientôt</span>
+                        <span invisible="not visite_technique_expiring"> | Visite technique expirant bientôt</span>
+                        <span invisible="not vignette_expiring"> | Vignette fiscale expirant bientôt</span>
+                        <span invisible="not entretien_km_alerte"> | Entretien kilométrique à prévoir</span>
+                    </div>
+
+                    <div class="oe_title" style="width:calc(100% - 160px);">
+                        <h1>
+                            <field name="immatriculation"
+                                   placeholder="Ex : 12345-A-7"
+                                   style="font-size:1.5em;font-weight:bold;"/>
+                        </h1>
+                        <h3 class="text-muted">
+                            <field name="marque" placeholder="Marque"/>&#160;
+                            <field name="modele" placeholder="Modèle"/>
+                        </h3>
+                    </div>
+                    <field name="photo" widget="image"
+                           class="oe_avatar"
+                           style="float:right;width:150px;height:150px;object-fit:cover;border-radius:6px;"/>
+
+                    <field name="assurance_expiring" invisible="1"/>
+                    <field name="visite_technique_expiring" invisible="1"/>
+                    <field name="vignette_expiring" invisible="1"/>
+                    <field name="entretien_km_alerte" invisible="1"/>
+
+                    <notebook>
+
+                        <!-- Tab Véhicule -->
+                        <page string="Véhicule" name="tab_vehicle">
+                            <group>
+                                <group string="Identification">
+                                    <field name="immatriculation"/>
+                                    <field name="marque"/>
+                                    <field name="modele"/>
+                                    <field name="annee"/>
+                                    <field name="couleur"/>
+                                    <field name="vehicle_category"/>
+                                </group>
+                                <group string="Caractéristiques techniques">
+                                    <field name="carburant"/>
+                                    <field name="puissance_cv"/>
+                                    <field name="kilometrage"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Tab Affectation -->
+                        <page string="Affectation" name="tab_affectation">
+                            <group>
+                                <group string="Technicien assigné">
+                                    <field name="chauffeur_id"
+                                           domain="[('telecom_technicien', '=', True)]"
+                                           options="{'no_create': True}"/>
+                                    <field name="date_affectation"/>
+                                    <field name="state"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Tab Documents -->
+                        <page string="Documents" name="tab_documents">
+                            <group>
+                                <group string="Assurance">
+                                    <field name="assurance_compagnie"/>
+                                    <field name="assurance_numero_police"/>
+                                    <field name="assurance_expiration"/>
+                                    <div class="alert alert-warning p-1 ps-2 small"
+                                         invisible="not assurance_expiring">
+                                        <i class="fa fa-exclamation-triangle me-1"/>
+                                        Assurance : expiration dans moins de 60 jours
+                                    </div>
+                                </group>
+                                <group string="Carte grise / Visite technique">
+                                    <field name="carte_grise_expiration"/>
+                                    <div class="alert alert-warning p-1 ps-2 small"
+                                         invisible="not visite_technique_expiring">
+                                        <i class="fa fa-exclamation-triangle me-1"/>
+                                        Visite technique : expiration dans moins de 60 jours
+                                    </div>
+                                </group>
+                                <group string="Vignette fiscale">
+                                    <field name="vignette_expiration"/>
+                                    <div class="alert alert-warning p-1 ps-2 small"
+                                         invisible="not vignette_expiring">
+                                        <i class="fa fa-exclamation-triangle me-1"/>
+                                        Vignette : expiration dans moins de 60 jours
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Tab Maintenance -->
+                        <page string="Maintenance" name="tab_maintenance">
+                            <group>
+                                <group string="Dernier entretien">
+                                    <field name="date_dernier_entretien"/>
+                                    <field name="km_dernier_entretien"/>
+                                </group>
+                                <group string="Prochain entretien">
+                                    <field name="intervalle_entretien_km"/>
+                                    <field name="km_prochain_entretien"/>
+                                    <field name="date_prochain_entretien"/>
+                                    <div class="alert alert-danger p-1 ps-2 small"
+                                         invisible="not entretien_km_alerte">
+                                        <i class="fa fa-wrench me-1"/>
+                                        Entretien kilométrique à prévoir prochainement
+                                    </div>
+                                </group>
+                            </group>
+                            <separator string="Historique des entretiens"/>
+                            <field name="entretien_ids" nolabel="1">
+                                <list string="Entretiens"
+                                      editable="bottom"
+                                      decoration-info="entretien_type == 'revision'"
+                                      decoration-warning="entretien_type in ('courroie', 'freins')">
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="entretien_type" widget="badge"/>
+                                    <field name="kilometrage"/>
+                                    <field name="garage"/>
+                                    <field name="cout" sum="Total coûts"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="prochain_entretien_km" optional="hide"/>
+                                    <field name="prochain_entretien_date" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab Stock mobile -->
+                        <page string="Stock mobile" name="tab_stock">
+                            <group>
+                                <group string="Entrepôt Odoo lié">
+                                    <field name="warehouse_id"
+                                           readonly="warehouse_id != False"
+                                           options="{'no_create': True}"/>
+                                    <field name="location_id" readonly="1"/>
+                                </group>
+                            </group>
+                            <div invisible="warehouse_id != False" class="mt-3">
+                                <button name="action_creer_entrepot_mobile"
+                                        string="Créer l'entrepôt mobile"
+                                        type="object"
+                                        class="btn-primary"/>
+                                <p class="text-muted small mt-2">
+                                    Aucun entrepôt mobile n'est encore lié à ce véhicule.
+                                    Cliquez sur le bouton pour en créer un automatiquement.
+                                </p>
+                            </div>
+                            <div invisible="warehouse_id == False" class="mt-2">
+                                <p class="text-muted small">
+                                    <i class="fa fa-info-circle me-1"/>
+                                    L'entrepôt mobile est lié. Pour gérer le stock terrain,
+                                    accédez au module Inventaire.
+                                </p>
+                            </div>
+                        </page>
+
+                        <!-- Tab Notes -->
+                        <page string="Notes" name="tab_notes">
+                            <field name="notes" placeholder="Notes internes sur ce véhicule…" nolabel="1"/>
+                        </page>
+
+                    </notebook>
+                </sheet>
+
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+
+    <record id="view_telecom_vehicle_search" model="ir.ui.view">
+        <field name="name">telecom.vehicle.search</field>
+        <field name="model">telecom.vehicle</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un véhicule">
+                <field name="immatriculation" string="Immatriculation"/>
+                <field name="marque"/>
+                <field name="modele"/>
+                <field name="chauffeur_id" string="Technicien"/>
+
+                <separator/>
+
+                <filter string="Disponible" name="filter_disponible"
+                        domain="[('state', '=', 'disponible')]"/>
+                <filter string="En mission" name="filter_en_mission"
+                        domain="[('state', '=', 'en_mission')]"/>
+                <filter string="En entretien" name="filter_en_entretien"
+                        domain="[('state', '=', 'en_entretien')]"/>
+                <filter string="Hors service" name="filter_hors_service"
+                        domain="[('state', '=', 'hors_service')]"/>
+
+                <separator/>
+
+                <filter string="Assurance expirant bientôt" name="filter_assurance_expiring"
+                        domain="[('assurance_expiring', '=', True)]"/>
+                <filter string="Visite technique expirant bientôt" name="filter_visite_expiring"
+                        domain="[('visite_technique_expiring', '=', True)]"/>
+                <filter string="Vignette expirant bientôt" name="filter_vignette_expiring"
+                        domain="[('vignette_expiring', '=', True)]"/>
+                <filter string="Entretien km à prévoir" name="filter_entretien_km"
+                        domain="[('entretien_km_alerte', '=', True)]"/>
+
+                <separator/>
+
+                <filter string="Archivés" name="filter_archived"
+                        domain="[('active', '=', False)]"/>
+
+                <group expand="0" string="Regrouper par">
+                    <filter string="Technicien assigné" name="group_chauffeur"
+                            context="{'group_by': 'chauffeur_id'}"/>
+                    <filter string="État" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Catégorie" name="group_category"
+                            context="{'group_by': 'vehicle_category'}"/>
+                    <filter string="Société" name="group_company"
+                            context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>

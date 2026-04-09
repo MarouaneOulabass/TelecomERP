@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Sequence — Situations de travaux : SIT/2024/001
+        ============================================================ -->
+
+        <record id="seq_telecom_situation" model="ir.sequence">
+            <field name="name">Situation de travaux TelecomERP</field>
+            <field name="code">telecom.situation</field>
+            <field name="prefix">SIT/%(year)s/</field>
+            <field name="suffix"></field>
+            <field name="padding">3</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="use_date_range">True</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- ============================================================
+             Sequence — Décomptes provisoires : DC/2024/001
+        ============================================================ -->
+
+        <record id="seq_telecom_decompte_provisoire" model="ir.sequence">
+            <field name="name">Décompte provisoire TelecomERP</field>
+            <field name="code">telecom.decompte.provisoire</field>
+            <field name="prefix">DC/%(year)s/</field>
+            <field name="suffix"></field>
+            <field name="padding">3</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="use_date_range">True</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- ============================================================
+             Sequence — Décomptes définitifs : DDF/2024/001
+        ============================================================ -->
+
+        <record id="seq_telecom_decompte_definitif" model="ir.sequence">
+            <field name="name">Décompte définitif TelecomERP</field>
+            <field name="code">telecom.decompte.definitif</field>
+            <field name="prefix">DDF/%(year)s/</field>
+            <field name="suffix"></field>
+            <field name="padding">3</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="use_date_range">True</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- ============================================================
+             Sequence — Avances de démarrage : AVA/2024/001
+        ============================================================ -->
+
+        <record id="seq_telecom_avance" model="ir.sequence">
+            <field name="name">Avance de démarrage TelecomERP</field>
+            <field name="code">telecom.avance</field>
+            <field name="prefix">AVA/%(year)s/</field>
+            <field name="suffix"></field>
+            <field name="padding">3</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="use_date_range">True</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- ============================================================
+             Cron — Recompute delai_depasse daily
+        ============================================================ -->
+
+        <record id="ir_cron_telecom_finance_delai" model="ir.cron">
+            <field name="name">TelecomERP — Vérification délais de paiement finance</field>
+            <field name="model_id" ref="model_telecom_situation"/>
+            <field name="state">code</field>
+            <field name="code">
+situations = model.search([('state', 'not in', ['paye']), ('date_paiement_prevu', '!=', False)])
+situations._compute_delai_depasse()
+decomptes = env['telecom.decompte'].search([('state', 'not in', ['paye']), ('date_paiement_prevu', '!=', False)])
+decomptes._compute_delai_depasse()
+            </field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

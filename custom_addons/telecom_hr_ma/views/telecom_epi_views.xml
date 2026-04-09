@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.epi.type — List + Form
+    ================================================================ -->
+
+    <record id="view_epi_type_list" model="ir.ui.view">
+        <field name="name">telecom.epi.type.list</field>
+        <field name="model">telecom.epi.type</field>
+        <field name="arch" type="xml">
+            <tree string="Types EPI" editable="top">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="periodicite_renouvellement_mois" string="Renouvellement (mois)"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_epi_type_form" model="ir.ui.view">
+        <field name="name">telecom.epi.type.form</field>
+        <field name="model">telecom.epi.type</field>
+        <field name="arch" type="xml">
+            <form string="Type EPI">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Désignation EPI..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="periodicite_renouvellement_mois"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_epi_type" model="ir.actions.act_window">
+        <field name="name">Types EPI</field>
+        <field name="res_model">telecom.epi.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ================================================================
+         telecom.epi.dotation — List + Form
+    ================================================================ -->
+
+    <record id="view_epi_dotation_list" model="ir.ui.view">
+        <field name="name">telecom.epi.dotation.list</field>
+        <field name="model">telecom.epi.dotation</field>
+        <field name="arch" type="xml">
+            <tree string="Dotations EPI"
+                  decoration-danger="state == 'expired'"
+                  decoration-warning="state == 'expiring_soon'">
+                <field name="employee_id"/>
+                <field name="epi_type_id"/>
+                <field name="date_dotation"/>
+                <field name="date_expiration"/>
+                <field name="quantite"/>
+                <field name="etat"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'valid'"
+                       decoration-warning="state == 'expiring_soon'"
+                       decoration-danger="state == 'expired'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_epi_dotation_form" model="ir.ui.view">
+        <field name="name">telecom.epi.dotation.form</field>
+        <field name="model">telecom.epi.dotation</field>
+        <field name="arch" type="xml">
+            <form string="Dotation EPI">
+                <sheet>
+                    <group>
+                        <group string="Employé &amp; EPI">
+                            <field name="employee_id"/>
+                            <field name="epi_type_id"/>
+                            <field name="quantite"/>
+                        </group>
+                        <group string="Suivi">
+                            <field name="etat"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'valid'"
+                                   decoration-warning="state == 'expiring_soon'"
+                                   decoration-danger="state == 'expired'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Dates">
+                            <field name="date_dotation"/>
+                            <field name="date_expiration"/>
+                        </group>
+                        <group>
+                            <field name="notes"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="view_epi_dotation_search" model="ir.ui.view">
+        <field name="name">telecom.epi.dotation.search</field>
+        <field name="model">telecom.epi.dotation</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher dotation EPI">
+                <field name="employee_id"/>
+                <field name="epi_type_id"/>
+                <filter name="filter_expired" string="Expirées"
+                        domain="[('state', '=', 'expired')]"/>
+                <filter name="filter_expiring" string="Expirent bientôt"
+                        domain="[('state', '=', 'expiring_soon')]"/>
+                <filter name="filter_a_remplacer" string="À remplacer"
+                        domain="[('etat', '=', 'a_remplacer')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_employee" string="Employé"
+                            context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_type" string="Type EPI"
+                            context="{'group_by': 'epi_type_id'}"/>
+                    <filter name="group_etat" string="État"
+                            context="{'group_by': 'etat'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_epi_dotation" model="ir.actions.act_window">
+        <field name="name">Dotations EPI</field>
+        <field name="res_model">telecom.epi.dotation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_epi_dotation_search"/>
+    </record>
+
+    <!-- Context action from employee smart button -->
+    <record id="action_epi_dotation_from_emp" model="ir.actions.act_window">
+        <field name="name">EPI</field>
+        <field name="res_model">telecom.epi.dotation</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('employee_id', '=', active_id)]</field>
+        <field name="context">{'default_employee_id': active_id}</field>
+    </record>
+
+</odoo>

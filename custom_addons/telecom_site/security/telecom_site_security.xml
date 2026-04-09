@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ================================================================
+             Record rules — telecom.site
+        ================================================================ -->
+
+        <!--
+            Techniciens can only READ sites that belong to their company.
+            They cannot create, write or unlink via record rules.
+            (CRUD permissions are also restricted in ir.model.access.csv)
+        -->
+        <record id="rule_telecom_site_technicien_read" model="ir.rule">
+            <field name="name">Site télécom : lecture seule (Technicien)</field>
+            <field name="model_id" ref="model_telecom_site"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_technicien'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!--
+            Chefs de chantier can read and write sites of their company.
+        -->
+        <record id="rule_telecom_site_chef_chantier" model="ir.rule">
+            <field name="name">Site télécom : lecture + écriture (Chef de chantier)</field>
+            <field name="model_id" ref="model_telecom_site"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_chef_chantier'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!--
+            Chargés d'affaires can read, write and create sites of their company.
+        -->
+        <record id="rule_telecom_site_charge_affaires" model="ir.rule">
+            <field name="name">Site télécom : CRUD sauf suppression (Chargé d'affaires)</field>
+            <field name="model_id" ref="model_telecom_site"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_charge_affaires'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!--
+            Administrators have full access to all sites of all companies
+            they belong to.
+        -->
+        <record id="rule_telecom_site_admin" model="ir.rule">
+            <field name="name">Site télécom : accès complet (Administrateur)</field>
+            <field name="model_id" ref="model_telecom_site"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- ================================================================
+             Record rules — telecom.site.document
+        ================================================================ -->
+
+        <!--
+            Techniciens can read documents of sites they can see.
+        -->
+        <record id="rule_telecom_site_document_technicien" model="ir.rule">
+            <field name="name">Document site : lecture (Technicien)</field>
+            <field name="model_id" ref="model_telecom_site_document"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_technicien'))]"/>
+            <field name="domain_force">[('site_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

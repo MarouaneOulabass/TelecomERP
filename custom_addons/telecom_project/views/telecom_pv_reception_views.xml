@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.pv.reception — List view
+         ================================================================ -->
+
+    <record id="view_telecom_pv_reception_list" model="ir.ui.view">
+        <field name="name">telecom.pv.reception.list</field>
+        <field name="model">telecom.pv.reception</field>
+        <field name="arch" type="xml">
+            <list string="PV de réception"
+                  decoration-success="state == 'approuve'"
+                  decoration-info="state == 'signe'"
+                  decoration-muted="state == 'draft'">
+                <field name="name" readonly="1"/>
+                <field name="pv_type" widget="badge"
+                       decoration-info="pv_type == 'partiel'"
+                       decoration-success="pv_type == 'definitif'"/>
+                <field name="project_id"/>
+                <field name="project_site_id" optional="show"/>
+                <field name="lot_id" optional="show"/>
+                <field name="date_pv"/>
+                <field name="redige_par" optional="show"/>
+                <field name="representant_client" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'approuve'"
+                       decoration-warning="state == 'signe'"
+                       decoration-muted="state == 'draft'"/>
+                <field name="date_signature" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.pv.reception — Form view
+         ================================================================ -->
+
+    <record id="view_telecom_pv_reception_form" model="ir.ui.view">
+        <field name="name">telecom.pv.reception.form</field>
+        <field name="model">telecom.pv.reception</field>
+        <field name="arch" type="xml">
+            <form string="Procès-Verbal de Réception">
+                <header>
+                    <button name="action_signer"
+                            string="Signer"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approuver"
+                            string="Approuver"
+                            type="object"
+                            class="btn-success"
+                            invisible="state != 'signe'"/>
+                    <button name="action_print_pv"
+                            string="Imprimer PV"
+                            type="object"
+                            icon="fa-print"
+                            invisible="state == 'draft'"/>
+                    <button name="action_reset_draft"
+                            string="Remettre en brouillon"
+                            type="object"
+                            class="btn-secondary"
+                            groups="telecom_base.group_telecom_admin"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,signe,approuve"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+
+                    <div class="oe_title">
+                        <label for="name" string="Référence PV"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <div>
+                            <field name="pv_type" widget="badge"
+                                   decoration-info="pv_type == 'partiel'"
+                                   decoration-success="pv_type == 'definitif'"
+                                   readonly="state != 'draft'"/>
+                        </div>
+                    </div>
+
+                    <!-- Header info -->
+                    <group col="2">
+                        <group string="Projet / Site">
+                            <field name="project_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="project_site_id"
+                                   domain="[('project_id', '=', project_id)]"
+                                   readonly="state != 'draft'"/>
+                            <field name="lot_id"
+                                   domain="[('project_id', '=', project_id)]"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Dates">
+                            <field name="date_pv"
+                                   readonly="state != 'draft'"/>
+                            <field name="date_signature" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+
+                    <!-- Participants -->
+                    <group string="Participants" col="2">
+                        <group string="Entreprise">
+                            <field name="redige_par"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Client opérateur">
+                            <field name="representant_client"
+                                   readonly="state != 'draft'"/>
+                            <field name="representant_client_fonction"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+
+                        <!-- Travaux réalisés -->
+                        <page string="Travaux réalisés">
+                            <field name="travaux_realises"
+                                   placeholder="Description détaillée des travaux et prestations réalisés…"
+                                   readonly="state != 'draft'"/>
+                        </page>
+
+                        <!-- Réserves -->
+                        <page string="Réserves">
+                            <group>
+                                <field name="reserves"
+                                       placeholder="Réserves formulées par le client (laisser vide si aucune réserve)…"
+                                       readonly="state != 'draft'"/>
+                            </group>
+                            <group string="Levée des réserves"
+                                   invisible="not reserves">
+                                <field name="levee_reserves"
+                                       placeholder="Conditions et procédure de levée des réserves…"
+                                       readonly="state != 'draft'"/>
+                                <field name="delai_levee_reserves"
+                                       readonly="state != 'draft'"/>
+                            </group>
+                        </page>
+
+                        <!-- Signatures -->
+                        <page string="Signatures">
+                            <group col="2">
+                                <group string="Signature entreprise">
+                                    <field name="signature_entreprise"
+                                           widget="signature"
+                                           readonly="state != 'draft'"
+                                           nolabel="1"/>
+                                </group>
+                                <group string="Signature client">
+                                    <field name="signature_client"
+                                           widget="signature"
+                                           readonly="state != 'draft'"
+                                           nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Documents joints -->
+                        <page string="Documents joints">
+                            <field name="document_ids"
+                                   widget="many2many_binary"
+                                   readonly="state == 'approuve'"/>
+                        </page>
+
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.pv.reception — Search view
+         ================================================================ -->
+
+    <record id="view_telecom_pv_reception_search" model="ir.ui.view">
+        <field name="name">telecom.pv.reception.search</field>
+        <field name="model">telecom.pv.reception</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un PV de réception">
+                <field name="name" string="Référence"/>
+                <field name="project_id"/>
+                <field name="project_site_id"/>
+                <field name="redige_par"/>
+                <field name="representant_client"/>
+                <separator/>
+                <filter name="filter_partiel" string="Réceptions partielles"
+                        domain="[('pv_type', '=', 'partiel')]"/>
+                <filter name="filter_definitif" string="Réceptions définitives"
+                        domain="[('pv_type', '=', 'definitif')]"/>
+                <separator/>
+                <filter name="filter_draft" string="Brouillons"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_signe" string="Signés"
+                        domain="[('state', '=', 'signe')]"/>
+                <filter name="filter_approuve" string="Approuvés"
+                        domain="[('state', '=', 'approuve')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_project" string="Projet"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter name="group_type" string="Type"
+                            context="{'group_by': 'pv_type'}"/>
+                    <filter name="group_state" string="État"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Mois"
+                            context="{'group_by': 'date_pv:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Action
+         ================================================================ -->
+
+    <record id="action_telecom_pv_reception" model="ir.actions.act_window">
+        <field name="name">PV de réception</field>
+        <field name="res_model">telecom.pv.reception</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_telecom_pv_reception_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier PV de réception
+            </p>
+            <p>
+                Les procès-verbaux de réception formalisent l'acceptation
+                des travaux télécom par le client opérateur.
+            </p>
+        </field>
+    </record>
+
+</odoo>

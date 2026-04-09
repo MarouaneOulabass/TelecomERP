@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         ir.actions.report — Décompte CCAG Travaux PDF
+    ================================================================ -->
+
+    <record id="action_report_telecom_decompte" model="ir.actions.report">
+        <field name="name">Décompte de travaux (CCAG)</field>
+        <field name="model">telecom.decompte</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">telecom_finance_ma.report_telecom_decompte_document</field>
+        <field name="report_file">telecom_finance_ma.report_telecom_decompte_document</field>
+        <field name="print_report_name">
+            (object.name or 'Decompte') + ' — ' + (object.project_id.name or '')
+        </field>
+        <field name="binding_model_id" ref="model_telecom_decompte"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+</odoo>

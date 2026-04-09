@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             RECORD RULES — telecom.lot
+             ============================================================ -->
+
+        <!-- Technicien: read-only access to lots belonging to their company -->
+        <record id="rule_lot_technicien" model="ir.rule">
+            <field name="name">Lot: technicien voit sa société</field>
+            <field name="model_id" ref="model_telecom_lot"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_technicien'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Chef de chantier: read/write lots in their company -->
+        <record id="rule_lot_chef_chantier" model="ir.rule">
+            <field name="name">Lot: chef de chantier voit sa société</field>
+            <field name="model_id" ref="model_telecom_lot"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_chef_chantier'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Chargé d'affaires: full CRUD on lots in their company -->
+        <record id="rule_lot_charge_affaires" model="ir.rule">
+            <field name="name">Lot: chargé d'affaires voit sa société</field>
+            <field name="model_id" ref="model_telecom_lot"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_charge_affaires'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Responsable: full CRUD on lots in their company -->
+        <record id="rule_lot_responsable" model="ir.rule">
+            <field name="name">Lot: responsable voit sa société</field>
+            <field name="model_id" ref="model_telecom_lot"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_responsable'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Admin: global unrestricted access -->
+        <record id="rule_lot_admin" model="ir.rule">
+            <field name="name">Lot: admin accès global</field>
+            <field name="model_id" ref="model_telecom_lot"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- ============================================================
+             RECORD RULES — telecom.project.site
+             ============================================================ -->
+
+        <!-- Technicien: read-only access to project sites in their company -->
+        <record id="rule_project_site_technicien" model="ir.rule">
+            <field name="name">Site projet: technicien voit sa société</field>
+            <field name="model_id" ref="model_telecom_project_site"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_technicien'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Chef de chantier: read/write project sites in their company -->
+        <record id="rule_project_site_chef_chantier" model="ir.rule">
+            <field name="name">Site projet: chef de chantier voit sa société</field>
+            <field name="model_id" ref="model_telecom_project_site"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_chef_chantier'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Chargé d'affaires: CRUD on project sites in their company -->
+        <record id="rule_project_site_charge_affaires" model="ir.rule">
+            <field name="name">Site projet: chargé d'affaires voit sa société</field>
+            <field name="model_id" ref="model_telecom_project_site"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_charge_affaires'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Responsable: CRUD on project sites in their company -->
+        <record id="rule_project_site_responsable" model="ir.rule">
+            <field name="name">Site projet: responsable voit sa société</field>
+            <field name="model_id" ref="model_telecom_project_site"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_responsable'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Admin: global unrestricted access -->
+        <record id="rule_project_site_admin" model="ir.rule">
+            <field name="name">Site projet: admin accès global</field>
+            <field name="model_id" ref="model_telecom_project_site"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- ============================================================
+             RECORD RULES — telecom.pv.reception
+             ============================================================ -->
+
+        <!-- Technicien: read-only access to PV in their company -->
+        <record id="rule_pv_technicien" model="ir.rule">
+            <field name="name">PV réception: technicien voit sa société</field>
+            <field name="model_id" ref="model_telecom_pv_reception"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_technicien'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Chef de chantier: read-only access to PV in their company -->
+        <record id="rule_pv_chef_chantier" model="ir.rule">
+            <field name="name">PV réception: chef de chantier voit sa société</field>
+            <field name="model_id" ref="model_telecom_pv_reception"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_chef_chantier'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Chargé d'affaires: CRUD on PV in their company -->
+        <record id="rule_pv_charge_affaires" model="ir.rule">
+            <field name="name">PV réception: chargé d'affaires voit sa société</field>
+            <field name="model_id" ref="model_telecom_pv_reception"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_charge_affaires'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Responsable: full CRUD including delete -->
+        <record id="rule_pv_responsable" model="ir.rule">
+            <field name="name">PV réception: responsable voit sa société</field>
+            <field name="model_id" ref="model_telecom_pv_reception"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_responsable'))]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Admin: global unrestricted access -->
+        <record id="rule_pv_admin" model="ir.rule">
+            <field name="name">PV réception: admin accès global</field>
+            <field name="model_id" ref="model_telecom_pv_reception"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.equipment.category — List view
+    ================================================================ -->
+    <record id="view_telecom_equipment_category_list" model="ir.ui.view">
+        <field name="name">telecom.equipment.category.list</field>
+        <field name="model">telecom.equipment.category</field>
+        <field name="arch" type="xml">
+            <list string="Catégories d'équipements">
+                <field name="complete_name"/>
+                <field name="code"/>
+                <field name="parent_id" optional="show"/>
+                <field name="equipment_count" string="Équipements"/>
+                <field name="active" optional="show" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.equipment.category — Form view
+    ================================================================ -->
+    <record id="view_telecom_equipment_category_form" model="ir.ui.view">
+        <field name="name">telecom.equipment.category.form</field>
+        <field name="model">telecom.equipment.category</field>
+        <field name="arch" type="xml">
+            <form string="Catégorie d'équipement">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button"
+                                type="action"
+                                name="%(action_telecom_equipment)d"
+                                icon="fa-cogs"
+                                context="{'search_default_category_id': active_id}">
+                            <field name="equipment_count" widget="statinfo" string="Équipements"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" string="Catégorie"/>
+                        <h1>
+                            <field name="name" placeholder="Nom de la catégorie..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Identification">
+                            <field name="code"/>
+                            <field name="parent_id"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group string="Sous-catégories">
+                        <field name="child_ids" nolabel="1">
+                            <list>
+                                <field name="complete_name"/>
+                                <field name="code"/>
+                                <field name="equipment_count" string="Équipements"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1" placeholder="Description de la catégorie..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.equipment.category — Search view
+    ================================================================ -->
+    <record id="view_telecom_equipment_category_search" model="ir.ui.view">
+        <field name="name">telecom.equipment.category.search</field>
+        <field name="model">telecom.equipment.category</field>
+        <field name="arch" type="xml">
+            <search string="Recherche catégories">
+                <field name="name" string="Catégorie" filter_domain="[('complete_name', 'ilike', self)]"/>
+                <field name="code"/>
+                <field name="parent_id"/>
+                <separator/>
+                <filter name="filter_active" string="Actives" domain="[('active', '=', True)]"/>
+                <filter name="filter_top_level" string="Catégories racines" domain="[('parent_id', '=', False)]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_parent" string="Catégorie parente" context="{'group_by': 'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Action window
+    ================================================================ -->
+    <record id="action_telecom_equipment_category" model="ir.actions.act_window">
+        <field name="name">Catégories d'équipements</field>
+        <field name="res_model">telecom.equipment.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_telecom_equipment_category_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre première catégorie d'équipement
+            </p>
+            <p>
+                Organisez vos équipements télécom en catégories hiérarchiques :
+                Antennes, Équipements radio, Shelter &amp; Infrastructure, etc.
+            </p>
+        </field>
+    </record>
+
+</odoo>

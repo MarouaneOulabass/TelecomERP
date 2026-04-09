@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         MENUS — TelecomERP > Interventions
+         All items are placed under the root menu provided by telecom_base.
+         ================================================================ -->
+
+    <!-- Top-level "Interventions" menu -->
+    <menuitem id="menu_telecom_intervention_root"
+              name="Interventions"
+              parent="telecom_base.menu_telecom_root"
+              sequence="20"
+              web_icon="telecom_intervention,static/description/icon.png"/>
+
+    <!-- Sub-menu: list + form + kanban -->
+    <menuitem id="menu_telecom_intervention_list"
+              name="Bons d'Intervention"
+              parent="menu_telecom_intervention_root"
+              action="action_telecom_intervention"
+              sequence="10"/>
+
+    <!-- Sub-menu: calendar / planning view -->
+    <menuitem id="menu_telecom_intervention_planning"
+              name="Planning"
+              parent="menu_telecom_intervention_root"
+              action="action_telecom_intervention_planning"
+              sequence="20"/>
+
+    <!-- Dedicated planning action that opens the calendar view by default -->
+    <record id="action_telecom_intervention_planning" model="ir.actions.act_window">
+        <field name="name">Planning des interventions</field>
+        <field name="res_model">telecom.intervention</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="search_view_id" ref="view_telecom_intervention_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune intervention planifiée
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         ir.actions.report — Fiche Site PDF
+    ================================================================ -->
+    <record id="action_report_telecom_site_fiche" model="ir.actions.report">
+        <field name="name">Fiche Site</field>
+        <field name="model">telecom.site</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">telecom_site.report_telecom_site_fiche</field>
+        <field name="report_file">telecom_site.report_telecom_site_fiche</field>
+        <field name="print_report_name">'Fiche_Site_' + (object.code_interne or '') + '_' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_telecom_site"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ================================================================
+         QWeb template — Fiche Site
+    ================================================================ -->
+    <template id="report_telecom_site_fiche">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="site">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- ── Header ── -->
+                        <div class="row mb-4">
+                            <div class="col-8">
+                                <h2 class="text-primary">
+                                    Fiche Site Télécom
+                                </h2>
+                                <h3>
+                                    <t t-esc="site.code_interne"/> —
+                                    <t t-esc="site.name"/>
+                                </h3>
+                            </div>
+                            <div class="col-4 text-end">
+                                <span t-att-class="'badge fs-6 ' + (
+                                    'bg-success' if site.state == 'livre' else
+                                    'bg-warning text-dark' if site.state in ('autorisation', 'deploiement', 'maintenance') else
+                                    'bg-danger' if site.state == 'desactive' else
+                                    'bg-info text-dark'
+                                )">
+                                    <t t-esc="dict(site._fields['state'].selection).get(site.state, site.state)"/>
+                                </span>
+                                <div class="text-muted mt-1" style="font-size: 10px;">
+                                    Imprimé le <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y à %H:%M')"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr/>
+
+                        <!-- ── Section 1 : Identification ── -->
+                        <h4 class="mt-3 mb-2 text-primary border-bottom pb-1">
+                            1. Identification du site
+                        </h4>
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 35%; background-color: #f8f9fa;">Code interne</th>
+                                    <td><t t-esc="site.code_interne"/></td>
+                                    <th style="width: 35%; background-color: #f8f9fa;">Code opérateur</th>
+                                    <td><t t-esc="site.code_operateur or '—'"/></td>
+                                </tr>
+                                <tr>
+                                    <th style="background-color: #f8f9fa;">Nom du site</th>
+                                    <td colspan="3"><t t-esc="site.name"/></td>
+                                </tr>
+                                <tr>
+                                    <th style="background-color: #f8f9fa;">Type de site</th>
+                                    <td>
+                                        <t t-esc="dict(site._fields['site_type'].selection).get(site.site_type, site.site_type)"/>
+                                    </td>
+                                    <th style="background-color: #f8f9fa;">Région (Wilaya)</th>
+                                    <td>
+                                        <t t-esc="dict(site._fields['wilaya'].selection).get(site.wilaya, '') if site.wilaya else '—'"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="background-color: #f8f9fa;">Commune</th>
+                                    <td><t t-esc="site.commune or '—'"/></td>
+                                    <th style="background-color: #f8f9fa;">Société</th>
+                                    <td><t t-esc="site.company_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <th style="background-color: #f8f9fa;">Adresse</th>
+                                    <td colspan="3"><t t-esc="site.adresse or '—'"/></td>
+                                </tr>
+                                <tr>
+                                    <th style="background-color: #f8f9fa;">Opérateurs hébergés</th>
+                                    <td colspan="3">
+                                        <t t-if="site.operateur_ids">
+                                            <t t-foreach="site.operateur_ids" t-as="op">
+                                                <span class="badge bg-secondary me-1"><t t-esc="op.name"/></span>
+                                            </t>
+                                        </t>
+                                        <t t-else="">—</t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="background-color: #f8f9fa;">Technologies déployées</th>
+                                    <td colspan="3">
+                                        <t t-if="site.technologie_ids">
+                                            <t t-foreach="site.technologie_ids" t-as="tech">
+                                                <span class="badge bg-primary me-1"><t t-esc="tech.name"/></span>
+                                            </t>
+                                        </t>
+                                        <t t-else="">—</t>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ── Section 2 : Localisation GPS ── -->
+                        <h4 class="mt-4 mb-2 text-primary border-bottom pb-1">
+                            2. Localisation GPS
+                        </h4>
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 35%; background-color: #f8f9fa;">Latitude (WGS84)</th>
+                                    <td>
+                                        <t t-if="site.gps_lat">
+                                            <t t-esc="'%.6f' % site.gps_lat"/>°
+                                        </t>
+                                        <t t-else="">—</t>
+                                    </td>
+                                    <th style="width: 35%; background-color: #f8f9fa;">Longitude (WGS84)</th>
+                                    <td>
+                                        <t t-if="site.gps_lng">
+                                            <t t-esc="'%.6f' % site.gps_lng"/>°
+                                        </t>
+                                        <t t-else="">—</t>
+                                    </td>
+                                </tr>
+                                <t t-if="site.gps_lat and site.gps_lng">
+                                    <tr>
+                                        <th style="background-color: #f8f9fa;">Google Maps</th>
+                                        <td colspan="3" style="font-size: 9px; color: #555;">
+                                            https://maps.google.com/?q=<t t-esc="'%.6f' % site.gps_lat"/>,<t t-esc="'%.6f' % site.gps_lng"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- ── Section 3 : Bail & Bailleur ── -->
+                        <h4 class="mt-4 mb-2 text-primary border-bottom pb-1">
+                            3. Bail et bailleur
+                        </h4>
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 35%; background-color: #f8f9fa;">Bailleur</th>
+                                    <td><t t-esc="site.bailleur_id.name if site.bailleur_id else '—'"/></td>
+                                    <th style="width: 35%; background-color: #f8f9fa;">Référence bail</th>
+                                    <td><t t-esc="site.bail_reference or '—'"/></td>
+                                </tr>
+                                <tr>
+                                    <th style="background-color: #f8f9fa;">Début du bail</th>
+                                    <td>
+                                        <t t-if="site.bail_date_debut">
+                                            <t t-esc="site.bail_date_debut.strftime('%d/%m/%Y')"/>
+                                        </t>
+                                        <t t-else="">—</t>
+                                    </td>
+                                    <th style="background-color: #f8f9fa;">Fin du bail</th>
+                                    <td>
+                                        <t t-if="site.bail_date_fin">
+                                            <span t-att-style="'color: red; font-weight: bold;' if site.bail_expiration_warning else ''">
+                                                <t t-esc="site.bail_date_fin.strftime('%d/%m/%Y')"/>
+                                                <t t-if="site.bail_expiration_warning"> ⚠ Expire bientôt</t>
+                                            </span>
+                                        </t>
+                                        <t t-else="">—</t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="background-color: #f8f9fa;">Loyer mensuel</th>
+                                    <td colspan="3">
+                                        <t t-if="site.loyer_mensuel">
+                                            <t t-esc="'%,.2f' % site.loyer_mensuel"/>
+                                            <t t-esc="site.currency_id.name"/>
+                                        </t>
+                                        <t t-else="">—</t>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ── Section 4 : Accès & Sécurité ── -->
+                        <h4 class="mt-4 mb-2 text-primary border-bottom pb-1">
+                            4. Accès et sécurité
+                        </h4>
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 35%; background-color: #f8f9fa;">Accès 24h/24</th>
+                                    <td>
+                                        <t t-if="site.acces_h24">Oui</t>
+                                        <t t-else="">Non</t>
+                                    </td>
+                                    <th style="width: 35%; background-color: #f8f9fa;">Autorisation préalable</th>
+                                    <td>
+                                        <t t-if="site.autorisation_prealable">Requise</t>
+                                        <t t-else="">Non requise</t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="background-color: #f8f9fa;">Contact local</th>
+                                    <td colspan="3"><t t-esc="site.contact_local or '—'"/></td>
+                                </tr>
+                                <t t-if="site.acces_instructions">
+                                    <tr>
+                                        <th style="background-color: #f8f9fa; vertical-align: top;">Instructions d'accès</th>
+                                        <td colspan="3" style="white-space: pre-wrap;"><t t-esc="site.acces_instructions"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- ── Section 5 : Caractéristiques techniques ── -->
+                        <h4 class="mt-4 mb-2 text-primary border-bottom pb-1">
+                            5. Caractéristiques techniques
+                        </h4>
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 35%; background-color: #f8f9fa;">Hauteur pylône</th>
+                                    <td>
+                                        <t t-if="site.hauteur_pylone">
+                                            <t t-esc="'%.2f' % site.hauteur_pylone"/> m
+                                        </t>
+                                        <t t-else="">—</t>
+                                    </td>
+                                    <th style="width: 35%; background-color: #f8f9fa;">Puissance électrique</th>
+                                    <td>
+                                        <t t-if="site.puissance_electrique">
+                                            <t t-esc="'%.2f' % site.puissance_electrique"/> kVA
+                                        </t>
+                                        <t t-else="">—</t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="background-color: #f8f9fa;">Groupe électrogène</th>
+                                    <td>
+                                        <t t-if="site.groupe_electrogene">
+                                            <span class="badge bg-success">Oui</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="badge bg-secondary">Non</span>
+                                        </t>
+                                    </td>
+                                    <th style="background-color: #f8f9fa;">Batterie de secours</th>
+                                    <td>
+                                        <t t-if="site.batterie_backup">
+                                            <span class="badge bg-success">Oui</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="badge bg-secondary">Non</span>
+                                        </t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="background-color: #f8f9fa;">Climatisation</th>
+                                    <td colspan="3">
+                                        <t t-if="site.climatisation">
+                                            <span class="badge bg-info text-dark">Oui</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="badge bg-secondary">Non</span>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ── Section 6 : Documents liés ── -->
+                        <t t-if="site.document_ids">
+                            <h4 class="mt-4 mb-2 text-primary border-bottom pb-1">
+                                6. Documents liés au site
+                            </h4>
+                            <table class="table table-sm table-bordered">
+                                <thead style="background-color: #f8f9fa;">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Titre</th>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="site.document_ids" t-as="doc">
+                                        <tr>
+                                            <td><t t-esc="doc_index + 1"/></td>
+                                            <td><t t-esc="doc.name"/></td>
+                                            <td>
+                                                <t t-esc="dict(doc._fields['document_type'].selection).get(doc.document_type, '') if doc.document_type else '—'"/>
+                                            </td>
+                                            <td>
+                                                <t t-if="doc.date">
+                                                    <t t-esc="doc.date.strftime('%d/%m/%Y')"/>
+                                                </t>
+                                                <t t-else="">—</t>
+                                            </td>
+                                            <td><t t-esc="doc.description or ''"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- ── Section 7 : Observations ── -->
+                        <t t-if="site.notes">
+                            <h4 class="mt-4 mb-2 text-primary border-bottom pb-1">
+                                7. Observations générales
+                            </h4>
+                            <div class="border rounded p-2" style="white-space: pre-wrap; background-color: #fafafa;">
+                                <t t-esc="site.notes"/>
+                            </div>
+                        </t>
+
+                        <!-- ── Footer signature block ── -->
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <div class="border-top pt-2">
+                                    <p class="text-muted small">Établi par</p>
+                                    <br/><br/>
+                                    <p>______________________</p>
+                                    <p class="text-muted small">Nom / Signature</p>
+                                </div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div class="border-top pt-2">
+                                    <p class="text-muted small">Visé par</p>
+                                    <br/><br/>
+                                    <p>______________________</p>
+                                    <p class="text-muted small">Nom / Signature / Cachet</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- /page -->
+                </t><!-- /external_layout -->
+            </t><!-- /foreach site -->
+        </t><!-- /html_container -->
+    </template>
+
+</odoo>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         hr.employee form — inherit to add Terrain & Paie Maroc tabs
+    ================================================================ -->
+
+    <record id="view_employee_form_telecom_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.form.telecom.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Smart buttons -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="%(telecom_hr_ma.action_habilitation_employee_from_emp)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-shield"
+                        context="{'default_employee_id': active_id}"
+                        groups="telecom_base.group_telecom_technicien">
+                    <field name="habilitation_count" string="Habilitations" widget="statinfo"/>
+                </button>
+                <button name="%(telecom_hr_ma.action_epi_dotation_from_emp)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-hard-hat"
+                        context="{'default_employee_id': active_id}"
+                        groups="telecom_base.group_telecom_technicien">
+                    <field name="epi_count" string="EPI" widget="statinfo"/>
+                </button>
+            </xpath>
+
+            <!-- Habilitations expiring warning banner -->
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-warning"
+                     role="alert"
+                     attrs="{'invisible': [('habilitations_expiring', '=', False)]}">
+                    <i class="fa fa-exclamation-triangle"/> Une ou plusieurs habilitations de cet employé expirent dans moins de 60 jours ou sont déjà expirées. Veuillez renouveler les habilitations concernées.
+                </div>
+            </xpath>
+
+            <!-- New page: Terrain &amp; Compétences -->
+            <xpath expr="//page[@name='resume']" position="after">
+                <page name="telecom_terrain" string="Terrain &amp; Compétences"
+                      groups="telecom_base.group_telecom_technicien">
+                    <group>
+                        <group string="Profil terrain">
+                            <field name="telecom_technicien" widget="boolean_toggle"/>
+                            <field name="niveau_technicien"
+                                   attrs="{'invisible': [('telecom_technicien', '=', False)]}"/>
+                            <field name="zone_intervention"
+                                   attrs="{'invisible': [('telecom_technicien', '=', False)]}"/>
+                        </group>
+                        <group string="Spécialités techniques"
+                               attrs="{'invisible': [('telecom_technicien', '=', False)]}">
+                            <field name="specialite_ids"
+                                   widget="many2many_tags"
+                                   nolabel="1"
+                                   colspan="2"/>
+                        </group>
+                    </group>
+
+                    <!-- Habilitations inline list -->
+                    <separator string="Habilitations sécurité"
+                               attrs="{'invisible': [('telecom_technicien', '=', False)]}"/>
+                    <field name="habilitation_ids"
+                           attrs="{'invisible': [('telecom_technicien', '=', False)]}"
+                           context="{'default_employee_id': active_id}">
+                        <tree editable="bottom" decoration-danger="state == 'expired'"
+                              decoration-warning="state == 'expiring_soon'">
+                            <field name="habilitation_type_id"/>
+                            <field name="date_obtention"/>
+                            <field name="date_expiration"/>
+                            <field name="organisme_formateur"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'valid'"
+                                   decoration-warning="state == 'expiring_soon'"
+                                   decoration-danger="state == 'expired'"/>
+                        </tree>
+                    </field>
+
+                    <!-- EPI dotations inline list -->
+                    <separator string="Dotations EPI"
+                               attrs="{'invisible': [('telecom_technicien', '=', False)]}"/>
+                    <field name="epi_dotation_ids"
+                           attrs="{'invisible': [('telecom_technicien', '=', False)]}"
+                           context="{'default_employee_id': active_id}">
+                        <tree editable="bottom" decoration-danger="state == 'expired'"
+                              decoration-warning="state == 'expiring_soon'">
+                            <field name="epi_type_id"/>
+                            <field name="date_dotation"/>
+                            <field name="date_expiration"/>
+                            <field name="quantite"/>
+                            <field name="etat"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'valid'"
+                                   decoration-warning="state == 'expiring_soon'"
+                                   decoration-danger="state == 'expired'"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+
+            <!-- New page: Paie Maroc -->
+            <xpath expr="//page[@name='telecom_terrain']" position="after">
+                <page name="telecom_paie_ma" string="Paie Maroc"
+                      groups="telecom_base.group_telecom_charge_affaires">
+                    <group>
+                        <group string="Identifiants légaux">
+                            <field name="cin"/>
+                            <field name="cnss_number"/>
+                            <field name="amo_number"/>
+                        </group>
+                        <group string="CIMR &amp; IR">
+                            <field name="cimr_taux"/>
+                            <field name="cimr_taux_patronal"/>
+                            <field name="nbr_parts_ir"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Action: Employés terrain (filtered to telecom_technicien = True) -->
+    <record id="action_employes_terrain" model="ir.actions.act_window">
+        <field name="name">Employés terrain</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('telecom_technicien', '=', True)]</field>
+        <field name="context">{'default_telecom_technicien': True}</field>
+    </record>
+
+</odoo>

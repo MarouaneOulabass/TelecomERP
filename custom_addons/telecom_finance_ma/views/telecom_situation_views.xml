@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.situation — List view
+    ================================================================ -->
+
+    <record id="view_telecom_situation_list" model="ir.ui.view">
+        <field name="name">telecom.situation.list</field>
+        <field name="model">telecom.situation</field>
+        <field name="arch" type="xml">
+            <list string="Situations de travaux"
+                  decoration-danger="delai_depasse == True"
+                  decoration-muted="state == 'paye'">
+                <field name="name" string="N° Situation"/>
+                <field name="project_id" string="Projet"/>
+                <field name="client_id" string="Client"/>
+                <field name="numero_situation" string="N°" width="50px"/>
+                <field name="date_situation" string="Date"/>
+                <field name="periode_du" string="Période du" optional="show"/>
+                <field name="periode_au" string="Période au" optional="show"/>
+                <field name="montant_situation_ht" string="Montant HT" sum="Total HT"/>
+                <field name="net_a_payer" string="Net à payer" sum="Total net"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="state" string="État" widget="badge"
+                       decoration-secondary="state == 'draft'"
+                       decoration-info="state == 'soumis'"
+                       decoration-warning="state == 'approuve'"
+                       decoration-success="state in ('facture', 'paye')"/>
+                <field name="delai_depasse" string="⚠ Délai" widget="boolean"/>
+                <field name="date_paiement_prevu" string="Échéance" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.situation — Form view
+    ================================================================ -->
+
+    <record id="view_telecom_situation_form" model="ir.ui.view">
+        <field name="name">telecom.situation.form</field>
+        <field name="model">telecom.situation</field>
+        <field name="arch" type="xml">
+            <form string="Situation de travaux">
+
+                <!-- ── Status bar ─────────────────────────────────── -->
+                <header>
+                    <button name="action_soumettre"
+                            string="Soumettre au client"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approuver"
+                            string="Approuver"
+                            type="object"
+                            class="btn-primary"
+                            groups="telecom_base.group_telecom_responsable"
+                            invisible="state != 'soumis'"/>
+                    <button name="action_creer_facture"
+                            string="Créer la facture"
+                            type="object"
+                            class="btn-success"
+                            groups="telecom_base.group_telecom_charge_affaires"
+                            invisible="state != 'approuve'"/>
+                    <button name="action_marquer_paye"
+                            string="Marquer payée"
+                            type="object"
+                            class="btn-success"
+                            groups="telecom_base.group_telecom_responsable"
+                            invisible="state != 'facture'"/>
+                    <button name="action_reset_draft"
+                            string="Remettre en brouillon"
+                            type="object"
+                            class="btn-secondary"
+                            groups="telecom_base.group_telecom_admin"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,soumis,approuve,facture,paye"/>
+                </header>
+
+                <!-- ── Smart buttons ──────────────────────────────── -->
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_invoice"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-file-text-o"
+                            invisible="not invoice_id">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Facture</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- ── Alert banner — délai dépassé ──────────────── -->
+                <div class="alert alert-danger" role="alert"
+                     invisible="not delai_depasse">
+                    <strong>⚠ Délai de paiement légal dépassé !</strong>
+                    Le délai de 60 jours (loi 69-21) est dépassé depuis la soumission du
+                    <field name="date_soumission" readonly="1" class="oe_inline"/>.
+                    Date limite : <field name="date_paiement_prevu" readonly="1" class="oe_inline"/>.
+                </div>
+
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" placeholder="N° Situation (auto)"/>
+                        </h1>
+                    </div>
+
+                    <!-- ── Section 1 : Identification ─────────────── -->
+                    <group string="Identification">
+                        <group>
+                            <field name="project_id"/>
+                            <field name="contract_id"
+                                   domain="[('partenaire_id', '=', client_id)]"/>
+                            <field name="client_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="numero_situation"/>
+                            <field name="date_situation"/>
+                            <field name="periode_du"/>
+                            <field name="periode_au"/>
+                            <field name="currency_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Section 2 : Avancement ─────────────────── -->
+                    <group string="Avancement des travaux">
+                        <group>
+                            <field name="montant_marche_ht"/>
+                            <field name="taux_avancement_cumul"
+                                   widget="percentage"/>
+                            <field name="montant_cumul_ht"/>
+                        </group>
+                        <group>
+                            <field name="montant_situation_precedente"/>
+                            <field name="montant_situation_ht"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Section 3 : TVA et retenues ────────────── -->
+                    <group string="TVA, Retenues et Net">
+                        <group>
+                            <field name="tva_taux" widget="percentage"/>
+                            <field name="montant_tva"/>
+                            <field name="montant_ttc"/>
+                        </group>
+                        <group>
+                            <field name="retenue_garantie_taux" widget="percentage"/>
+                            <field name="retenue_garantie"/>
+                            <field name="avance_remboursement"/>
+                            <div class="o_wrap_field o_field_widget" colspan="2">
+                                <label for="net_a_payer" class="o_form_label"/>
+                                <div class="o_field_widget">
+                                    <field name="net_a_payer"
+                                           class="fw-bold fs-5 text-success"/>
+                                </div>
+                            </div>
+                        </group>
+                    </group>
+
+                    <!-- ── Section 4 : Délai de paiement ─────────── -->
+                    <group string="Suivi délai de paiement (loi 69-21)">
+                        <group>
+                            <field name="date_soumission"/>
+                            <field name="date_paiement_prevu"/>
+                        </group>
+                        <group>
+                            <field name="delai_depasse" widget="boolean_toggle"/>
+                            <field name="invoice_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Tabs ────────────────────────────────────── -->
+                    <notebook>
+                        <page string="Détail par lot / site" name="detail_lignes">
+                            <field name="situation_line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="lot_id"/>
+                                    <field name="site_id"/>
+                                    <field name="description"/>
+                                    <field name="montant_marche_lot"
+                                           sum="Total marché"/>
+                                    <field name="taux_avancement_cumul"
+                                           widget="percentage"/>
+                                    <field name="montant_cumul"
+                                           sum="Total cumulé"/>
+                                    <field name="montant_precedent"
+                                           sum="Total précédent"/>
+                                    <field name="montant_periode"
+                                           sum="Total période"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes internes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- ── Chatter ────────────────────────────────────── -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.situation — Search view
+    ================================================================ -->
+
+    <record id="view_telecom_situation_search" model="ir.ui.view">
+        <field name="name">telecom.situation.search</field>
+        <field name="model">telecom.situation</field>
+        <field name="arch" type="xml">
+            <search string="Recherche situations de travaux">
+                <field name="name" string="N° Situation"/>
+                <field name="project_id" string="Projet"/>
+                <field name="client_id" string="Client"/>
+                <field name="contract_id" string="Contrat"/>
+
+                <!-- Filters -->
+                <filter string="Brouillons" name="filter_draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter string="Soumis" name="filter_soumis"
+                        domain="[('state', '=', 'soumis')]"/>
+                <filter string="Approuvés" name="filter_approuve"
+                        domain="[('state', '=', 'approuve')]"/>
+                <filter string="Facturés" name="filter_facture"
+                        domain="[('state', '=', 'facture')]"/>
+                <filter string="Payés" name="filter_paye"
+                        domain="[('state', '=', 'paye')]"/>
+                <separator/>
+                <filter string="⚠ Délai dépassé" name="filter_delai_depasse"
+                        domain="[('delai_depasse', '=', True)]"/>
+                <separator/>
+                <filter string="Cette année" name="filter_this_year"
+                        domain="[('date_situation', '>=', (context_today() + relativedelta(month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+
+                <!-- Group by -->
+                <group expand="0" string="Grouper par">
+                    <filter string="Projet" name="group_project"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter string="Client" name="group_client"
+                            context="{'group_by': 'client_id'}"/>
+                    <filter string="État" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Mois" name="group_month"
+                            context="{'group_by': 'date_situation:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Window action
+    ================================================================ -->
+
+    <record id="action_telecom_situation" model="ir.actions.act_window">
+        <field name="name">Situations de travaux</field>
+        <field name="res_model">telecom.situation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_telecom_situation_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer une nouvelle situation de travaux
+            </p>
+            <p>
+                Une situation de travaux représente une période de facturation
+                basée sur le pourcentage d'avancement des travaux.
+            </p>
+        </field>
+    </record>
+
+    <!-- Alerte: filtered action for overdue situations -->
+    <record id="action_telecom_situation_alertes" model="ir.actions.act_window">
+        <field name="name">Alertes — Délais de paiement</field>
+        <field name="res_model">telecom.situation</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('delai_depasse', '=', True)]</field>
+        <field name="search_view_id" ref="view_telecom_situation_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune alerte de délai de paiement
+            </p>
+            <p>
+                Toutes les situations sont dans les délais légaux de 60 jours (loi 69-21).
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_telecom_paie_bulletin">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- ================================================
+                             Header: Company + Employee info
+                        ================================================ -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <h4 class="text-uppercase" style="color:#1a5276;">
+                                    <strong>Bulletin de Paie</strong>
+                                </h4>
+                                <table class="table table-sm table-borderless" style="font-size:12px;">
+                                    <tr>
+                                        <td><strong>Société :</strong></td>
+                                        <td><t t-esc="o.company_id.name"/></td>
+                                    </tr>
+                                    <tr t-if="o.company_id.vat">
+                                        <td><strong>IF :</strong></td>
+                                        <td><t t-esc="o.company_id.vat"/></td>
+                                    </tr>
+                                    <tr t-if="o.company_id.street">
+                                        <td><strong>Adresse :</strong></td>
+                                        <td><t t-esc="o.company_id.street"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6 text-right">
+                                <table class="table table-sm table-borderless" style="font-size:12px;">
+                                    <tr>
+                                        <td><strong>N° Bulletin :</strong></td>
+                                        <td><t t-esc="o.sequence_number or '—'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Période :</strong></td>
+                                        <td>
+                                            <t t-esc="o.date_from.strftime('%d/%m/%Y')"/>
+                                            au
+                                            <t t-esc="o.date_to.strftime('%d/%m/%Y')"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ================================================
+                             Employee info block
+                        ================================================ -->
+                        <div class="row mb-3"
+                             style="background-color:#eaf2f8; padding:10px; border-left:4px solid #1a5276;">
+                            <div class="col-6">
+                                <strong>Employé :</strong>
+                                <span style="font-size:14px; margin-left:6px;">
+                                    <t t-esc="o.employee_id.name"/>
+                                </span>
+                                <br/>
+                                <t t-if="o.employee_id.job_title">
+                                    <small><t t-esc="o.employee_id.job_title"/></small>
+                                    <br/>
+                                </t>
+                                <t t-if="o.employee_id.department_id">
+                                    <small>Département : <t t-esc="o.employee_id.department_id.name"/></small>
+                                    <br/>
+                                </t>
+                            </div>
+                            <div class="col-6">
+                                <t t-if="o.employee_id.cnss_number">
+                                    <small><strong>N° CNSS :</strong> <t t-esc="o.employee_id.cnss_number"/></small><br/>
+                                </t>
+                                <t t-if="o.employee_id.cin">
+                                    <small><strong>CIN :</strong> <t t-esc="o.employee_id.cin"/></small><br/>
+                                </t>
+                                <t t-if="o.employee_id.amo_number">
+                                    <small><strong>N° AMO :</strong> <t t-esc="o.employee_id.amo_number"/></small><br/>
+                                </t>
+                                <small>
+                                    <strong>Parts IR :</strong>
+                                    <t t-esc="o.employee_id.nbr_parts_ir"/>
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- ================================================
+                             Salary elements table
+                        ================================================ -->
+                        <h6 class="mt-3" style="color:#1a5276; border-bottom:1px solid #1a5276;">
+                            ÉLÉMENTS DE SALAIRE
+                        </h6>
+                        <table class="table table-sm table-bordered" style="font-size:11px;">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Désignation</th>
+                                    <th class="text-right">Base</th>
+                                    <th class="text-right">Taux / Jours</th>
+                                    <th class="text-right">Montant (MAD)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Salaire de base</td>
+                                    <td class="text-right">—</td>
+                                    <td class="text-right"><t t-esc="o.nbr_jours_travailles"/> j</td>
+                                    <td class="text-right">
+                                        <t t-esc="'%.2f' % o.salaire_base"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="o.prime_anciennete">
+                                    <td>Prime d'ancienneté</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.salaire_base"/></td>
+                                    <td class="text-right">—</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.prime_anciennete"/></td>
+                                </tr>
+                                <tr t-if="o.indemnite_deplacement">
+                                    <td>Indemnités de déplacement</td>
+                                    <td class="text-right">—</td>
+                                    <td class="text-right"><t t-esc="o.nbr_jours_presents"/> j présents</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.indemnite_deplacement"/></td>
+                                </tr>
+                                <tr t-if="o.avantages_nature">
+                                    <td>Avantages en nature</td>
+                                    <td class="text-right">—</td>
+                                    <td class="text-right">—</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.avantages_nature"/></td>
+                                </tr>
+                                <tr t-if="o.nbr_heures_sup">
+                                    <td>Heures supplémentaires</td>
+                                    <td class="text-right">—</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.nbr_heures_sup"/> h</td>
+                                    <td class="text-right">—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ================================================
+                             Cotisations table (salariales + patronales)
+                        ================================================ -->
+                        <h6 class="mt-3" style="color:#1a5276; border-bottom:1px solid #1a5276;">
+                            COTISATIONS SOCIALES
+                        </h6>
+                        <table class="table table-sm table-bordered" style="font-size:11px;">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Cotisation</th>
+                                    <th class="text-right">Base</th>
+                                    <th class="text-right">Taux salarié</th>
+                                    <th class="text-right">Part salarié (MAD)</th>
+                                    <th class="text-right">Taux patronal</th>
+                                    <th class="text-right">Part patronal (MAD)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>CNSS</td>
+                                    <td class="text-right">
+                                        <t t-esc="'%.2f' % o.cnss_base"/>
+                                        <small> (plaf. 6 000)</small>
+                                    </td>
+                                    <td class="text-right">4,48 %</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.cnss_salarie"/></td>
+                                    <td class="text-right">10,64 %</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.cnss_patronal"/></td>
+                                </tr>
+                                <tr>
+                                    <td>AMO</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.salaire_base"/></td>
+                                    <td class="text-right">2,26 %</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.amo_salarie"/></td>
+                                    <td class="text-right">3,96 %</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.amo_patronal"/></td>
+                                </tr>
+                                <tr t-if="o.employee_id.cimr_taux or o.employee_id.cimr_taux_patronal">
+                                    <td>CIMR</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.salaire_base"/></td>
+                                    <td class="text-right">
+                                        <t t-esc="'%.2f' % o.employee_id.cimr_taux"/> %
+                                    </td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.cimr_salarie"/></td>
+                                    <td class="text-right">
+                                        <t t-esc="'%.2f' % o.employee_id.cimr_taux_patronal"/> %
+                                    </td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.cimr_patronal"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ================================================
+                             IR Calculation table
+                        ================================================ -->
+                        <h6 class="mt-3" style="color:#1a5276; border-bottom:1px solid #1a5276;">
+                            IMPÔT SUR LE REVENU (IR) — BARÈME 2024
+                        </h6>
+                        <table class="table table-sm table-bordered" style="font-size:11px;">
+                            <tbody>
+                                <tr>
+                                    <td width="60%">Salaire net imposable (brut - cotisations sal. + avantages)</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.salaire_net_imposable"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Frais professionnels (20 %, plafond 2 500 MAD/mois)</td>
+                                    <td class="text-right">- <t t-esc="'%.2f' % o.frais_pro"/></td>
+                                </tr>
+                                <tr t-if="o.indemnite_deplacement">
+                                    <td>Indemnités de déplacement (exonérées IR)</td>
+                                    <td class="text-right">- <t t-esc="'%.2f' % o.indemnite_deplacement"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Base imposable IR mensuelle</strong></td>
+                                    <td class="text-right"><strong><t t-esc="'%.2f' % o.salaire_imposable_ir"/></strong></td>
+                                </tr>
+                                <tr>
+                                    <td>IR annuel brut (barème)</td>
+                                    <td class="text-right"><t t-esc="'%.2f' % o.ir_annuel_brut"/></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Déductions charges de famille
+                                        (<t t-esc="o.employee_id.nbr_parts_ir"/> parts ×
+                                        30 MAD/mois)
+                                    </td>
+                                    <td class="text-right">
+                                        - <t t-esc="'%.2f' % (max(0, o.employee_id.nbr_parts_ir - 1) * 30)"/>
+                                    </td>
+                                </tr>
+                                <tr style="background-color:#f8f9fa;">
+                                    <td><strong>IR mensuel retenu</strong></td>
+                                    <td class="text-right"><strong><t t-esc="'%.2f' % o.ir_mensuel"/></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ================================================
+                             Net à payer — highlighted
+                        ================================================ -->
+                        <div class="row mt-4">
+                            <div class="col-6 offset-6">
+                                <table class="table table-bordered"
+                                       style="font-size:13px; background-color:#1a5276; color:white;">
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Salaire brut</strong></td>
+                                            <td class="text-right">
+                                                <t t-esc="'%.2f' % o.salaire_base"/> MAD
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>— Cotisations salariales</td>
+                                            <td class="text-right">
+                                                <t t-esc="'%.2f' % (o.cnss_salarie + o.amo_salarie + o.cimr_salarie)"/> MAD
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>— IR mensuel</td>
+                                            <td class="text-right">
+                                                <t t-esc="'%.2f' % o.ir_mensuel"/> MAD
+                                            </td>
+                                        </tr>
+                                        <tr t-if="o.indemnite_deplacement">
+                                            <td>+ Indemnités déplacement</td>
+                                            <td class="text-right">
+                                                <t t-esc="'%.2f' % o.indemnite_deplacement"/> MAD
+                                            </td>
+                                        </tr>
+                                        <tr style="font-size:15px; font-weight:bold; background-color:#0e3460;">
+                                            <td>NET À PAYER</td>
+                                            <td class="text-right">
+                                                <t t-esc="'%.2f' % o.salaire_net_a_payer"/> MAD
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ================================================
+                             Legal mentions
+                        ================================================ -->
+                        <div class="row mt-5" style="font-size:9px; color:#666;">
+                            <div class="col-12">
+                                <hr/>
+                                <p>
+                                    <strong>Mentions légales :</strong>
+                                    Ce bulletin de paie est établi conformément aux dispositions du Code du Travail marocain (Loi 65-99) et aux circulaires de la Direction Générale des Impôts relatives au barème IR 2024.
+                                    Les taux de cotisations appliqués sont : CNSS salarié 4,48 % (plafond 6 000 MAD/mois), CNSS patronal 10,64 %, AMO salarié 2,26 %, AMO patronal 3,96 %.
+                                    Ce bulletin tient lieu de reçu de paiement. À conserver sans limitation de durée.
+                                </p>
+                                <p>
+                                    Signature employeur : ________________________________
+                                    <span style="margin-left:60px;">
+                                        Signature employé : ________________________________
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+
+                    </div><!-- /page -->
+                </t><!-- /web.external_layout -->
+            </t><!-- /foreach -->
+        </t><!-- /web.html_container -->
+    </template>
+</odoo>

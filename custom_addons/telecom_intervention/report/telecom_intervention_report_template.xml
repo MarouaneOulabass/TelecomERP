@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         QWEB TEMPLATE — Bon d'Intervention PDF
+         Layout: company header, BI details, site info, team,
+                 work report, materials table, photos, signatures, footer.
+         ================================================================ -->
+
+    <template id="report_telecom_intervention">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- ====================================================
+                             PAGE HEADER — BI identification
+                             ==================================================== -->
+                        <div class="row mb-3">
+                            <div class="col-8">
+                                <h2 class="text-primary mb-0">
+                                    BON D'INTERVENTION
+                                </h2>
+                                <h3 class="text-muted">
+                                    <t t-esc="o.name"/>
+                                </h3>
+                            </div>
+                            <div class="col-4 text-end">
+                                <table class="table table-sm table-bordered">
+                                    <tr>
+                                        <th class="bg-light">Type</th>
+                                        <td>
+                                            <t t-esc="dict(o.fields_get(['intervention_type'])['intervention_type']['selection'])[o.intervention_type]"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Priorité</th>
+                                        <td>
+                                            <t t-esc="dict(o.fields_get(['priority'])['priority']['selection'])[o.priority]"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">État</th>
+                                        <td>
+                                            <t t-esc="dict(o.fields_get(['state'])['state']['selection'])[o.state]"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Date planifiée</th>
+                                        <td>
+                                            <t t-esc="o.date_planifiee"
+                                               t-options="{'widget': 'datetime'}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr class="mt-0"/>
+
+                        <!-- ====================================================
+                             SECTION 1 — Site information
+                             ==================================================== -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-1">
+                                    1. Informations du site
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th class="w-40 bg-light">Code interne</th>
+                                        <td>
+                                            <t t-esc="o.site_id.code_interne"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Nom du site</th>
+                                        <td>
+                                            <t t-esc="o.site_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Type de site</th>
+                                        <td>
+                                            <t t-if="o.site_id.site_type"
+                                               t-esc="dict(o.site_id.fields_get(['site_type'])['site_type']['selection'])[o.site_id.site_type]"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Région (Wilaya)</th>
+                                        <td>
+                                            <t t-if="o.site_id.wilaya"
+                                               t-esc="dict(o.site_id.fields_get(['wilaya'])['wilaya']['selection'])[o.site_id.wilaya]"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th class="w-40 bg-light">GPS Latitude</th>
+                                        <td>
+                                            <t t-esc="o.site_id.gps_lat"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">GPS Longitude</th>
+                                        <td>
+                                            <t t-esc="o.site_id.gps_lng"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Opérateur</th>
+                                        <td>
+                                            <t t-esc="o.operateur_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Accès 24h/24</th>
+                                        <td>
+                                            <t t-if="o.site_id.acces_h24">Oui</t>
+                                            <t t-else="">Non</t>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ====================================================
+                             SECTION 2 — Team
+                             ==================================================== -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-1">
+                                    2. Équipe d'intervention
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th class="bg-light">Chef de chantier</th>
+                                        <td>
+                                            <t t-esc="o.chef_chantier_id.name or '—'"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Durée estimée (h)</th>
+                                        <td>
+                                            <t t-esc="'%.2f' % (o.duree_estimee or 0.0)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">SLA (heures)</th>
+                                        <td>
+                                            <t t-esc="o.sla_delai_heures"/> h
+                                            <t t-if="o.sla_depasse">
+                                                <span class="text-danger fw-bold">(DÉPASSÉ)</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <strong>Techniciens affectés :</strong>
+                                <ul class="mb-0 mt-1">
+                                    <t t-foreach="o.technician_ids" t-as="tech">
+                                        <li><t t-esc="tech.name"/></li>
+                                    </t>
+                                    <t t-if="not o.technician_ids">
+                                        <li class="text-muted">Aucun technicien affecté</li>
+                                    </t>
+                                </ul>
+                                <t t-if="o.habilitations_requises_text">
+                                    <p class="mt-2 mb-0">
+                                        <strong>Habilitations requises :</strong><br/>
+                                        <t t-esc="o.habilitations_requises_text"/>
+                                    </p>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- ====================================================
+                             SECTION 3 — Work report
+                             ==================================================== -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-1">
+                                    3. Rapport d'intervention
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th class="bg-light">Début réel</th>
+                                        <td>
+                                            <t t-if="o.date_debut_reel"
+                                               t-esc="o.date_debut_reel"
+                                               t-options="{'widget': 'datetime'}"/>
+                                            <t t-else="">—</t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Fin réelle</th>
+                                        <td>
+                                            <t t-if="o.date_fin_reel"
+                                               t-esc="o.date_fin_reel"
+                                               t-options="{'widget': 'datetime'}"/>
+                                            <t t-else="">—</t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Durée réelle (h)</th>
+                                        <td>
+                                            <t t-esc="'%.2f' % (o.duree_reelle or 0.0)"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <t t-if="o.description_travaux">
+                            <div class="mb-2">
+                                <strong>Description des travaux effectués :</strong>
+                                <div class="border rounded p-2 bg-light mt-1"
+                                     style="white-space: pre-wrap;">
+                                    <t t-esc="o.description_travaux"/>
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-if="o.problemes_rencontres">
+                            <div class="mb-2">
+                                <strong>Problèmes rencontrés :</strong>
+                                <div class="border rounded p-2 bg-light mt-1"
+                                     style="white-space: pre-wrap;">
+                                    <t t-esc="o.problemes_rencontres"/>
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-if="o.travaux_restants">
+                            <div class="mb-3">
+                                <strong>Travaux restants / Réserves :</strong>
+                                <div class="border rounded p-2 bg-light mt-1"
+                                     style="white-space: pre-wrap;">
+                                    <t t-esc="o.travaux_restants"/>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- ====================================================
+                             SECTION 4 — Materials consumed
+                             ==================================================== -->
+                        <t t-if="o.materiel_consomme_ids">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <h5 class="text-primary border-bottom pb-1">
+                                        4. Matériels consommés
+                                    </h5>
+                                </div>
+                            </div>
+                            <table class="table table-sm table-bordered mb-3">
+                                <thead class="table-secondary">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Désignation</th>
+                                        <th class="text-end">Quantité</th>
+                                        <th>Unité</th>
+                                        <th>N° Série</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.materiel_consomme_ids"
+                                       t-as="mat">
+                                        <tr>
+                                            <td>
+                                                <t t-esc="mat_index + 1"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="mat.designation"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-esc="'%.3f' % mat.quantite"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="mat.unite"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="mat.numero_serie or ''"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="mat.notes or ''"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- ====================================================
+                             SECTION 5 — Photos (3 per row)
+                             ==================================================== -->
+                        <t t-if="o.photo_ids">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <h5 class="text-primary border-bottom pb-1">
+                                        5. Photos
+                                    </h5>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <t t-foreach="o.photo_ids" t-as="photo">
+                                    <div class="col-4 mb-3 text-center">
+                                        <img t-att-src="'data:image/png;base64,' + (photo.photo.decode('utf-8') if photo.photo else '')"
+                                             class="img-fluid border"
+                                             style="max-height: 180px; object-fit: cover;"
+                                             alt="Photo intervention"/>
+                                        <div class="small mt-1">
+                                            <strong><t t-esc="photo.name"/></strong>
+                                            <br/>
+                                            <t t-esc="dict(photo.fields_get(['photo_type'])['photo_type']['selection'])[photo.photo_type]"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+
+                        <!-- ====================================================
+                             SECTION 6 — Signatures
+                             ==================================================== -->
+                        <div class="row mb-3 mt-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-1">
+                                    6. Signatures
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- Technicien signature -->
+                            <div class="col-6 text-center border-end pe-4">
+                                <p class="fw-bold mb-2">Chef de chantier / Technicien</p>
+                                <div class="border rounded bg-light"
+                                     style="height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <t t-if="o.signature_technicien">
+                                        <img t-att-src="'data:image/png;base64,' + (o.signature_technicien.decode('utf-8') if o.signature_technicien else '')"
+                                             style="max-height: 90px;"
+                                             alt="Signature technicien"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="text-muted small">Signature à apposer</span>
+                                    </t>
+                                </div>
+                                <p class="mt-2 mb-0 small">
+                                    <t t-esc="o.chef_chantier_id.name or '—'"/>
+                                </p>
+                                <t t-if="o.date_signature">
+                                    <p class="mb-0 small text-muted">
+                                        Le : <t t-esc="o.date_signature"
+                                               t-options="{'widget': 'datetime'}"/>
+                                    </p>
+                                </t>
+                            </div>
+
+                            <!-- Client signature -->
+                            <div class="col-6 text-center ps-4">
+                                <p class="fw-bold mb-2">Représentant client</p>
+                                <div class="border rounded bg-light"
+                                     style="height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <t t-if="o.signature_client">
+                                        <img t-att-src="'data:image/png;base64,' + (o.signature_client.decode('utf-8') if o.signature_client else '')"
+                                             style="max-height: 90px;"
+                                             alt="Signature client"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="text-muted small">Signature à apposer</span>
+                                    </t>
+                                </div>
+                                <p class="mt-2 mb-0 small">
+                                    <t t-esc="o.nom_signataire_client or '—'"/>
+                                </p>
+                                <t t-if="o.date_signature">
+                                    <p class="mb-0 small text-muted">
+                                        Le : <t t-esc="o.date_signature"
+                                               t-options="{'widget': 'datetime'}"/>
+                                    </p>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- ====================================================
+                             PAGE FOOTER
+                             ==================================================== -->
+                        <div class="footer mt-4 pt-2 border-top text-muted small text-center">
+                            <t t-esc="o.company_id.name"/> —
+                            <t t-if="o.company_id.street">
+                                <t t-esc="o.company_id.street"/>,
+                            </t>
+                            <t t-if="o.company_id.city">
+                                <t t-esc="o.company_id.city"/>
+                            </t>
+                            <t t-if="o.company_id.vat">
+                                — ICE : <t t-esc="o.company_id.vat"/>
+                            </t>
+                            <br/>
+                            Document généré le
+                            <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y à %H:%M')"/>
+                            — Page <span class="page"/> / <span class="topage"/>
+                        </div>
+
+                    </div><!-- /page -->
+                </t><!-- /external_layout -->
+            </t><!-- /foreach -->
+        </t><!-- /html_container -->
+    </template>
+
+</odoo>

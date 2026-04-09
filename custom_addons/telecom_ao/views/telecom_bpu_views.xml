@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         telecom.bpu.ligne — standalone list view
+    ============================================================ -->
+    <record id="view_telecom_bpu_ligne_list" model="ir.ui.view">
+        <field name="name">telecom.bpu.ligne.list</field>
+        <field name="model">telecom.bpu.ligne</field>
+        <field name="arch" type="xml">
+            <list string="Lignes BPU" default_order="ao_id, sequence">
+                <field name="ao_id"/>
+                <field name="section"/>
+                <field name="code"/>
+                <field name="designation"/>
+                <field name="unite"/>
+                <field name="quantite"/>
+                <field name="prix_unitaire"/>
+                <field name="montant_ht"/>
+                <field name="currency_id" optional="hide" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.bpu.ligne — standalone form view
+    ============================================================ -->
+    <record id="view_telecom_bpu_ligne_form" model="ir.ui.view">
+        <field name="name">telecom.bpu.ligne.form</field>
+        <field name="model">telecom.bpu.ligne</field>
+        <field name="arch" type="xml">
+            <form string="Ligne BPU">
+                <group>
+                    <group string="Identification">
+                        <field name="ao_id"/>
+                        <field name="sequence"/>
+                        <field name="section"/>
+                        <field name="code"/>
+                        <field name="designation"/>
+                    </group>
+                    <group string="Prix">
+                        <field name="unite"/>
+                        <field name="quantite"/>
+                        <field name="currency_id" groups="base.group_multi_currency"/>
+                        <field name="prix_unitaire"/>
+                        <field name="montant_ht"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="notes"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.bpu.ligne — action
+    ============================================================ -->
+    <record id="action_telecom_bpu_ligne" model="ir.actions.act_window">
+        <field name="name">BPU — Lignes de prix</field>
+        <field name="res_model">telecom.bpu.ligne</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune ligne BPU trouvée.
+            </p>
+            <p>
+                Les lignes BPU sont créées depuis les dossiers Appels d'Offres.
+            </p>
+        </field>
+    </record>
+
+</odoo>

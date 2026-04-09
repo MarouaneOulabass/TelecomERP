@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend partner form with Moroccan legal tab -->
+    <record id="view_partner_form_telecom_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.telecom.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Add smart button for certifications -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_certifications"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-certificate"
+                        attrs="{'invisible': [('is_company', '=', False)]}">
+                    <field name="certification_count" widget="statinfo" string="Certifications"/>
+                </button>
+            </xpath>
+
+            <!-- Add Moroccan info tab after main tab -->
+            <xpath expr="//page[@name='internal_notes']" position="before">
+                <page name="telecom_morocco" string="Maroc / Télécom">
+                    <group>
+                        <group string="Identifiants légaux marocains">
+                            <field name="ice"/>
+                            <field name="if_number"/>
+                            <field name="rc_number"/>
+                            <field name="patente"/>
+                            <field name="cnss_number"/>
+                            <field name="forme_juridique"/>
+                            <field name="capital_social"
+                                   attrs="{'invisible': [('is_company', '=', False)]}"/>
+                            <field name="capital_currency_id"
+                                   attrs="{'invisible': [('is_company', '=', False)]}"
+                                   groups="base.group_multi_currency"/>
+                        </group>
+                        <group string="Classification télécom">
+                            <field name="partner_type"/>
+                            <field name="specialite_ids"
+                                   widget="many2many_tags"
+                                   attrs="{'invisible': [('partner_type', 'not in', ['subcontractor'])]}"/>
+                            <field name="apporteur_affaires"/>
+                            <field name="taux_commission"
+                                   attrs="{'invisible': [('apporteur_affaires', '=', False)]}"/>
+                        </group>
+                    </group>
+                    <separator string="Certifications &amp; Agréments"
+                               attrs="{'invisible': [('is_company', '=', False)]}"/>
+                    <field name="certification_ids"
+                           attrs="{'invisible': [('is_company', '=', False)]}"
+                           context="{'default_partner_id': active_id}">
+                        <list string="Certifications" editable="bottom">
+                            <field name="name"/>
+                            <field name="certification_type"/>
+                            <field name="reference"/>
+                            <field name="date_expiration"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'valid'"
+                                   decoration-warning="state == 'expiring_soon'"
+                                   decoration-danger="state == 'expired'"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Extend partner list with ICE column -->
+    <record id="view_partner_tree_telecom_inherit" model="ir.ui.view">
+        <field name="name">res.partner.tree.telecom.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_simple_form"/>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='country_id']" position="after">
+                <field name="ice" optional="show"/>
+                <field name="partner_type" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

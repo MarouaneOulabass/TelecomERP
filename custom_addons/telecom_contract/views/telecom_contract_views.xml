@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         telecom.contract — List view
+    ============================================================ -->
+    <record id="view_telecom_contract_list" model="ir.ui.view">
+        <field name="name">telecom.contract.list</field>
+        <field name="model">telecom.contract</field>
+        <field name="arch" type="xml">
+            <list string="Contrats"
+                  decoration-success="state == 'actif' and not expiry_warning"
+                  decoration-warning="state == 'actif' and expiry_warning"
+                  decoration-muted="state in ('resilie', 'expire')"
+                  decoration-info="state == 'brouillon'">
+                <field name="reference" string="Réf."/>
+                <field name="name" string="Titre contrat"/>
+                <field name="contract_type"/>
+                <field name="partenaire_id"/>
+                <field name="date_debut"/>
+                <field name="date_fin" optional="show"/>
+                <field name="montant_total" optional="show"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="sla_delai_intervention_h" string="SLA interv. (h)" optional="show"/>
+                <field name="expiry_warning" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'actif'"
+                       decoration-warning="state == 'suspendu'"
+                       decoration-danger="state in ('resilie', 'expire')"
+                       decoration-muted="state == 'brouillon'"/>
+                <field name="responsable_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.contract — Form view
+    ============================================================ -->
+    <record id="view_telecom_contract_form" model="ir.ui.view">
+        <field name="name">telecom.contract.form</field>
+        <field name="model">telecom.contract</field>
+        <field name="arch" type="xml">
+            <form string="Contrat télécom">
+                <header>
+                    <!-- State transition buttons -->
+                    <button name="action_activer"
+                            string="Activer"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state not in ('brouillon', 'suspendu')"/>
+                    <button name="action_suspendre"
+                            string="Suspendre"
+                            type="object"
+                            class="btn-warning"
+                            invisible="state != 'actif'"/>
+                    <button name="action_reactiver"
+                            string="Réactiver"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'suspendu'"/>
+                    <button name="action_resilier"
+                            string="Résilier"
+                            type="object"
+                            class="btn-danger"
+                            invisible="state not in ('actif', 'suspendu')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="brouillon,actif,expire"
+                           readonly="1"/>
+                </header>
+
+                <sheet>
+                    <!-- Smart buttons -->
+                    <div class="oe_button_box" name="button_box">
+
+                        <!-- Cautions count -->
+                        <button name="action_view_cautions"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-shield">
+                            <field name="caution_count" widget="statinfo" string="Cautions"/>
+                        </button>
+
+                        <!-- Sites covered -->
+                        <button class="oe_stat_button"
+                                icon="fa-map-marker"
+                                type="object"
+                                name="action_view_sites_covered">
+                            <field name="nb_sites" widget="statinfo" string="Sites"/>
+                        </button>
+
+                        <!-- Days to expiry indicator -->
+                        <button class="oe_stat_button"
+                                icon="fa-clock-o"
+                                type="object"
+                                name="action_view_expiry_info"
+                                invisible="not date_fin">
+                            <field name="jours_avant_expiration" widget="statinfo"
+                                   string="Jours restants"/>
+                        </button>
+
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name" string="Titre du contrat"/>
+                        <h1>
+                            <field name="name" placeholder="Titre du contrat…"/>
+                        </h1>
+                        <div class="o_row">
+                            <field name="reference" readonly="1"/>
+                        </div>
+                    </div>
+
+                    <group>
+                        <group string="Identification">
+                            <field name="contract_type"/>
+                            <field name="partenaire_id"/>
+                            <field name="responsable_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Avertissements">
+                            <field name="expiry_warning" readonly="1"
+                                   widget="boolean"
+                                   invisible="not expiry_warning"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <!-- TAB 1: Contract details -->
+                        <page string="Contrat" name="contrat">
+                            <group>
+                                <group string="Période">
+                                    <field name="date_debut"/>
+                                    <field name="date_fin"/>
+                                    <field name="tacite_reconduction"/>
+                                    <field name="preavis_resiliation_mois"
+                                           invisible="not tacite_reconduction"/>
+                                </group>
+                                <group string="Financier">
+                                    <field name="currency_id" groups="base.group_multi_currency"/>
+                                    <field name="montant_total"/>
+                                    <field name="ao_id"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- TAB 2: SLA -->
+                        <page string="SLA" name="sla">
+                            <group>
+                                <group string="Délais contractuels">
+                                    <field name="sla_delai_intervention_h"/>
+                                    <field name="sla_delai_reparation_h"/>
+                                    <field name="sla_disponibilite_pct"/>
+                                </group>
+                                <group string="Pénalités">
+                                    <field name="penalite_sla" nolabel="1"
+                                           placeholder="Description des pénalités applicables…"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- TAB 3: Sites covered -->
+                        <page string="Sites couverts" name="sites">
+                            <field name="sites_couverts" nolabel="1"
+                                   widget="many2many_list">
+                                <list string="Sites">
+                                    <field name="name"/>
+                                    <field name="code_interne" optional="show"/>
+                                    <field name="site_type" optional="show"/>
+                                    <field name="wilaya" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- TAB 4: Bank guarantees -->
+                        <page string="Cautions bancaires" name="cautions">
+                            <field name="caution_bancaire_ids" nolabel="1">
+                                <list editable="bottom"
+                                      string="Cautions bancaires"
+                                      decoration-danger="state == 'expired'"
+                                      decoration-warning="state == 'expiring_soon'"
+                                      decoration-muted="state == 'liberee'">
+                                    <field name="caution_type"/>
+                                    <field name="reference_bancaire"/>
+                                    <field name="banque"/>
+                                    <field name="montant"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="date_emission"/>
+                                    <field name="date_expiration"/>
+                                    <field name="date_liberation" optional="show"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'active'"
+                                           decoration-warning="state == 'expiring_soon'"
+                                           decoration-danger="state == 'expired'"
+                                           decoration-muted="state == 'liberee'"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- TAB 5: Documents -->
+                        <page string="Documents" name="documents">
+                            <field name="document_ids" widget="many2many_binary"
+                                   string="Documents contractuels"/>
+                        </page>
+
+                        <!-- TAB 6: Notes -->
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes internes…" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.contract — Search view
+    ============================================================ -->
+    <record id="view_telecom_contract_search" model="ir.ui.view">
+        <field name="name">telecom.contract.search</field>
+        <field name="model">telecom.contract</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher des contrats">
+                <field name="name" string="Titre / Référence"
+                       filter_domain="['|', ('name', 'ilike', self), ('reference', 'ilike', self)]"/>
+                <field name="partenaire_id"/>
+                <field name="responsable_id"/>
+
+                <!-- State filters -->
+                <filter name="filter_brouillon" string="Brouillons"    domain="[('state','=','brouillon')]"/>
+                <filter name="filter_actif"     string="Actifs"        domain="[('state','=','actif')]"/>
+                <filter name="filter_expire"    string="Expirés"       domain="[('state','=','expire')]"/>
+                <filter name="filter_resilie"   string="Résiliés"      domain="[('state','=','resilie')]"/>
+                <filter name="filter_suspendu"  string="Suspendus"     domain="[('state','=','suspendu')]"/>
+                <separator/>
+
+                <!-- Type filters -->
+                <filter name="filter_cadre"       string="Cadres opérateur"  domain="[('contract_type','=','cadre_operateur')]"/>
+                <filter name="filter_maintenance" string="Maintenance"        domain="[('contract_type','=','maintenance')]"/>
+                <filter name="filter_deploiement" string="Déploiement"        domain="[('contract_type','=','deploiement')]"/>
+                <separator/>
+
+                <!-- Expiry warning -->
+                <filter name="filter_expiry_warning"
+                        string="Expire bientôt (90 j)"
+                        domain="[('expiry_warning','=',True)]"/>
+                <filter name="filter_mes_contrats"
+                        string="Mes contrats"
+                        domain="[('responsable_id','=',uid)]"/>
+
+                <!-- Group by -->
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_state"         string="État"              context="{'group_by': 'state'}"/>
+                    <filter name="group_type"          string="Type contrat"      context="{'group_by': 'contract_type'}"/>
+                    <filter name="group_partenaire"    string="Partenaire"        context="{'group_by': 'partenaire_id'}"/>
+                    <filter name="group_responsable"   string="Chargé d'affaires" context="{'group_by': 'responsable_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.contract — Action
+    ============================================================ -->
+    <record id="action_telecom_contract" model="ir.actions.act_window">
+        <field name="name">Contrats</field>
+        <field name="res_model">telecom.contract</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_telecom_contract_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre premier contrat télécom
+            </p>
+            <p>
+                Gérez vos contrats opérateurs, SLA, sites couverts et cautions bancaires.
+            </p>
+        </field>
+    </record>
+
+</odoo>

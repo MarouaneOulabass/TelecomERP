@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Top-level Finance menu (under TelecomERP root)
+    ================================================================ -->
+
+    <menuitem id="menu_telecom_finance"
+              name="Finance"
+              parent="telecom_base.menu_telecom_root"
+              sequence="50"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+    <!-- ================================================================
+         Finance sub-menus
+    ================================================================ -->
+
+    <!-- Situations de travaux -->
+    <menuitem id="menu_telecom_finance_situations"
+              name="Situations de travaux"
+              parent="menu_telecom_finance"
+              action="action_telecom_situation"
+              sequence="10"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+    <!-- Décomptes -->
+    <menuitem id="menu_telecom_finance_decomptes"
+              name="Décomptes"
+              parent="menu_telecom_finance"
+              action="action_telecom_decompte"
+              sequence="20"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+    <!-- Avances de démarrage -->
+    <menuitem id="menu_telecom_finance_avances"
+              name="Avances de démarrage"
+              parent="menu_telecom_finance"
+              action="action_telecom_avance_demarrage"
+              sequence="30"
+              groups="telecom_base.group_telecom_responsable"/>
+
+    <!-- Alertes paiement (filtered: delai_depasse = True) -->
+    <menuitem id="menu_telecom_finance_alertes"
+              name="⚠ Alertes paiement"
+              parent="menu_telecom_finance"
+              action="action_telecom_situation_alertes"
+              sequence="40"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+</odoo>

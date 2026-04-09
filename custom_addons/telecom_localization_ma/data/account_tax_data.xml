@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Moroccan TVA rates and RAS tax.
+
+        These records use noupdate="1" so that manual adjustments by the
+        accountant are not overwritten on module upgrade.
+
+        All taxes are created without a company_id (global templates).
+        In a multi-company setup, duplicate them per company as needed.
+    -->
+    <data noupdate="1">
+
+        <!-- ============================================================
+             TVA 20 % — Taux normal
+        ============================================================ -->
+        <record id="tax_tva_20" model="account.tax">
+            <field name="name">TVA 20 %</field>
+            <field name="description">TVA 20</field>
+            <field name="amount">20.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">sale</field>
+            <field name="price_include">False</field>
+            <field name="include_base_amount">False</field>
+            <field name="is_ras">False</field>
+            <field name="invoice_label">TVA 20 %</field>
+            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+        </record>
+
+        <record id="tax_tva_20_achat" model="account.tax">
+            <field name="name">TVA 20 % (Achat)</field>
+            <field name="description">TVA 20 ACH</field>
+            <field name="amount">20.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">purchase</field>
+            <field name="price_include">False</field>
+            <field name="include_base_amount">False</field>
+            <field name="is_ras">False</field>
+            <field name="invoice_label">TVA 20 %</field>
+            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+        </record>
+
+        <!-- ============================================================
+             TVA 14 % — Transport, travaux immobiliers (taux intermédiaire)
+        ============================================================ -->
+        <record id="tax_tva_14" model="account.tax">
+            <field name="name">TVA 14 % — Transport</field>
+            <field name="description">TVA 14</field>
+            <field name="amount">14.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">sale</field>
+            <field name="price_include">False</field>
+            <field name="include_base_amount">False</field>
+            <field name="is_ras">False</field>
+            <field name="invoice_label">TVA 14 %</field>
+            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+        </record>
+
+        <record id="tax_tva_14_achat" model="account.tax">
+            <field name="name">TVA 14 % — Transport (Achat)</field>
+            <field name="description">TVA 14 ACH</field>
+            <field name="amount">14.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">purchase</field>
+            <field name="price_include">False</field>
+            <field name="include_base_amount">False</field>
+            <field name="is_ras">False</field>
+            <field name="invoice_label">TVA 14 %</field>
+            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+        </record>
+
+        <!-- ============================================================
+             TVA 10 % — Travaux, hôtellerie, restauration
+        ============================================================ -->
+        <record id="tax_tva_10" model="account.tax">
+            <field name="name">TVA 10 % — Travaux / Hôtellerie</field>
+            <field name="description">TVA 10</field>
+            <field name="amount">10.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">sale</field>
+            <field name="price_include">False</field>
+            <field name="include_base_amount">False</field>
+            <field name="is_ras">False</field>
+            <field name="invoice_label">TVA 10 %</field>
+            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+        </record>
+
+        <record id="tax_tva_10_achat" model="account.tax">
+            <field name="name">TVA 10 % — Travaux / Hôtellerie (Achat)</field>
+            <field name="description">TVA 10 ACH</field>
+            <field name="amount">10.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">purchase</field>
+            <field name="price_include">False</field>
+            <field name="include_base_amount">False</field>
+            <field name="is_ras">False</field>
+            <field name="invoice_label">TVA 10 %</field>
+            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+        </record>
+
+        <!-- ============================================================
+             TVA 7 % — Eau, électricité, médicaments, actes médicaux
+        ============================================================ -->
+        <record id="tax_tva_7" model="account.tax">
+            <field name="name">TVA 7 % — Eau / Électricité / Médicaments</field>
+            <field name="description">TVA 7</field>
+            <field name="amount">7.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">sale</field>
+            <field name="price_include">False</field>
+            <field name="include_base_amount">False</field>
+            <field name="is_ras">False</field>
+            <field name="invoice_label">TVA 7 %</field>
+            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+        </record>
+
+        <record id="tax_tva_7_achat" model="account.tax">
+            <field name="name">TVA 7 % — Eau / Électricité / Médicaments (Achat)</field>
+            <field name="description">TVA 7 ACH</field>
+            <field name="amount">7.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">purchase</field>
+            <field name="price_include">False</field>
+            <field name="include_base_amount">False</field>
+            <field name="is_ras">False</field>
+            <field name="invoice_label">TVA 7 %</field>
+            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+        </record>
+
+        <!-- ============================================================
+             TVA 0 % — Exonéré / Export
+        ============================================================ -->
+        <record id="tax_tva_0_export" model="account.tax">
+            <field name="name">TVA 0 % — Exonéré / Export</field>
+            <field name="description">TVA 0 EXP</field>
+            <field name="amount">0.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">sale</field>
+            <field name="price_include">False</field>
+            <field name="include_base_amount">False</field>
+            <field name="is_ras">False</field>
+            <field name="invoice_label">TVA 0 % Exo.</field>
+            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+        </record>
+
+        <!-- ============================================================
+             RAS 10 % — Retenue à la source sur prestations de services
+             amount is negative because it reduces the amount payable.
+             type_tax_use = purchase (applied on supplier/service invoices).
+        ============================================================ -->
+        <record id="tax_ras_10_prestations" model="account.tax">
+            <field name="name">RAS 10 % — Prestations de services</field>
+            <field name="description">RAS 10</field>
+            <field name="amount">-10.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">purchase</field>
+            <field name="price_include">False</field>
+            <field name="include_base_amount">False</field>
+            <field name="is_ras">True</field>
+            <field name="invoice_label">RAS 10 %</field>
+            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+        </record>
+
+    </data>
+</odoo>

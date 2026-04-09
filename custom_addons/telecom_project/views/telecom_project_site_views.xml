@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.project.site — List view
+         ================================================================ -->
+
+    <record id="view_telecom_project_site_list" model="ir.ui.view">
+        <field name="name">telecom.project.site.list</field>
+        <field name="model">telecom.project.site</field>
+        <field name="arch" type="xml">
+            <list string="Sites de projet"
+                  decoration-success="state == 'livre'"
+                  decoration-muted="state == 'suspendu'"
+                  decoration-warning="state in ('recette', 'travaux_en_cours')">
+                <field name="site_id"/>
+                <field name="project_id" optional="show"/>
+                <field name="lot_id" optional="show"/>
+                <field name="responsable_site_id" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'livre'"
+                       decoration-warning="state in ('recette','travaux_en_cours')"
+                       decoration-info="state in ('etude','autorisation')"
+                       decoration-muted="state == 'suspendu'"/>
+                <field name="date_debut_prevu" optional="show"/>
+                <field name="date_fin_prevu"/>
+                <field name="date_livraison_reel" optional="show"/>
+                <field name="intervention_count" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.project.site — Form view
+         ================================================================ -->
+
+    <record id="view_telecom_project_site_form" model="ir.ui.view">
+        <field name="name">telecom.project.site.form</field>
+        <field name="model">telecom.project.site</field>
+        <field name="arch" type="xml">
+            <form string="Site de projet">
+                <header>
+                    <button name="action_set_etude"
+                            string="Étude"
+                            type="object"
+                            invisible="state not in ('prospection',)"/>
+                    <button name="action_set_autorisation"
+                            string="Autorisation"
+                            type="object"
+                            invisible="state not in ('etude',)"/>
+                    <button name="action_set_travaux"
+                            string="Travaux"
+                            type="object"
+                            invisible="state not in ('autorisation',)"/>
+                    <button name="action_set_recette"
+                            string="Recette"
+                            type="object"
+                            invisible="state not in ('travaux_en_cours',)"/>
+                    <button name="action_set_livre"
+                            string="Livrer"
+                            type="object"
+                            class="btn-success"
+                            invisible="state not in ('recette',)"/>
+                    <button name="action_set_suspendu"
+                            string="Suspendre"
+                            type="object"
+                            class="btn-warning"
+                            invisible="state in ('livre', 'suspendu')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="prospection,etude,autorisation,travaux_en_cours,recette,livre"/>
+                </header>
+
+                <sheet>
+                    <!-- Smart buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_interventions"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-wrench"
+                                invisible="intervention_count == 0">
+                            <field name="intervention_count" widget="statinfo" string="Interventions"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="site_id" string="Site physique"/>
+                        <h1>
+                            <field name="site_id" placeholder="Sélectionner un site…"/>
+                        </h1>
+                    </div>
+
+                    <group col="2">
+                        <group string="Contexte projet">
+                            <field name="project_id"/>
+                            <field name="lot_id"
+                                   domain="[('project_id', '=', project_id)]"/>
+                            <field name="responsable_site_id"/>
+                        </group>
+                        <group string="Planning">
+                            <field name="date_debut_prevu"/>
+                            <field name="date_fin_prevu"/>
+                            <field name="date_livraison_reel"/>
+                        </group>
+                    </group>
+
+                    <group string="Notes d'avancement">
+                        <field name="notes_avancement" nolabel="1" colspan="2"
+                               placeholder="Avancement, blocages, remarques terrain…"/>
+                    </group>
+
+                    <notebook>
+                        <!-- PV partiels -->
+                        <page string="PV partiels">
+                            <field name="pv_partiel_ids"
+                                   domain="[('pv_type', '=', 'partiel')]"
+                                   context="{'default_project_id': project_id,
+                                             'default_project_site_id': active_id,
+                                             'default_pv_type': 'partiel'}">
+                                <list string="PV partiels">
+                                    <field name="name" readonly="1"/>
+                                    <field name="date_pv"/>
+                                    <field name="redige_par"/>
+                                    <field name="representant_client"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'approuve'"
+                                           decoration-warning="state == 'signe'"
+                                           decoration-muted="state == 'draft'"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- PV définitif -->
+                        <page string="PV définitif">
+                            <group>
+                                <field name="pv_definitif_id"
+                                       domain="[('pv_type', '=', 'definitif'), ('project_site_id', '=', active_id)]"
+                                       context="{'default_project_id': project_id,
+                                                 'default_project_site_id': active_id,
+                                                 'default_pv_type': 'definitif'}"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.project.site — Kanban view (grouped by state)
+         ================================================================ -->
+
+    <record id="view_telecom_project_site_kanban" model="ir.ui.view">
+        <field name="name">telecom.project.site.kanban</field>
+        <field name="model">telecom.project.site</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state"
+                    class="o_kanban_small_column"
+                    quick_create="false">
+                <field name="site_id"/>
+                <field name="project_id"/>
+                <field name="lot_id"/>
+                <field name="responsable_site_id"/>
+                <field name="state"/>
+                <field name="date_fin_prevu"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_title">
+                                    <strong>
+                                        <field name="site_id"/>
+                                    </strong>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <span class="text-muted">
+                                        <field name="project_id"/>
+                                    </span>
+                                    <t t-if="record.lot_id.raw_value">
+                                        <br/>
+                                        <span class="badge bg-light text-dark">
+                                            <field name="lot_id"/>
+                                        </span>
+                                    </t>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <t t-if="record.responsable_site_id.raw_value">
+                                            <field name="responsable_site_id"
+                                                   widget="many2one_avatar_employee"/>
+                                        </t>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <t t-if="record.date_fin_prevu.raw_value">
+                                            <span class="text-muted small">
+                                                <i class="fa fa-calendar-o"/>
+                                                <field name="date_fin_prevu"/>
+                                            </span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.project.site — Search view
+         ================================================================ -->
+
+    <record id="view_telecom_project_site_search" model="ir.ui.view">
+        <field name="name">telecom.project.site.search</field>
+        <field name="model">telecom.project.site</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un site de projet">
+                <field name="site_id"/>
+                <field name="project_id"/>
+                <field name="lot_id"/>
+                <field name="responsable_site_id"/>
+                <separator/>
+                <filter name="filter_prospection" string="Prospection"
+                        domain="[('state', '=', 'prospection')]"/>
+                <filter name="filter_travaux" string="Travaux en cours"
+                        domain="[('state', '=', 'travaux_en_cours')]"/>
+                <filter name="filter_recette" string="Recette"
+                        domain="[('state', '=', 'recette')]"/>
+                <filter name="filter_livre" string="Livrés"
+                        domain="[('state', '=', 'livre')]"/>
+                <filter name="filter_suspendu" string="Suspendus"
+                        domain="[('state', '=', 'suspendu')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_project" string="Projet"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter name="group_lot" string="Lot"
+                            context="{'group_by': 'lot_id'}"/>
+                    <filter name="group_state" string="État"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_responsable" string="Responsable"
+                            context="{'group_by': 'responsable_site_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Action
+         ================================================================ -->
+
+    <record id="action_telecom_project_site" model="ir.actions.act_window">
+        <field name="name">Sites de projet</field>
+        <field name="res_model">telecom.project.site</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_telecom_project_site_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Rattachez un premier site à votre projet
+            </p>
+            <p>
+                Chaque site de projet suit l'avancement du déploiement
+                depuis la prospection jusqu'à la livraison.
+            </p>
+        </field>
+    </record>
+
+</odoo>

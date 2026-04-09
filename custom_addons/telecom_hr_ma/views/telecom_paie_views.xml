@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.paie.bulletin — List + Form
+    ================================================================ -->
+
+    <record id="view_paie_bulletin_list" model="ir.ui.view">
+        <field name="name">telecom.paie.bulletin.list</field>
+        <field name="model">telecom.paie.bulletin</field>
+        <field name="arch" type="xml">
+            <tree string="Bulletins de paie"
+                  decoration-muted="state == 'draft'"
+                  decoration-info="state == 'confirme'"
+                  decoration-success="state in ('valide', 'paye')">
+                <field name="sequence_number" string="N° Bulletin"/>
+                <field name="employee_id"/>
+                <field name="date_from" string="Mois"/>
+                <field name="salaire_base"/>
+                <field name="cnss_salarie" optional="show"/>
+                <field name="amo_salarie" optional="show"/>
+                <field name="ir_mensuel" optional="show"/>
+                <field name="salaire_net_a_payer" string="NET À PAYER"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-muted="state == 'draft'"
+                       decoration-info="state == 'confirme'"
+                       decoration-success="state == 'valide'"
+                       decoration-primary="state == 'paye'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_paie_bulletin_form" model="ir.ui.view">
+        <field name="name">telecom.paie.bulletin.form</field>
+        <field name="model">telecom.paie.bulletin</field>
+        <field name="arch" type="xml">
+            <form string="Bulletin de paie">
+                <header>
+                    <button name="action_confirmer" type="object"
+                            string="Confirmer" class="btn-primary"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            groups="telecom_base.group_telecom_responsable"/>
+                    <button name="action_valider" type="object"
+                            string="Valider"
+                            attrs="{'invisible': [('state', '!=', 'confirme')]}"
+                            groups="telecom_base.group_telecom_responsable"/>
+                    <button name="action_marquer_paye" type="object"
+                            string="Marquer payé" class="btn-success"
+                            attrs="{'invisible': [('state', '!=', 'valide')]}"
+                            groups="telecom_base.group_telecom_responsable"/>
+                    <button name="action_remettre_brouillon" type="object"
+                            string="Remettre en brouillon"
+                            attrs="{'invisible': [('state', '!=', 'confirme')]}"
+                            groups="telecom_base.group_telecom_admin"/>
+                    <button name="%(action_report_telecom_paie)d" type="action"
+                            string="Imprimer bulletin" class="btn-secondary"
+                            icon="fa-print"
+                            attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirme,valide,paye"/>
+                </header>
+                <sheet>
+                    <!-- Title -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <h4>
+                            <field name="sequence_number" readonly="1"
+                                   placeholder="N° attribué à la confirmation"
+                                   attrs="{'invisible': [('sequence_number', '=', False)]}"/>
+                        </h4>
+                    </div>
+
+                    <!-- Header: Employee + Period -->
+                    <group string="En-tête">
+                        <group>
+                            <field name="employee_id"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="date_from"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="date_to"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Éléments de salaire -->
+                    <group string="Éléments de salaire">
+                        <group>
+                            <field name="salaire_base"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="nbr_jours_travailles"/>
+                            <field name="nbr_jours_presents" readonly="1"/>
+                            <field name="nbr_heures_sup" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="prime_anciennete" readonly="1"/>
+                            <field name="indemnite_deplacement"/>
+                            <field name="avantages_nature"/>
+                        </group>
+                    </group>
+
+                    <!-- Cotisations salariales -->
+                    <group string="Cotisations salariales (part employé)">
+                        <group>
+                            <field name="cnss_base" readonly="1"/>
+                            <field name="cnss_salarie" readonly="1"/>
+                            <field name="amo_salarie" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="cimr_salarie" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Cotisations patronales -->
+                    <group string="Cotisations patronales (part employeur)"
+                           groups="telecom_base.group_telecom_responsable">
+                        <group>
+                            <field name="cnss_patronal" readonly="1"/>
+                            <field name="amo_patronal" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="cimr_patronal" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- IR -->
+                    <group string="Calcul Impôt sur le Revenu (IR)">
+                        <group>
+                            <field name="salaire_net_imposable" readonly="1"/>
+                            <field name="frais_pro" readonly="1"/>
+                            <field name="salaire_imposable_ir" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="ir_annuel_brut" readonly="1"/>
+                            <field name="ir_mensuel" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Net à payer — highlighted -->
+                    <group string="Net à payer">
+                        <group>
+                            <field name="salaire_net_a_payer" readonly="1"
+                                   class="o_field_monetary"
+                                   widget="monetary"
+                                   options="{'field_digits': True}"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="view_paie_bulletin_search" model="ir.ui.view">
+        <field name="name">telecom.paie.bulletin.search</field>
+        <field name="model">telecom.paie.bulletin</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher bulletin">
+                <field name="employee_id"/>
+                <field name="sequence_number"/>
+                <filter name="filter_draft" string="Brouillons"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_confirme" string="Confirmés"
+                        domain="[('state', '=', 'confirme')]"/>
+                <filter name="filter_valide" string="Validés"
+                        domain="[('state', '=', 'valide')]"/>
+                <filter name="filter_paye" string="Payés"
+                        domain="[('state', '=', 'paye')]"/>
+                <separator/>
+                <filter name="filter_this_month" string="Ce mois-ci"
+                        domain="[('date_from', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_employee" string="Employé"
+                            context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_period" string="Période"
+                            context="{'group_by': 'date_from:month'}"/>
+                    <filter name="group_state" string="Statut"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_paie_bulletin" model="ir.actions.act_window">
+        <field name="name">Bulletins de paie</field>
+        <field name="res_model">telecom.paie.bulletin</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_paie_bulletin_search"/>
+    </record>
+
+</odoo>

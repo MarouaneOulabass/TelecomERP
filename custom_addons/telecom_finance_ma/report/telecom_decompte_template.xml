@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         QWeb PDF template — Décompte de travaux (CCAG Travaux format)
+         External ID: telecom_finance_ma.report_telecom_decompte_document
+
+         Sections:
+           1. Company header (ICE / IF / RC)
+           2. Identification parties + références marché
+           3. Tableau I  — Cumul des travaux HT
+           4. Tableau II — Déductions (RG, avances, situations ant.)
+           5. TVA
+           6. RAS 10 %
+           7. Net à régler
+           8. Date limite de paiement (loi 69-21)
+           9. Signature blocks : Entreprise / Maître d'ouvrage / Maître d'œuvre
+    ================================================================ -->
+
+    <template id="report_telecom_decompte_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="dc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- ══════════════════════════════════════════
+                             TITLE BLOCK
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-3">
+                            <div class="col-12 text-center">
+                                <h2 class="text-uppercase fw-bold mb-1">
+                                    <t t-if="dc.decompte_type == 'definitif'">
+                                        DÉCOMPTE DÉFINITIF DE TRAVAUX
+                                    </t>
+                                    <t t-else="">
+                                        DÉCOMPTE PROVISOIRE DE TRAVAUX
+                                    </t>
+                                </h2>
+                                <h4 class="text-muted">
+                                    Marché de travaux télécom —
+                                    Conforme CCAG Travaux
+                                </h4>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             SECTION A — Références
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-3">
+                            <!-- Left: N° décompte + projet -->
+                            <div class="col-6">
+                                <table class="table table-bordered table-sm">
+                                    <thead class="table-secondary">
+                                        <tr>
+                                            <th colspan="2" class="text-center">
+                                                Références décompte
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th style="width:45%">N° Décompte</th>
+                                            <td>
+                                                <strong>
+                                                    <t t-esc="dc.name"/>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Type</th>
+                                            <td>
+                                                <t t-if="dc.decompte_type == 'definitif'">
+                                                    Définitif
+                                                </t>
+                                                <t t-else="">
+                                                    Provisoire
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Date</th>
+                                            <td>
+                                                <t t-esc="dc.date_decompte"
+                                                   t-options='{"widget":"date"}'/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Projet</th>
+                                            <td>
+                                                <t t-esc="dc.project_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Contrat</th>
+                                            <td>
+                                                <t t-esc="dc.contract_id.reference or dc.contract_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <t t-if="dc.pv_id">
+                                            <tr>
+                                                <th>PV de réception</th>
+                                                <td>
+                                                    <t t-esc="dc.pv_id.name"/>
+                                                    (<t t-esc="dc.pv_id.date_pv"
+                                                        t-options='{"widget":"date"}'/>)
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Right: Parties -->
+                            <div class="col-6">
+                                <table class="table table-bordered table-sm">
+                                    <thead class="table-secondary">
+                                        <tr>
+                                            <th colspan="2" class="text-center">
+                                                Parties contractantes
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Entreprise (company) -->
+                                        <tr>
+                                            <th>Entreprise</th>
+                                            <td>
+                                                <strong>
+                                                    <t t-esc="dc.company_id.name"/>
+                                                </strong>
+                                                <t t-if="dc.company_id.partner_id.ice">
+                                                    <br/>
+                                                    <span class="text-muted small">
+                                                        ICE : <t t-esc="dc.company_id.partner_id.ice"/>
+                                                    </span>
+                                                </t>
+                                                <t t-if="dc.company_id.partner_id.if_number">
+                                                    <br/>
+                                                    <span class="text-muted small">
+                                                        IF : <t t-esc="dc.company_id.partner_id.if_number"/>
+                                                    </span>
+                                                </t>
+                                                <t t-if="dc.company_id.partner_id.rc_number">
+                                                    <br/>
+                                                    <span class="text-muted small">
+                                                        RC : <t t-esc="dc.company_id.partner_id.rc_number"/>
+                                                    </span>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <!-- Client / Maître d'ouvrage -->
+                                        <tr>
+                                            <th>Maître d'ouvrage</th>
+                                            <td>
+                                                <strong>
+                                                    <t t-esc="dc.client_id.name"/>
+                                                </strong>
+                                                <t t-if="dc.client_id.ice">
+                                                    <br/>
+                                                    <span class="text-muted small">
+                                                        ICE : <t t-esc="dc.client_id.ice"/>
+                                                    </span>
+                                                </t>
+                                                <t t-if="dc.client_id.if_number">
+                                                    <br/>
+                                                    <span class="text-muted small">
+                                                        IF : <t t-esc="dc.client_id.if_number"/>
+                                                    </span>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             TABLEAU I — Cumul des travaux
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1 mb-2 text-uppercase">
+                                    I — Cumul des travaux
+                                </h5>
+                                <table class="table table-bordered table-sm">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Désignation</th>
+                                            <th class="text-end" style="width:220px">
+                                                Montant HT
+                                                (<t t-esc="dc.currency_id.name"/>)
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Montant marché initial HT</td>
+                                            <td class="text-end">
+                                                <t t-esc="dc.montant_marche_ht"
+                                                   t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Travaux réalisés cumulés HT</td>
+                                            <td class="text-end">
+                                                <t t-esc="dc.montant_travaux_ht"
+                                                   t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                        <t t-if="dc.montant_travaux_supplementaires">
+                                            <tr>
+                                                <td>Travaux supplémentaires (avenants)</td>
+                                                <td class="text-end">
+                                                    <t t-esc="dc.montant_travaux_supplementaires"
+                                                       t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="dc.montant_revisions_prix">
+                                            <tr>
+                                                <td>Révisions de prix</td>
+                                                <td class="text-end">
+                                                    <t t-esc="dc.montant_revisions_prix"
+                                                       t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <tr class="table-info fw-bold">
+                                            <td>TOTAL HT CUMULÉ</td>
+                                            <td class="text-end">
+                                                <t t-esc="dc.total_ht_cumul"
+                                                   t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             TABLEAU II — Déductions
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1 mb-2 text-uppercase">
+                                    II — Déductions
+                                </h5>
+                                <table class="table table-bordered table-sm">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Désignation</th>
+                                            <th class="text-end" style="width:220px">
+                                                Montant
+                                                (<t t-esc="dc.currency_id.name"/>)
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                Retenue de garantie
+                                                (<t t-esc="dc.retenue_garantie_taux"/>%)
+                                                sur total HT cumulé
+                                            </td>
+                                            <td class="text-end text-danger">
+                                                (<t t-esc="dc.retenue_garantie_cumul"
+                                                    t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>)
+                                            </td>
+                                        </tr>
+                                        <t t-if="dc.avance_periode">
+                                            <tr>
+                                                <td>Remboursement avance — cette période</td>
+                                                <td class="text-end text-danger">
+                                                    (<t t-esc="dc.avance_periode"
+                                                        t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>)
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="dc.avances_remboursees">
+                                            <tr>
+                                                <td>Avances remboursées antérieurement</td>
+                                                <td class="text-end text-muted">
+                                                    (<t t-esc="dc.avances_remboursees"
+                                                        t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>)
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="dc.situations_anterieures">
+                                            <tr>
+                                                <td>Situations antérieures réglées</td>
+                                                <td class="text-end text-danger">
+                                                    (<t t-esc="dc.situations_anterieures"
+                                                        t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>)
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <tr class="table-warning fw-bold">
+                                            <td>BASE TVA</td>
+                                            <td class="text-end">
+                                                <t t-esc="dc.base_tva"
+                                                   t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             TABLEAU III — TVA, RAS et Net
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1 mb-2 text-uppercase">
+                                    III — TVA, Retenue à la source et Net à régler
+                                </h5>
+                                <table class="table table-bordered table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width:60%">
+                                                Base TVA
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-esc="dc.base_tva"
+                                                   t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                TVA (<t t-esc="dc.tva_taux"/>%)
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-esc="dc.tva_montant"
+                                                   t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                        <tr class="fw-bold">
+                                            <td>NET À RÉGLER (TTC)</td>
+                                            <td class="text-end">
+                                                <t t-esc="dc.net_a_regler"
+                                                   t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Retenue à la source (RAS 10 %)
+                                                <span class="text-muted small">
+                                                    (sur base HT)
+                                                </span>
+                                            </td>
+                                            <td class="text-end text-danger">
+                                                (<t t-esc="dc.ras_montant"
+                                                    t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>)
+                                            </td>
+                                        </tr>
+                                        <tr class="table-success fw-bold fs-6">
+                                            <td>NET APRÈS RAS À VERSER</td>
+                                            <td class="text-end">
+                                                <t t-esc="dc.net_apres_ras"
+                                                   t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Liberation RG — definitif only -->
+                                        <t t-if="dc.decompte_type == 'definitif' and dc.liberation_retenue and dc.montant_liberation_rg">
+                                            <tr class="table-info">
+                                                <td>
+                                                    <strong>Libération retenue de garantie</strong>
+                                                    (réception définitive)
+                                                </td>
+                                                <td class="text-end text-success fw-bold">
+                                                    +
+                                                    <t t-esc="dc.montant_liberation_rg"
+                                                       t-options='{"widget":"monetary","display_currency":dc.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             PAYMENT DEADLINE BLOCK — loi 69-21
+                        ══════════════════════════════════════════ -->
+                        <t t-if="dc.date_paiement_prevu">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="border border-warning rounded p-3"
+                                         style="background-color: #fff9e6;">
+                                        <strong>
+                                            ⏱ Date limite de paiement (loi n° 69-21) :
+                                        </strong>
+                                        <span class="fs-5 fw-bold ms-2">
+                                            <t t-esc="dc.date_paiement_prevu"
+                                               t-options='{"widget":"date"}'/>
+                                        </span>
+                                        <span class="text-muted small ms-2">
+                                            (60 jours à compter du
+                                            <t t-esc="dc.date_soumission"
+                                               t-options='{"widget":"date"}'/>)
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- ══════════════════════════════════════════
+                             NOTES
+                        ══════════════════════════════════════════ -->
+                        <t t-if="dc.notes">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <h5 class="border-bottom pb-1 mb-2">Observations</h5>
+                                    <div class="border p-3 rounded bg-light">
+                                        <t t-out="dc.notes"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- ══════════════════════════════════════════
+                             SIGNATURE BLOCKS
+                        ══════════════════════════════════════════ -->
+                        <div class="row mt-4 mb-5" style="page-break-inside: avoid;">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1 mb-3 text-uppercase">
+                                    Signatures
+                                </h5>
+                            </div>
+
+                            <!-- Entreprise — Titulaire du marché -->
+                            <div class="col-4 text-center">
+                                <p class="mb-1">
+                                    <strong>L'Entreprise (Titulaire)</strong>
+                                </p>
+                                <p class="text-muted small mb-3">
+                                    <t t-esc="dc.company_id.name"/>
+                                </p>
+                                <div style="height: 80px; border-bottom: 1px solid #555; margin: 0 10px;">
+                                </div>
+                                <p class="text-muted small mt-1">
+                                    Nom, qualité et cachet
+                                </p>
+                                <p class="text-muted small">
+                                    Fait à __________, le __________
+                                </p>
+                            </div>
+
+                            <!-- Maître d'œuvre -->
+                            <div class="col-4 text-center">
+                                <p class="mb-1">
+                                    <strong>Le Maître d'œuvre</strong>
+                                </p>
+                                <p class="text-muted small mb-3">
+                                    (Bureau d'études / Ingénieur responsable)
+                                </p>
+                                <div style="height: 80px; border-bottom: 1px solid #555; margin: 0 10px;">
+                                </div>
+                                <p class="text-muted small mt-1">
+                                    Nom, qualité et cachet
+                                </p>
+                                <p class="text-muted small">
+                                    Fait à __________, le __________
+                                </p>
+                            </div>
+
+                            <!-- Maître d'ouvrage -->
+                            <div class="col-4 text-center">
+                                <p class="mb-1">
+                                    <strong>Le Maître d'ouvrage</strong>
+                                </p>
+                                <p class="text-muted small mb-3">
+                                    <t t-esc="dc.client_id.name"/>
+                                </p>
+                                <div style="height: 80px; border-bottom: 1px solid #555; margin: 0 10px;">
+                                </div>
+                                <p class="text-muted small mt-1">
+                                    Nom, qualité et cachet
+                                </p>
+                                <p class="text-muted small">
+                                    Fait à __________, le __________
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             LEGAL FOOTER
+                        ══════════════════════════════════════════ -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <hr/>
+                                <p class="text-muted small text-center mb-1">
+                                    Ce décompte est établi conformément au Cahier des Clauses
+                                    Administratives Générales applicables aux marchés de Travaux (CCAG Travaux)
+                                    et à la réglementation marocaine des marchés publics.
+                                </p>
+                                <p class="text-muted small text-center mb-1">
+                                    Le paiement doit intervenir dans un délai maximum de 60 jours
+                                    à compter de la date de soumission, conformément à la loi n° 69-21
+                                    relative aux délais de paiement.
+                                </p>
+                                <p class="text-muted small text-center mb-0">
+                                    Document généré par TelecomERP —
+                                    <t t-esc="dc.company_id.name"/> —
+                                    <t t-esc="dc.date_decompte" t-options='{"widget":"date"}'/>
+                                </p>
+                            </div>
+                        </div>
+
+                    </div><!-- /page -->
+                </t><!-- /external_layout -->
+            </t><!-- /foreach -->
+        </t><!-- /html_container -->
+    </template>
+
+</odoo>

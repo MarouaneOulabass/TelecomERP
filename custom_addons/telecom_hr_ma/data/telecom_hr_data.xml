@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Initial habilitation types
+        ============================================================ -->
+
+        <record id="habilitation_type_trav_hauteur" model="telecom.habilitation.type">
+            <field name="name">Travaux en hauteur</field>
+            <field name="code">TRAV_HAUTEUR</field>
+            <field name="description">Autorisation de travail en hauteur (port du harnais, utilisation de l'échelle et nacelle). Obligatoire pour les pylônes et toitures.</field>
+            <field name="periodicite_renouvellement">36</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="habilitation_type_elec_b1" model="telecom.habilitation.type">
+            <field name="name">Habilitation électrique B1</field>
+            <field name="code">HABILT_ELEC_B1</field>
+            <field name="description">Habilitation électrique niveau B1 — Exécutant électricien (travaux d'ordre électrique, BT).</field>
+            <field name="periodicite_renouvellement">36</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="habilitation_type_elec_b2" model="telecom.habilitation.type">
+            <field name="name">Habilitation électrique B2</field>
+            <field name="code">HABILT_ELEC_B2</field>
+            <field name="description">Habilitation électrique niveau B2 — Chargé de travaux (direction de travaux d'ordre électrique, BT).</field>
+            <field name="periodicite_renouvellement">36</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="habilitation_type_elec_br" model="telecom.habilitation.type">
+            <field name="name">Habilitation électrique BR</field>
+            <field name="code">HABILT_ELEC_BR</field>
+            <field name="description">Habilitation électrique BR — Chargé d'interventions générales (dépannage, essais, mesures en BT).</field>
+            <field name="periodicite_renouvellement">36</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="habilitation_type_elec_bc" model="telecom.habilitation.type">
+            <field name="name">Habilitation électrique BC</field>
+            <field name="code">HABILT_ELEC_BC</field>
+            <field name="description">Habilitation électrique BC — Chargé de consignation (mise en sécurité des installations BT).</field>
+            <field name="periodicite_renouvellement">36</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="habilitation_type_secours" model="telecom.habilitation.type">
+            <field name="name">Premiers secours / SST</field>
+            <field name="code">SECOURS</field>
+            <field name="description">Sauveteur Secouriste du Travail (SST) — formation premiers secours en entreprise.</field>
+            <field name="periodicite_renouvellement">24</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="habilitation_type_nacelle" model="telecom.habilitation.type">
+            <field name="name">Conduite nacelle élévatrice</field>
+            <field name="code">CONDUIRE_NACELLE</field>
+            <field name="description">Autorisation de conduite et d'utilisation des nacelles élévatrices (PEMP catégorie 1 et 3B).</field>
+            <field name="periodicite_renouvellement">36</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- ============================================================
+             Initial EPI types
+        ============================================================ -->
+
+        <record id="epi_type_casque" model="telecom.epi.type">
+            <field name="name">Casque de chantier</field>
+            <field name="code">CASQUE</field>
+            <field name="description">Casque de protection classe E (travaux électriques) ou classe G (général). Norme EN 397.</field>
+            <field name="periodicite_renouvellement_mois">36</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="epi_type_harnais" model="telecom.epi.type">
+            <field name="name">Harnais antichute</field>
+            <field name="code">HARNAIS</field>
+            <field name="description">Harnais de sécurité antichute complet (baudrier + longe à absorbeur d'énergie). Norme EN 361 / EN 362.</field>
+            <field name="periodicite_renouvellement_mois">12</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="epi_type_chaussures" model="telecom.epi.type">
+            <field name="name">Chaussures de sécurité</field>
+            <field name="code">CHAUSSURES</field>
+            <field name="description">Chaussures de sécurité S3 (embouts acier, semelle anti-perforation). Norme EN ISO 20345.</field>
+            <field name="periodicite_renouvellement_mois">12</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="epi_type_gilet" model="telecom.epi.type">
+            <field name="name">Gilet haute visibilité</field>
+            <field name="code">GILET_HV</field>
+            <field name="description">Gilet/veste de signalisation haute visibilité classe 2 ou 3. Norme EN ISO 20471.</field>
+            <field name="periodicite_renouvellement_mois">12</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="epi_type_gants" model="telecom.epi.type">
+            <field name="name">Gants de travail</field>
+            <field name="code">GANTS</field>
+            <field name="description">Gants de protection mécanique anti-coupures et anti-vibrations. Norme EN 388.</field>
+            <field name="periodicite_renouvellement_mois">6</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="epi_type_lunettes" model="telecom.epi.type">
+            <field name="name">Lunettes de protection</field>
+            <field name="code">LUNETTES</field>
+            <field name="description">Lunettes / masque de protection oculaire (projections, UV, laser). Norme EN 166.</field>
+            <field name="periodicite_renouvellement_mois">12</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="epi_type_combinaison" model="telecom.epi.type">
+            <field name="name">Combinaison de travail</field>
+            <field name="code">COMBINAISON</field>
+            <field name="description">Combinaison ou vêtement de travail (une ou deux pièces), résistant aux risques mécaniques et aux salissures.</field>
+            <field name="periodicite_renouvellement_mois">12</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

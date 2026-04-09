@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         account.journal — Extend journal form with LCN tab
+    ================================================================ -->
+    <record id="view_journal_form_localization_ma_lcn" model="ir.ui.view">
+        <field name="name">account.journal.form.localization.ma.lcn</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Add LCN tab inside the existing notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="LCN" name="page_lcn"
+                      attrs="{'invisible': [('type', 'not in', ['bank', 'cash'])]}">
+                    <group string="Lettre de Change Normalisée (LCN)" name="group_lcn">
+                        <group>
+                            <field name="is_lcn"/>
+                            <field name="lcn_bank_ref"
+                                   attrs="{'invisible': [('is_lcn', '=', False)],
+                                           'required': [('is_lcn', '=', True)]}"/>
+                        </group>
+                        <group>
+                            <div attrs="{'invisible': [('is_lcn', '=', False)]}"
+                                 class="alert alert-info" role="alert">
+                                Ce journal est configuré pour la gestion des
+                                <strong>Lettres de Change Normalisées (LCN)</strong>.
+                                Les remises LCN seront identifiées avec la référence bancaire indiquée.
+                            </div>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

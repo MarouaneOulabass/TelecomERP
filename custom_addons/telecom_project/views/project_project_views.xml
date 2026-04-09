@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         project.project — Telecom form view extension
+         ================================================================ -->
+
+    <record id="view_project_telecom_form_inherit" model="ir.ui.view">
+        <field name="name">project.project.telecom.form</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+
+            <!-- Smart buttons — inject inside existing button box -->
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_view_lots"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-list-ol"
+                        invisible="lot_count == 0">
+                    <field name="lot_count" widget="statinfo" string="Lots"/>
+                </button>
+
+                <button name="action_view_project_sites"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-map-marker">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="sites_livres"/>/<field name="sites_total"/>
+                        </span>
+                        <span class="o_stat_text">Sites</span>
+                    </div>
+                </button>
+
+                <button name="action_view_pv_reception"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-file-text-o"
+                        invisible="pv_count == 0">
+                    <field name="pv_count" widget="statinfo" string="PV"/>
+                </button>
+            </xpath>
+
+            <!-- Telecom tab — appended to notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page name="telecom" string="Télécom">
+
+                    <!-- Project classification -->
+                    <group string="Classification projet" col="2">
+                        <group>
+                            <field name="project_type"/>
+                            <field name="operateur_id"/>
+                        </group>
+                        <group>
+                            <field name="date_debut_prevu"/>
+                            <field name="date_fin_prevu"/>
+                        </group>
+                    </group>
+
+                    <!-- Budget -->
+                    <group string="Budget">
+                        <group>
+                            <field name="currency_id" options="{'no_create': True}"/>
+                            <field name="budget_total"/>
+                        </group>
+                        <group>
+                            <field name="cout_reel" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- KPI progress -->
+                    <group string="Avancement">
+                        <group>
+                            <field name="sites_livres" readonly="1"/>
+                            <field name="sites_total" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="taux_avancement"
+                                   widget="progressbar"
+                                   readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Sites inline list -->
+                    <field name="project_site_ids"
+                           widget="one2many_list"
+                           context="{'default_project_id': active_id}"
+                           colspan="2">
+                        <list string="Sites du projet" editable="bottom">
+                            <field name="site_id"/>
+                            <field name="lot_id"/>
+                            <field name="responsable_site_id"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'livre'"
+                                   decoration-warning="state in ('recette', 'travaux_en_cours')"
+                                   decoration-info="state in ('etude', 'autorisation')"
+                                   decoration-muted="state == 'suspendu'"/>
+                            <field name="date_fin_prevu"/>
+                            <field name="date_livraison_reel"/>
+                            <!-- keep project_id hidden, filled by context -->
+                            <field name="project_id" column_invisible="1"/>
+                        </list>
+                    </field>
+
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- ================================================================
+         project.project — List view extension (optional columns)
+         ================================================================ -->
+
+    <record id="view_project_telecom_list_inherit" model="ir.ui.view">
+        <field name="name">project.project.telecom.list</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project_project_list_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="project_type" optional="show"/>
+                <field name="operateur_id" optional="show"/>
+                <field name="sites_total" optional="show"/>
+                <field name="sites_livres" optional="show"/>
+                <field name="taux_avancement" widget="progressbar" optional="show"/>
+                <field name="date_fin_prevu" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Telecom Reporting — Dashboard pivot/graph action
+         (serves as the "main dashboard" via the best-matching pivot view
+          on the intervention analysis model)
+    ================================================================ -->
+
+    <!-- Dedicated pivot view for the dashboard entry point:
+         shows the full current-year cross-tab at a glance -->
+    <record id="view_dashboard_intervention_pivot" model="ir.ui.view">
+        <field name="name">telecom.dashboard.intervention.pivot</field>
+        <field name="model">report.telecom.intervention.analysis</field>
+        <field name="arch" type="xml">
+            <pivot string="Tableau de bord — Interventions" disable_linking="True">
+                <field name="month" type="row"/>
+                <field name="intervention_type" type="col"/>
+                <field name="count_total" type="measure" string="Nb interventions"/>
+                <field name="count_sla_depasse" type="measure" string="SLA dépassés"/>
+                <field name="duree_moyenne" type="measure" string="Durée totale (h)"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Dedicated graph view for the dashboard: bar chart by wilaya -->
+    <record id="view_dashboard_intervention_graph" model="ir.ui.view">
+        <field name="name">telecom.dashboard.intervention.graph</field>
+        <field name="model">report.telecom.intervention.analysis</field>
+        <field name="arch" type="xml">
+            <graph string="Interventions par région" type="bar" stacked="True">
+                <field name="wilaya" type="row"/>
+                <field name="intervention_type" type="col"/>
+                <field name="count_total" type="measure" string="Nb interventions"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Pivot: sites by wilaya + state -->
+    <record id="view_dashboard_site_pivot" model="ir.ui.view">
+        <field name="name">telecom.dashboard.site.pivot</field>
+        <field name="model">report.telecom.site.analysis</field>
+        <field name="arch" type="xml">
+            <pivot string="Tableau de bord — Sites" disable_linking="True">
+                <field name="wilaya" type="row"/>
+                <field name="site_type" type="col"/>
+                <field name="intervention_count_total" type="measure" string="Interventions (total)"/>
+                <field name="intervention_count_month" type="measure" string="Interventions (mois)"/>
+                <field name="operateur_count" type="measure" string="Opérateurs"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph: sites by state -->
+    <record id="view_dashboard_site_graph" model="ir.ui.view">
+        <field name="name">telecom.dashboard.site.graph</field>
+        <field name="model">report.telecom.site.analysis</field>
+        <field name="arch" type="xml">
+            <graph string="Sites par état" type="pie">
+                <field name="state" type="row"/>
+                <field name="intervention_count_total" type="measure" string="Nb interventions"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Pivot: finance by month -->
+    <record id="view_dashboard_finance_pivot" model="ir.ui.view">
+        <field name="name">telecom.dashboard.finance.pivot</field>
+        <field name="model">report.telecom.finance.analysis</field>
+        <field name="arch" type="xml">
+            <pivot string="Tableau de bord — Finance" disable_linking="True">
+                <field name="year" type="row"/>
+                <field name="month" type="row"/>
+                <field name="montant_situation_ht_total" type="measure" string="Total situations (MAD)"/>
+                <field name="net_a_regler_total" type="measure" string="Net à régler (MAD)"/>
+                <field name="nb_delais_depasses" type="measure" string="Délais dépassés"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph: finance amounts by month -->
+    <record id="view_dashboard_finance_graph" model="ir.ui.view">
+        <field name="name">telecom.dashboard.finance.graph</field>
+        <field name="model">report.telecom.finance.analysis</field>
+        <field name="arch" type="xml">
+            <graph string="Montants par mois" type="bar" stacked="False">
+                <field name="month" type="row"/>
+                <field name="montant_situation_ht_total" type="measure" string="Total situations (MAD)"/>
+                <field name="net_a_regler_total" type="measure" string="Net à régler (MAD)"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Main dashboard action: opens intervention analysis in pivot+graph
+         (default entry point for the Reporting → Tableau de bord menu)
+    ================================================================ -->
+    <record id="action_telecom_dashboard" model="ir.actions.act_window">
+        <field name="name">Tableau de bord TelecomERP</field>
+        <field name="res_model">report.telecom.intervention.analysis</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_dashboard_intervention_pivot')}),
+            (0, 0, {'view_mode': 'graph', 'view_id': ref('view_dashboard_intervention_graph')}),
+        ]"/>
+        <field name="context">{
+            'search_default_filter_current_year': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tableau de bord TelecomERP
+            </p>
+            <p>
+                Aucune donnée d'intervention disponible pour la période sélectionnée.
+                Créez des bons d'intervention dans le module Interventions.
+            </p>
+        </field>
+    </record>
+
+</odoo>

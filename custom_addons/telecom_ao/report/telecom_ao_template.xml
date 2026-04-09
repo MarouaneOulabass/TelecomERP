@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         QWeb template: BPU / Offre de prix report
+    ============================================================ -->
+    <template id="report_ao_bpu_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- - Report title - -->
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <h2>BORDEREAU DE PRIX UNITAIRES</h2>
+                                <h4>Offre de prix — <t t-esc="o.numero_ao"/></h4>
+                            </div>
+                        </div>
+
+                        <!-- - AO header information - -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td class="fw-bold" style="width:45%">Référence AO :</td>
+                                        <td><t t-esc="o.numero_ao"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Référence DAO :</td>
+                                        <td><t t-esc="o.reference_dao or '—'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Titre :</td>
+                                        <td><t t-esc="o.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Maître d'ouvrage :</td>
+                                        <td><t t-esc="o.maitre_ouvrage_id.name"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td class="fw-bold" style="width:55%">Date remise offre :</td>
+                                        <td>
+                                            <t t-if="o.date_remise">
+                                                <t t-esc="o.date_remise" t-options='{"widget": "date"}'/>
+                                            </t>
+                                            <t t-else="">—</t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Lots visés :</td>
+                                        <td><t t-esc="o.lots_vises or '—'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Chargé d'affaires :</td>
+                                        <td><t t-esc="o.responsable_id.name or '—'"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- - BPU lines table - -->
+                        <t t-set="current_section" t-value="''"/>
+                        <table class="table table-sm table-bordered" style="font-size:9pt;">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width:5%">N°</th>
+                                    <th style="width:8%">Code</th>
+                                    <th style="width:35%">Désignation</th>
+                                    <th style="width:7%" class="text-center">Unité</th>
+                                    <th style="width:10%" class="text-end">Quantité</th>
+                                    <th style="width:15%" class="text-end">Prix unitaire HT</th>
+                                    <th style="width:15%" class="text-end">Montant HT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.bpu_ids" t-as="line">
+                                    <!-- Section header row -->
+                                    <t t-if="line.section and line.section != current_section">
+                                        <t t-set="current_section" t-value="line.section"/>
+                                        <tr class="table-secondary">
+                                            <td colspan="7" class="fw-bold">
+                                                <t t-esc="line.section"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td><t t-esc="line_index + 1"/></td>
+                                        <td><t t-esc="line.code or ''"/></td>
+                                        <td><t t-esc="line.designation"/></td>
+                                        <td class="text-center"><t t-esc="line.unite"/></td>
+                                        <td class="text-end">
+                                            <t t-esc="line.quantite"
+                                               t-options='{"widget": "float", "precision": 3}'/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-esc="line.prix_unitaire"
+                                               t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-esc="line.montant_ht"
+                                               t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-light fw-bold">
+                                    <td colspan="6" class="text-end">Total HT</td>
+                                    <td class="text-end">
+                                        <t t-esc="o.montant_bpu_total"
+                                           t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <!-- - Cautions section - -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5>Cautions bancaires requises</h5>
+                                <table class="table table-sm table-bordered" style="font-size:9pt;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Type de caution</th>
+                                            <th>Base de calcul</th>
+                                            <th class="text-end">Montant</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Caution provisoire (1,5%)</td>
+                                            <td>Montant soumissionné HT</td>
+                                            <td class="text-end">
+                                                <t t-esc="o.caution_provisoire_montant"
+                                                   t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Caution définitive (3%)</td>
+                                            <td>Montant soumissionné HT</td>
+                                            <td class="text-end">
+                                                <t t-esc="o.caution_definitif_montant"
+                                                   t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- - Signature block - -->
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <p class="fw-bold">Le Maître d'ouvrage</p>
+                                <br/><br/><br/>
+                                <p>________________________</p>
+                            </div>
+                            <div class="col-6 text-center">
+                                <p class="fw-bold">Le Soumissionnaire</p>
+                                <br/><br/><br/>
+                                <p>________________________</p>
+                            </div>
+                        </div>
+
+                    </div><!-- .page -->
+                </t><!-- external_layout -->
+            </t>
+        </t>
+    </template>
+
+</odoo>

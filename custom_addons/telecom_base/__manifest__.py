@@ -1,0 +1,22 @@
+{
+    'name': 'TelecomERP — Base',
+    'version': '17.0.1.0.0',
+    'category': 'TelecomERP',
+    'summary': 'Fondations TelecomERP : groupes de sécurité, extensions partenaires marocains',
+    'author': 'TelecomERP',
+    'license': 'OPL-1',
+    'depends': ['base', 'contacts', 'mail', 'account'],
+    'data': [
+        'security/telecom_security.xml',
+        'security/ir.model.access.csv',
+        'data/telecom_base_data.xml',
+        'views/res_partner_views.xml',
+        'views/res_company_views.xml',
+        'views/telecom_certification_views.xml',
+        'views/menu_views.xml',
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+    'sequence': 1,
+}

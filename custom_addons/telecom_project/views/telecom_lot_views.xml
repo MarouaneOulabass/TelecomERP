@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.lot — List view
+         ================================================================ -->
+
+    <record id="view_telecom_lot_list" model="ir.ui.view">
+        <field name="name">telecom.lot.list</field>
+        <field name="model">telecom.lot</field>
+        <field name="arch" type="xml">
+            <list string="Lots de projet"
+                  decoration-success="state == 'livre'"
+                  decoration-muted="state == 'suspendu'"
+                  decoration-info="state == 'en_cours'">
+                <field name="code" optional="show"/>
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="chef_lot_id" optional="show"/>
+                <field name="date_debut" optional="show"/>
+                <field name="date_fin_prevu"/>
+                <field name="sites_total"/>
+                <field name="sites_livres"/>
+                <field name="taux_avancement" widget="progressbar"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'livre'"
+                       decoration-warning="state == 'en_cours'"
+                       decoration-muted="state == 'suspendu'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.lot — Form view
+         ================================================================ -->
+
+    <record id="view_telecom_lot_form" model="ir.ui.view">
+        <field name="name">telecom.lot.form</field>
+        <field name="model">telecom.lot</field>
+        <field name="arch" type="xml">
+            <form string="Lot de projet">
+                <header>
+                    <button name="action_set_livre"
+                            string="Marquer Livré"
+                            type="object"
+                            class="btn-success"
+                            invisible="state in ('livre',)"/>
+                    <button name="action_set_suspendu"
+                            string="Suspendre"
+                            type="object"
+                            class="btn-warning"
+                            invisible="state in ('suspendu', 'livre')"/>
+                    <button name="action_set_en_cours"
+                            string="Reprendre"
+                            type="object"
+                            invisible="state != 'suspendu'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="en_cours,livre"/>
+                </header>
+
+                <sheet>
+                    <!-- KPI smart button -->
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" class="oe_stat_button" icon="fa-map-marker"
+                                name="action_view_sites">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="sites_livres"/>/<field name="sites_total"/>
+                                </span>
+                                <span class="o_stat_text">Sites</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Nom du lot…"/>
+                        </h1>
+                        <field name="code" placeholder="Code (ex: L01)"/>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="o_row mb-3">
+                        <label string="Avancement : "/>
+                        <field name="taux_avancement" widget="progressbar" readonly="1"
+                               style="width: 300px;"/>
+                    </div>
+
+                    <group col="2">
+                        <group string="Projet">
+                            <field name="project_id"/>
+                            <field name="chef_lot_id"/>
+                        </group>
+                        <group string="Planning">
+                            <field name="date_debut"/>
+                            <field name="date_fin_prevu"/>
+                            <field name="date_fin_reel"/>
+                        </group>
+                    </group>
+
+                    <group string="Description">
+                        <field name="description" nolabel="1" colspan="2"
+                               placeholder="Description du périmètre du lot…"/>
+                    </group>
+
+                    <!-- Sites inline -->
+                    <notebook>
+                        <page string="Sites du lot">
+                            <field name="project_site_ids"
+                                   context="{'default_project_id': project_id, 'default_lot_id': active_id}">
+                                <list string="Sites" editable="bottom"
+                                      decoration-success="state == 'livre'"
+                                      decoration-muted="state == 'suspendu'">
+                                    <field name="site_id"/>
+                                    <field name="responsable_site_id" optional="show"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'livre'"
+                                           decoration-warning="state in ('recette','travaux_en_cours')"
+                                           decoration-info="state in ('etude','autorisation')"
+                                           decoration-muted="state == 'suspendu'"/>
+                                    <field name="date_debut_prevu" optional="show"/>
+                                    <field name="date_fin_prevu"/>
+                                    <field name="date_livraison_reel" optional="show"/>
+                                    <field name="notes_avancement" optional="hide"/>
+                                    <field name="project_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.lot — Search view
+         ================================================================ -->
+
+    <record id="view_telecom_lot_search" model="ir.ui.view">
+        <field name="name">telecom.lot.search</field>
+        <field name="model">telecom.lot</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un lot">
+                <field name="name" string="Lot"
+                       filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                <field name="project_id"/>
+                <field name="chef_lot_id"/>
+                <separator/>
+                <filter name="filter_en_cours" string="En cours" domain="[('state', '=', 'en_cours')]"/>
+                <filter name="filter_livre" string="Livrés" domain="[('state', '=', 'livre')]"/>
+                <filter name="filter_suspendu" string="Suspendus" domain="[('state', '=', 'suspendu')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_project" string="Projet" context="{'group_by': 'project_id'}"/>
+                    <filter name="group_state" string="État" context="{'group_by': 'state'}"/>
+                    <filter name="group_chef" string="Responsable" context="{'group_by': 'chef_lot_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Action
+         ================================================================ -->
+
+    <record id="action_telecom_lot" model="ir.actions.act_window">
+        <field name="name">Lots de projet</field>
+        <field name="res_model">telecom.lot</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_telecom_lot_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier lot de projet
+            </p>
+            <p>
+                Un lot regroupe plusieurs sites d'un même projet télécom
+                (ex : Lot 1 — Grand Casablanca).
+            </p>
+        </field>
+    </record>
+
+</odoo>

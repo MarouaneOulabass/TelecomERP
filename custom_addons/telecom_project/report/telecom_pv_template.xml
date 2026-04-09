@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         QWeb PDF template — Procès-Verbal de Réception télécom
+         External ID: telecom_project.report_telecom_pv_document
+    ================================================================ -->
+
+    <template id="report_telecom_pv_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="pv">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- ══════════════════════════════════════════
+                             HEADER — Title block
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <h2 class="text-uppercase fw-bold">
+                                    Procès-Verbal de Réception
+                                </h2>
+                                <h4>
+                                    <t t-if="pv.pv_type == 'partiel'">
+                                        <span class="badge bg-info text-white">Réception Partielle</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="badge bg-success text-white">Réception Définitive</span>
+                                    </t>
+                                </h4>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             REFERENCE BLOCK
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <table class="table table-bordered table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <th class="bg-light" style="width:45%">N° PV</th>
+                                            <td><strong><t t-esc="pv.name"/></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-light">Date du PV</th>
+                                            <td>
+                                                <t t-esc="pv.date_pv"
+                                                   t-options='{"widget": "date"}'/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-light">Type</th>
+                                            <td>
+                                                <t t-if="pv.pv_type == 'partiel'">Réception partielle</t>
+                                                <t t-else="">Réception définitive</t>
+                                            </td>
+                                        </tr>
+                                        <t t-if="pv.date_signature">
+                                            <tr>
+                                                <th class="bg-light">Date de signature</th>
+                                                <td>
+                                                    <t t-esc="pv.date_signature"
+                                                       t-options='{"widget": "date"}'/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-bordered table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <th class="bg-light" style="width:45%">Projet</th>
+                                            <td><t t-esc="pv.project_id.name"/></td>
+                                        </tr>
+                                        <t t-if="pv.lot_id">
+                                            <tr>
+                                                <th class="bg-light">Lot</th>
+                                                <td><t t-esc="pv.lot_id.name"/></td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="pv.project_site_id">
+                                            <tr>
+                                                <th class="bg-light">Site</th>
+                                                <td><t t-esc="pv.project_site_id.site_id.name"/></td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Code site</th>
+                                                <td><t t-esc="pv.project_site_id.site_id.code_interne"/></td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="pv.project_id.operateur_id">
+                                            <tr>
+                                                <th class="bg-light">Opérateur</th>
+                                                <td><t t-esc="pv.project_id.operateur_id.name"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             PARTIES — Entreprise / Client
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1 mb-2">Parties prenantes</h5>
+                            </div>
+                            <div class="col-6">
+                                <strong>Entreprise prestataire</strong>
+                                <p class="mb-1"><t t-esc="pv.company_id.name"/></p>
+                                <t t-if="pv.redige_par">
+                                    <p class="mb-0">Représenté par : <strong><t t-esc="pv.redige_par.name"/></strong></p>
+                                    <t t-if="pv.redige_par.job_title">
+                                        <p class="text-muted small mb-0"><t t-esc="pv.redige_par.job_title"/></p>
+                                    </t>
+                                </t>
+                            </div>
+                            <div class="col-6">
+                                <strong>Client opérateur</strong>
+                                <t t-if="pv.project_id.operateur_id">
+                                    <p class="mb-1"><t t-esc="pv.project_id.operateur_id.name"/></p>
+                                </t>
+                                <t t-if="pv.representant_client">
+                                    <p class="mb-0">Représenté par : <strong><t t-esc="pv.representant_client"/></strong></p>
+                                    <t t-if="pv.representant_client_fonction">
+                                        <p class="text-muted small mb-0"><t t-esc="pv.representant_client_fonction"/></p>
+                                    </t>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             TRAVAUX RÉALISÉS
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1 mb-2">Travaux réalisés</h5>
+                                <div class="border p-3 bg-light rounded">
+                                    <t t-out="pv.travaux_realises"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             RÉSERVES
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1 mb-2">Réserves</h5>
+                                <t t-if="pv.reserves">
+                                    <div class="border p-3 rounded" style="border-color: #ffc107 !important; background-color: #fff9e6;">
+                                        <t t-out="pv.reserves"/>
+                                    </div>
+                                    <t t-if="pv.levee_reserves">
+                                        <div class="mt-2">
+                                            <strong>Modalités de levée des réserves :</strong>
+                                            <p class="mt-1"><t t-esc="pv.levee_reserves"/></p>
+                                            <t t-if="pv.delai_levee_reserves">
+                                                <p>
+                                                    Délai accordé :
+                                                    <strong><t t-esc="pv.delai_levee_reserves"/> jour(s)</strong>
+                                                    à compter de la date de signature du présent PV.
+                                                </p>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <div class="border p-3 rounded bg-light">
+                                        <p class="text-success mb-0">
+                                            <strong>Aucune réserve formulée.</strong>
+                                            Les travaux sont réceptionnés sans réserve.
+                                        </p>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             CONCLUSION
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="border p-3 rounded">
+                                    <t t-if="pv.pv_type == 'definitif'">
+                                        <p class="mb-0">
+                                            Les soussignés certifient que les travaux décrits ci-dessus ont été
+                                            réalisés conformément aux spécifications contractuelles et que la
+                                            <strong>réception définitive</strong> est prononcée à la date indiquée,
+                                            <t t-if="not pv.reserves">sans réserve.</t>
+                                            <t t-else="">sous réserve de la levée des points mentionnés ci-dessus.</t>
+                                        </p>
+                                    </t>
+                                    <t t-else="">
+                                        <p class="mb-0">
+                                            Les soussignés certifient que les travaux décrits ci-dessus ont été
+                                            réalisés à la date indiquée dans le cadre d'une
+                                            <strong>réception partielle</strong>.
+                                            La réception définitive interviendra à l'achèvement complet des travaux.
+                                        </p>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             SIGNATURE BLOCKS
+                        ══════════════════════════════════════════ -->
+                        <div class="row mb-5" style="page-break-inside: avoid;">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1 mb-3">Signatures</h5>
+                            </div>
+
+                            <!-- Entreprise signature -->
+                            <div class="col-6 text-center">
+                                <p class="mb-1"><strong>Pour l'entreprise prestataire</strong></p>
+                                <p class="text-muted small mb-3">
+                                    <t t-esc="pv.company_id.name"/>
+                                    <t t-if="pv.redige_par">
+                                        <br/><t t-esc="pv.redige_par.name"/>
+                                    </t>
+                                </p>
+                                <div style="height: 80px; border-bottom: 1px solid #999; margin: 0 20px;">
+                                    <t t-if="pv.signature_entreprise">
+                                        <img t-att-src="'data:image/png;base64,' + pv.signature_entreprise.decode('utf-8')"
+                                             style="max-height: 75px; max-width: 100%;"/>
+                                    </t>
+                                </div>
+                                <p class="text-muted small mt-1">Signature et cachet de l'entreprise</p>
+                            </div>
+
+                            <!-- Client signature -->
+                            <div class="col-6 text-center">
+                                <p class="mb-1"><strong>Pour le client opérateur</strong></p>
+                                <p class="text-muted small mb-3">
+                                    <t t-if="pv.project_id.operateur_id">
+                                        <t t-esc="pv.project_id.operateur_id.name"/>
+                                    </t>
+                                    <t t-if="pv.representant_client">
+                                        <br/><t t-esc="pv.representant_client"/>
+                                        <t t-if="pv.representant_client_fonction">
+                                            — <t t-esc="pv.representant_client_fonction"/>
+                                        </t>
+                                    </t>
+                                </p>
+                                <div style="height: 80px; border-bottom: 1px solid #999; margin: 0 20px;">
+                                    <t t-if="pv.signature_client">
+                                        <img t-att-src="'data:image/png;base64,' + pv.signature_client.decode('utf-8')"
+                                             style="max-height: 75px; max-width: 100%;"/>
+                                    </t>
+                                </div>
+                                <p class="text-muted small mt-1">Signature et cachet du client</p>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             LEGAL FOOTER
+                        ══════════════════════════════════════════ -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <hr/>
+                                <p class="text-muted small text-center">
+                                    Ce procès-verbal est établi en deux (2) exemplaires originaux, un pour chaque partie.
+                                    Il a valeur contractuelle et engage les deux parties signataires dès sa signature.
+                                    Conformément à la législation marocaine en vigueur, tout litige sera soumis
+                                    aux juridictions compétentes du ressort du lieu d'exécution des travaux.
+                                </p>
+                                <p class="text-muted small text-center mb-0">
+                                    Document généré par TelecomERP —
+                                    <t t-esc="pv.company_id.name"/> —
+                                    <span t-field="pv.date_pv" t-options='{"widget": "date"}'/>
+                                </p>
+                            </div>
+                        </div>
+
+                    </div><!-- /page -->
+                </t><!-- /external_layout -->
+            </t><!-- /foreach -->
+        </t><!-- /html_container -->
+    </template>
+
+</odoo>

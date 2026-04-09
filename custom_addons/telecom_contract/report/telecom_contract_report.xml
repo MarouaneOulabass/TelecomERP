@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         PDF report action — Contract summary
+    ============================================================ -->
+    <record id="action_report_telecom_contract" model="ir.actions.report">
+        <field name="name">Fiche contrat</field>
+        <field name="model">telecom.contract</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">telecom_contract.report_contract_document</field>
+        <field name="report_file">telecom_contract.report_contract_document</field>
+        <field name="print_report_name">
+            (object.reference or 'CTR') + ' — ' + object.name
+        </field>
+        <field name="binding_model_id" ref="model_telecom_contract"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ============================================================
+         QWeb template: Contract summary PDF
+    ============================================================ -->
+    <template id="report_contract_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- - Report title - -->
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <h2>FICHE CONTRAT</h2>
+                                <h4><t t-esc="o.reference"/> — <t t-esc="o.name"/></h4>
+                            </div>
+                        </div>
+
+                        <!-- - Contract identity - -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <h5 class="border-bottom pb-1">Identification</h5>
+                                <table class="table table-sm table-borderless" style="font-size:9pt;">
+                                    <tr>
+                                        <td class="fw-bold" style="width:45%">Référence :</td>
+                                        <td><t t-esc="o.reference"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Type :</td>
+                                        <td>
+                                            <t t-esc="dict(o._fields['contract_type'].selection).get(o.contract_type, o.contract_type)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">État :</td>
+                                        <td>
+                                            <t t-esc="dict(o._fields['state'].selection).get(o.state, o.state)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Chargé d'affaires :</td>
+                                        <td><t t-esc="o.responsable_id.name or '—'"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <h5 class="border-bottom pb-1">Parties</h5>
+                                <table class="table table-sm table-borderless" style="font-size:9pt;">
+                                    <tr>
+                                        <td class="fw-bold" style="width:50%">Opérateur / Client :</td>
+                                        <td><t t-esc="o.partenaire_id.name"/></td>
+                                    </tr>
+                                    <t t-if="o.partenaire_id.street">
+                                    <tr>
+                                        <td class="fw-bold">Adresse :</td>
+                                        <td>
+                                            <t t-esc="o.partenaire_id.street"/>
+                                            <t t-if="o.partenaire_id.city">, <t t-esc="o.partenaire_id.city"/></t>
+                                        </td>
+                                    </tr>
+                                    </t>
+                                    <t t-if="o.ao_id">
+                                    <tr>
+                                        <td class="fw-bold">AO d'origine :</td>
+                                        <td><t t-esc="o.ao_id.numero_ao"/> — <t t-esc="o.ao_id.name"/></td>
+                                    </tr>
+                                    </t>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- - Period and amounts - -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <h5 class="border-bottom pb-1">Période contractuelle</h5>
+                                <table class="table table-sm table-borderless" style="font-size:9pt;">
+                                    <tr>
+                                        <td class="fw-bold" style="width:50%">Date début :</td>
+                                        <td>
+                                            <t t-esc="o.date_debut" t-options='{"widget": "date"}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Date fin :</td>
+                                        <td>
+                                            <t t-if="o.date_fin">
+                                                <t t-esc="o.date_fin" t-options='{"widget": "date"}'/>
+                                            </t>
+                                            <t t-else="">Indéterminée</t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Tacite reconduction :</td>
+                                        <td><t t-esc="'Oui' if o.tacite_reconduction else 'Non'"/></td>
+                                    </tr>
+                                    <t t-if="o.tacite_reconduction">
+                                    <tr>
+                                        <td class="fw-bold">Préavis :</td>
+                                        <td><t t-esc="o.preavis_resiliation_mois"/> mois</td>
+                                    </tr>
+                                    </t>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <h5 class="border-bottom pb-1">Montants</h5>
+                                <table class="table table-sm table-borderless" style="font-size:9pt;">
+                                    <tr>
+                                        <td class="fw-bold" style="width:50%">Montant total HT :</td>
+                                        <td>
+                                            <t t-esc="o.montant_total"
+                                               t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- - SLA table - -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1">Engagements SLA</h5>
+                                <table class="table table-sm table-bordered" style="font-size:9pt;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Indicateur SLA</th>
+                                            <th class="text-end">Valeur contractuelle</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Délai maximal d'intervention</td>
+                                            <td class="text-end"><t t-esc="o.sla_delai_intervention_h"/> heures</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Délai maximal de réparation</td>
+                                            <td class="text-end"><t t-esc="o.sla_delai_reparation_h"/> heures</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Taux de disponibilité</td>
+                                            <td class="text-end"><t t-esc="o.sla_disponibilite_pct"/> %</td>
+                                        </tr>
+                                        <t t-if="o.penalite_sla">
+                                        <tr>
+                                            <td>Pénalités SLA</td>
+                                            <td><t t-esc="o.penalite_sla"/></td>
+                                        </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- - Cautions table - -->
+                        <t t-if="o.caution_bancaire_ids">
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1">Cautions bancaires</h5>
+                                <table class="table table-sm table-bordered" style="font-size:9pt;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Référence bancaire</th>
+                                            <th>Banque</th>
+                                            <th class="text-end">Montant</th>
+                                            <th>Émission</th>
+                                            <th>Expiration</th>
+                                            <th>Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="o.caution_bancaire_ids" t-as="c">
+                                            <tr>
+                                                <td>
+                                                    <t t-esc="dict(c._fields['caution_type'].selection).get(c.caution_type, c.caution_type)"/>
+                                                </td>
+                                                <td><t t-esc="c.reference_bancaire"/></td>
+                                                <td><t t-esc="c.banque"/></td>
+                                                <td class="text-end">
+                                                    <t t-esc="c.montant"
+                                                       t-options='{"widget": "monetary", "display_currency": c.currency_id}'/>
+                                                </td>
+                                                <td>
+                                                    <t t-if="c.date_emission">
+                                                        <t t-esc="c.date_emission" t-options='{"widget": "date"}'/>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                    <t t-if="c.date_expiration">
+                                                        <t t-esc="c.date_expiration" t-options='{"widget": "date"}'/>
+                                                    </t>
+                                                    <t t-else="">—</t>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="dict(c._fields['state'].selection).get(c.state, c.state)"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        </t>
+
+                        <!-- - Sites covered - -->
+                        <t t-if="o.sites_couverts">
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1">Sites couverts (<t t-esc="o.nb_sites"/> site(s))</h5>
+                                <table class="table table-sm table-bordered" style="font-size:9pt;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Nom du site</th>
+                                            <th>Code interne</th>
+                                            <th>Type</th>
+                                            <th>Wilaya</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="o.sites_couverts" t-as="s">
+                                            <tr>
+                                                <td><t t-esc="s.name"/></td>
+                                                <td><t t-esc="s.code_interne or '—'"/></td>
+                                                <td><t t-esc="s.site_type or '—'"/></td>
+                                                <td><t t-esc="s.wilaya or '—'"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        </t>
+
+                        <!-- - Signature block - -->
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <p class="fw-bold">Le Client / Opérateur</p>
+                                <br/><br/><br/>
+                                <p>________________________</p>
+                                <p><t t-esc="o.partenaire_id.name"/></p>
+                            </div>
+                            <div class="col-6 text-center">
+                                <p class="fw-bold">Le Prestataire</p>
+                                <br/><br/><br/>
+                                <p>________________________</p>
+                                <p><t t-esc="o.company_id.name"/></p>
+                            </div>
+                        </div>
+
+                    </div><!-- .page -->
+                </t><!-- external_layout -->
+            </t>
+        </t>
+    </template>
+
+</odoo>

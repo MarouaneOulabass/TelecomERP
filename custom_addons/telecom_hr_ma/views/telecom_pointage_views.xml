@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.pointage.chantier — List + Form + Calendar
+    ================================================================ -->
+
+    <record id="view_pointage_list" model="ir.ui.view">
+        <field name="name">telecom.pointage.chantier.list</field>
+        <field name="model">telecom.pointage.chantier</field>
+        <field name="arch" type="xml">
+            <tree string="Pointages chantier"
+                  decoration-muted="state == 'refuse'"
+                  decoration-success="state == 'valide'"
+                  decoration-info="state == 'draft'">
+                <field name="date"/>
+                <field name="employee_id"/>
+                <field name="site_id"/>
+                <field name="heure_debut" string="Début" widget="float_time"/>
+                <field name="heure_fin" string="Fin" widget="float_time"/>
+                <field name="duree_heures" string="Durée (h)" widget="float_time"/>
+                <field name="heures_supplementaires" string="H. Sup." widget="float_time"/>
+                <field name="prime_deplacement" string="Prime dép."/>
+                <field name="currency_id" invisible="1"/>
+                <field name="chef_validation_id" string="Chef"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'valide'"
+                       decoration-danger="state == 'refuse'"/>
+                <button name="action_valider" type="object" string="Valider"
+                        icon="fa-check" class="btn-success"
+                        attrs="{'invisible': [('state', '!=', 'draft')]}"
+                        groups="telecom_base.group_telecom_chef_chantier"/>
+                <button name="action_refuser" type="object" string="Refuser"
+                        icon="fa-times" class="btn-danger"
+                        attrs="{'invisible': [('state', '!=', 'draft')]}"
+                        groups="telecom_base.group_telecom_chef_chantier"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pointage_form" model="ir.ui.view">
+        <field name="name">telecom.pointage.chantier.form</field>
+        <field name="model">telecom.pointage.chantier</field>
+        <field name="arch" type="xml">
+            <form string="Pointage chantier">
+                <header>
+                    <button name="action_valider" type="object"
+                            string="Valider" class="btn-primary"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            groups="telecom_base.group_telecom_chef_chantier"/>
+                    <button name="action_refuser" type="object"
+                            string="Refuser" class="btn-danger"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            groups="telecom_base.group_telecom_chef_chantier"/>
+                    <button name="action_remettre_brouillon" type="object"
+                            string="Remettre en brouillon"
+                            attrs="{'invisible': [('state', '=', 'draft')]}"
+                            groups="telecom_base.group_telecom_admin"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,valide"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identification">
+                            <field name="employee_id"/>
+                            <field name="site_id"/>
+                            <field name="date"/>
+                        </group>
+                        <group string="Validation">
+                            <field name="chef_validation_id"
+                                   attrs="{'required': [('state', '=', 'valide')]}"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Horaires">
+                            <field name="heure_debut" widget="float_time"/>
+                            <field name="heure_fin" widget="float_time"/>
+                            <field name="duree_heures" widget="float_time" readonly="1"/>
+                            <field name="heures_supplementaires" widget="float_time" readonly="1"/>
+                        </group>
+                        <group string="Indemnités">
+                            <field name="prime_deplacement"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Calendar view -->
+    <record id="view_pointage_calendar" model="ir.ui.view">
+        <field name="name">telecom.pointage.chantier.calendar</field>
+        <field name="model">telecom.pointage.chantier</field>
+        <field name="arch" type="xml">
+            <calendar string="Pointages" date_start="date"
+                      color="employee_id" mode="month">
+                <field name="employee_id"/>
+                <field name="site_id"/>
+                <field name="duree_heures"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="view_pointage_search" model="ir.ui.view">
+        <field name="name">telecom.pointage.chantier.search</field>
+        <field name="model">telecom.pointage.chantier</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher pointage">
+                <field name="employee_id"/>
+                <field name="site_id"/>
+                <filter name="filter_draft" string="Brouillons"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_valide" string="Validés"
+                        domain="[('state', '=', 'valide')]"/>
+                <filter name="filter_refuse" string="Refusés"
+                        domain="[('state', '=', 'refuse')]"/>
+                <separator/>
+                <filter name="filter_this_month" string="Ce mois-ci"
+                        domain="[('date', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_employee" string="Employé"
+                            context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_site" string="Site"
+                            context="{'group_by': 'site_id'}"/>
+                    <filter name="group_date" string="Date"
+                            context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pointage_chantier" model="ir.actions.act_window">
+        <field name="name">Pointage chantier</field>
+        <field name="res_model">telecom.pointage.chantier</field>
+        <field name="view_mode">list,form,calendar</field>
+        <field name="search_view_id" ref="view_pointage_search"/>
+        <field name="context">{'search_default_filter_this_month': 1}</field>
+    </record>
+
+</odoo>

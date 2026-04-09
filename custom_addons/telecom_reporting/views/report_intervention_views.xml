@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         report.telecom.intervention.analysis — List view
+    ================================================================ -->
+    <record id="view_report_intervention_list" model="ir.ui.view">
+        <field name="name">report.telecom.intervention.analysis.list</field>
+        <field name="model">report.telecom.intervention.analysis</field>
+        <field name="arch" type="xml">
+            <list string="Interventions" create="false" edit="false" delete="false">
+                <field name="month" string="Mois"/>
+                <field name="site_name" string="Site"/>
+                <field name="wilaya" string="Région"/>
+                <field name="intervention_type" string="Type"/>
+                <field name="state" string="État"/>
+                <field name="date_planifiee" string="Date planifiée"/>
+                <field name="count_total" string="Nb" sum="Total"/>
+                <field name="count_sla_depasse" string="SLA dépassés" sum="Total SLA"/>
+                <field name="duree_moyenne" string="Durée (h)" digits="[8,2]" sum="Total heures"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         report.telecom.intervention.analysis — Pivot view
+    ================================================================ -->
+    <record id="view_report_intervention_pivot" model="ir.ui.view">
+        <field name="name">report.telecom.intervention.analysis.pivot</field>
+        <field name="model">report.telecom.intervention.analysis</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse interventions" disable_linking="True">
+                <field name="month" type="row"/>
+                <field name="intervention_type" type="col"/>
+                <field name="count_total" type="measure" string="Nb interventions"/>
+                <field name="count_sla_depasse" type="measure" string="SLA dépassés"/>
+                <field name="duree_moyenne" type="measure" string="Durée totale (h)"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         report.telecom.intervention.analysis — Graph view
+    ================================================================ -->
+    <record id="view_report_intervention_graph" model="ir.ui.view">
+        <field name="name">report.telecom.intervention.analysis.graph</field>
+        <field name="model">report.telecom.intervention.analysis</field>
+        <field name="arch" type="xml">
+            <graph string="Interventions par mois et état" type="bar" stacked="True">
+                <field name="month" type="row"/>
+                <field name="state" type="col"/>
+                <field name="count_total" type="measure" string="Nb interventions"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         report.telecom.intervention.analysis — Search view
+    ================================================================ -->
+    <record id="view_report_intervention_search" model="ir.ui.view">
+        <field name="name">report.telecom.intervention.analysis.search</field>
+        <field name="model">report.telecom.intervention.analysis</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher interventions">
+
+                <!-- Quick search fields -->
+                <field name="site_name" string="Site"/>
+                <field name="month" string="Mois"/>
+
+                <!-- Predefined filters -->
+                <filter string="Mois en cours"
+                        name="filter_current_month"
+                        domain="[('month', '=', context_today().strftime('%Y-%m'))]"/>
+                <filter string="Mois précédent"
+                        name="filter_last_month"
+                        domain="[('month', '=', (context_today().replace(day=1) - relativedelta(months=1)).strftime('%Y-%m'))]"/>
+                <filter string="Année en cours"
+                        name="filter_current_year"
+                        domain="[('year', '=', context_today().strftime('%Y'))]"/>
+                <separator/>
+                <filter string="SLA dépassé"
+                        name="filter_sla_depasse"
+                        domain="[('count_sla_depasse', '>', 0)]"/>
+                <filter string="Validées"
+                        name="filter_valide"
+                        domain="[('state', '=', 'valide')]"/>
+                <filter string="Annulées"
+                        name="filter_annule"
+                        domain="[('state', '=', 'annule')]"/>
+
+                <!-- Group-by options -->
+                <group expand="0" string="Regrouper par">
+                    <filter string="Type d'intervention"
+                            name="group_type"
+                            context="{'group_by': 'intervention_type'}"/>
+                    <filter string="État"
+                            name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Région (Wilaya)"
+                            name="group_wilaya"
+                            context="{'group_by': 'wilaya'}"/>
+                    <filter string="Mois"
+                            name="group_month"
+                            context="{'group_by': 'month'}"/>
+                    <filter string="Année"
+                            name="group_year"
+                            context="{'group_by': 'year'}"/>
+                    <filter string="Site"
+                            name="group_site"
+                            context="{'group_by': 'site_id'}"/>
+                    <filter string="Société"
+                            name="group_company"
+                            context="{'group_by': 'company_id'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+</odoo>

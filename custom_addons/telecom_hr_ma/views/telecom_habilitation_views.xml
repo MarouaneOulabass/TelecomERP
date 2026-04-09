@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.habilitation.type — List + Form
+    ================================================================ -->
+
+    <record id="view_habilitation_type_list" model="ir.ui.view">
+        <field name="name">telecom.habilitation.type.list</field>
+        <field name="model">telecom.habilitation.type</field>
+        <field name="arch" type="xml">
+            <tree string="Types d'habilitation" editable="top">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="periodicite_renouvellement" string="Renouvellement (mois)"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_habilitation_type_form" model="ir.ui.view">
+        <field name="name">telecom.habilitation.type.form</field>
+        <field name="model">telecom.habilitation.type</field>
+        <field name="arch" type="xml">
+            <form string="Type d'habilitation">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Désignation..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="periodicite_renouvellement"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_habilitation_type" model="ir.actions.act_window">
+        <field name="name">Types d'habilitation</field>
+        <field name="res_model">telecom.habilitation.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ================================================================
+         telecom.habilitation.employee — List + Form
+    ================================================================ -->
+
+    <record id="view_habilitation_employee_list" model="ir.ui.view">
+        <field name="name">telecom.habilitation.employee.list</field>
+        <field name="model">telecom.habilitation.employee</field>
+        <field name="arch" type="xml">
+            <tree string="Habilitations employés"
+                  decoration-danger="state == 'expired'"
+                  decoration-warning="state == 'expiring_soon'">
+                <field name="employee_id"/>
+                <field name="habilitation_type_id"/>
+                <field name="date_obtention"/>
+                <field name="date_expiration"/>
+                <field name="organisme_formateur"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'valid'"
+                       decoration-warning="state == 'expiring_soon'"
+                       decoration-danger="state == 'expired'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_habilitation_employee_form" model="ir.ui.view">
+        <field name="name">telecom.habilitation.employee.form</field>
+        <field name="model">telecom.habilitation.employee</field>
+        <field name="arch" type="xml">
+            <form string="Habilitation employé">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive"
+                                invisible="1"/>
+                    </div>
+                    <group>
+                        <group string="Employé &amp; Type">
+                            <field name="employee_id"/>
+                            <field name="habilitation_type_id"/>
+                        </group>
+                        <group string="Statut">
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'valid'"
+                                   decoration-warning="state == 'expiring_soon'"
+                                   decoration-danger="state == 'expired'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Dates">
+                            <field name="date_obtention"/>
+                            <field name="date_expiration"/>
+                            <field name="organisme_formateur"/>
+                        </group>
+                        <group string="Document justificatif">
+                            <field name="document" widget="binary" filename="document_filename"/>
+                            <field name="document_filename" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search view for filtering/grouping habilitations -->
+    <record id="view_habilitation_employee_search" model="ir.ui.view">
+        <field name="name">telecom.habilitation.employee.search</field>
+        <field name="model">telecom.habilitation.employee</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher habilitation">
+                <field name="employee_id"/>
+                <field name="habilitation_type_id"/>
+                <filter name="filter_expired" string="Expirées"
+                        domain="[('state', '=', 'expired')]"/>
+                <filter name="filter_expiring" string="Expirent bientôt"
+                        domain="[('state', '=', 'expiring_soon')]"/>
+                <filter name="filter_valid" string="Valides"
+                        domain="[('state', '=', 'valid')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_employee" string="Employé"
+                            context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_type" string="Type"
+                            context="{'group_by': 'habilitation_type_id'}"/>
+                    <filter name="group_state" string="Statut"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_habilitation_employee" model="ir.actions.act_window">
+        <field name="name">Habilitations</field>
+        <field name="res_model">telecom.habilitation.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_habilitation_employee_search"/>
+    </record>
+
+    <!-- Context action from employee (used in smart button) -->
+    <record id="action_habilitation_employee_from_emp" model="ir.actions.act_window">
+        <field name="name">Habilitations</field>
+        <field name="res_model">telecom.habilitation.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('employee_id', '=', active_id)]</field>
+        <field name="context">{'default_employee_id': active_id}</field>
+    </record>
+
+</odoo>

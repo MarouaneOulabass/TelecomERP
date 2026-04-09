@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_telecom_vehicle_technicien,telecom.vehicle.technicien,model_telecom_vehicle,telecom_base.group_telecom_technicien,1,0,0,0
+access_telecom_vehicle_chef,telecom.vehicle.chef,model_telecom_vehicle,telecom_base.group_telecom_chef_chantier,1,1,0,0
+access_telecom_vehicle_charge,telecom.vehicle.charge,model_telecom_vehicle,telecom_base.group_telecom_charge_affaires,1,1,1,0
+access_telecom_vehicle_admin,telecom.vehicle.admin,model_telecom_vehicle,telecom_base.group_telecom_admin,1,1,1,1
+access_telecom_vehicle_entretien_technicien,telecom.vehicle.entretien.technicien,model_telecom_vehicle_entretien,telecom_base.group_telecom_technicien,1,0,0,0
+access_telecom_vehicle_entretien_chef,telecom.vehicle.entretien.chef,model_telecom_vehicle_entretien,telecom_base.group_telecom_chef_chantier,1,1,1,0
+access_telecom_vehicle_entretien_charge,telecom.vehicle.entretien.charge,model_telecom_vehicle_entretien,telecom_base.group_telecom_charge_affaires,1,1,1,0
+access_telecom_vehicle_entretien_admin,telecom.vehicle.entretien.admin,model_telecom_vehicle_entretien,telecom_base.group_telecom_admin,1,1,1,1

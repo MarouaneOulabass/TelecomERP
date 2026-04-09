@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Multi-company record rules
+             All models restrict visibility to records belonging to the
+             current user's company (or companies in multi-company mode).
+        ============================================================ -->
+
+        <!-- telecom.equipment.category — shared across companies (no company field) -->
+        <!-- Categories are company-independent; no rule needed. -->
+
+        <!-- telecom.equipment -->
+        <record id="rule_telecom_equipment_company"
+                model="ir.rule">
+            <field name="name">Équipement : accès multi-société</field>
+            <field name="model_id" ref="model_telecom_equipment"/>
+            <field name="domain_force">
+                ['|',
+                 ('company_id', '=', False),
+                 ('company_id', 'in', company_ids)]
+            </field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- telecom.equipment.historique -->
+        <record id="rule_telecom_equipment_historique_company"
+                model="ir.rule">
+            <field name="name">Historique équipement : accès multi-société</field>
+            <field name="model_id" ref="model_telecom_equipment_historique"/>
+            <field name="domain_force">
+                [('equipment_id.company_id', 'in', company_ids)]
+            </field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- telecom.outillage -->
+        <record id="rule_telecom_outillage_company"
+                model="ir.rule">
+            <field name="name">Outillage : accès multi-société</field>
+            <field name="model_id" ref="model_telecom_outillage"/>
+            <field name="domain_force">
+                ['|',
+                 ('company_id', '=', False),
+                 ('company_id', 'in', company_ids)]
+            </field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

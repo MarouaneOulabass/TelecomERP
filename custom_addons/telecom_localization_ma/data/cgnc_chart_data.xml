@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        CGNC — Code Général de la Normalisation Comptable (Maroc)
+
+        These records create account.group entries for each class and
+        principal sub-group of the CGNC.  Full account codes depend on
+        the company; this file provides the structural skeleton that
+        accountants complete per company.
+
+        noupdate="1" prevents overwriting manual adjustments on upgrade.
+    -->
+    <data noupdate="1">
+
+        <!-- ============================================================
+             CLASSE 1 — Comptes de financement permanent
+        ============================================================ -->
+        <record id="cgnc_class_1" model="account.group">
+            <field name="name">Classe 1 — Financement permanent</field>
+            <field name="code_prefix_start">1</field>
+            <field name="code_prefix_end">1</field>
+        </record>
+
+        <record id="cgnc_11" model="account.group">
+            <field name="name">11 — Capitaux propres et assimilés</field>
+            <field name="code_prefix_start">11</field>
+            <field name="code_prefix_end">11</field>
+            <field name="parent_id" ref="cgnc_class_1"/>
+        </record>
+
+        <record id="cgnc_12" model="account.group">
+            <field name="name">12 — Résultats nets en instance d'affectation</field>
+            <field name="code_prefix_start">12</field>
+            <field name="code_prefix_end">12</field>
+            <field name="parent_id" ref="cgnc_class_1"/>
+        </record>
+
+        <record id="cgnc_13" model="account.group">
+            <field name="name">13 — Capitaux propres assimilés</field>
+            <field name="code_prefix_start">13</field>
+            <field name="code_prefix_end">13</field>
+            <field name="parent_id" ref="cgnc_class_1"/>
+        </record>
+
+        <record id="cgnc_14" model="account.group">
+            <field name="name">14 — Dettes de financement</field>
+            <field name="code_prefix_start">14</field>
+            <field name="code_prefix_end">14</field>
+            <field name="parent_id" ref="cgnc_class_1"/>
+        </record>
+
+        <record id="cgnc_15" model="account.group">
+            <field name="name">15 — Provisions durables pour risques et charges</field>
+            <field name="code_prefix_start">15</field>
+            <field name="code_prefix_end">15</field>
+            <field name="parent_id" ref="cgnc_class_1"/>
+        </record>
+
+        <record id="cgnc_16" model="account.group">
+            <field name="name">16 — Comptes de liaison des établissements et sociétés en participation</field>
+            <field name="code_prefix_start">16</field>
+            <field name="code_prefix_end">16</field>
+            <field name="parent_id" ref="cgnc_class_1"/>
+        </record>
+
+        <record id="cgnc_17" model="account.group">
+            <field name="name">17 — Écarts de conversion — Passif</field>
+            <field name="code_prefix_start">17</field>
+            <field name="code_prefix_end">17</field>
+            <field name="parent_id" ref="cgnc_class_1"/>
+        </record>
+
+        <record id="cgnc_18" model="account.group">
+            <field name="name">18 — Comptes de liaison des sociétés en participation</field>
+            <field name="code_prefix_start">18</field>
+            <field name="code_prefix_end">18</field>
+            <field name="parent_id" ref="cgnc_class_1"/>
+        </record>
+
+        <!-- ============================================================
+             CLASSE 2 — Comptes d'actif immobilisé
+        ============================================================ -->
+        <record id="cgnc_class_2" model="account.group">
+            <field name="name">Classe 2 — Actif immobilisé</field>
+            <field name="code_prefix_start">2</field>
+            <field name="code_prefix_end">2</field>
+        </record>
+
+        <record id="cgnc_21" model="account.group">
+            <field name="name">21 — Immobilisations en non-valeurs</field>
+            <field name="code_prefix_start">21</field>
+            <field name="code_prefix_end">21</field>
+            <field name="parent_id" ref="cgnc_class_2"/>
+        </record>
+
+        <record id="cgnc_22" model="account.group">
+            <field name="name">22 — Immobilisations incorporelles</field>
+            <field name="code_prefix_start">22</field>
+            <field name="code_prefix_end">22</field>
+            <field name="parent_id" ref="cgnc_class_2"/>
+        </record>
+
+        <record id="cgnc_23" model="account.group">
+            <field name="name">23 — Immobilisations corporelles</field>
+            <field name="code_prefix_start">23</field>
+            <field name="code_prefix_end">23</field>
+            <field name="parent_id" ref="cgnc_class_2"/>
+        </record>
+
+        <record id="cgnc_24" model="account.group">
+            <field name="name">24 — Immobilisations financières</field>
+            <field name="code_prefix_start">24</field>
+            <field name="code_prefix_end">24</field>
+            <field name="parent_id" ref="cgnc_class_2"/>
+        </record>
+
+        <record id="cgnc_25" model="account.group">
+            <field name="name">25 — Écarts de conversion — Actif</field>
+            <field name="code_prefix_start">25</field>
+            <field name="code_prefix_end">25</field>
+            <field name="parent_id" ref="cgnc_class_2"/>
+        </record>
+
+        <record id="cgnc_27" model="account.group">
+            <field name="name">27 — Immobilisations en cours</field>
+            <field name="code_prefix_start">27</field>
+            <field name="code_prefix_end">27</field>
+            <field name="parent_id" ref="cgnc_class_2"/>
+        </record>
+
+        <record id="cgnc_28" model="account.group">
+            <field name="name">28 — Amortissements des immobilisations</field>
+            <field name="code_prefix_start">28</field>
+            <field name="code_prefix_end">28</field>
+            <field name="parent_id" ref="cgnc_class_2"/>
+        </record>
+
+        <!-- ============================================================
+             CLASSE 3 — Comptes d'actif circulant (hors trésorerie) — Stocks
+        ============================================================ -->
+        <record id="cgnc_class_3" model="account.group">
+            <field name="name">Classe 3 — Actif circulant — Stocks</field>
+            <field name="code_prefix_start">3</field>
+            <field name="code_prefix_end">3</field>
+        </record>
+
+        <record id="cgnc_31" model="account.group">
+            <field name="name">31 — Stocks de marchandises</field>
+            <field name="code_prefix_start">31</field>
+            <field name="code_prefix_end">31</field>
+            <field name="parent_id" ref="cgnc_class_3"/>
+        </record>
+
+        <record id="cgnc_32" model="account.group">
+            <field name="name">32 — Stocks de matières et fournitures consommables</field>
+            <field name="code_prefix_start">32</field>
+            <field name="code_prefix_end">32</field>
+            <field name="parent_id" ref="cgnc_class_3"/>
+        </record>
+
+        <record id="cgnc_33" model="account.group">
+            <field name="name">33 — Stocks de produits</field>
+            <field name="code_prefix_start">33</field>
+            <field name="code_prefix_end">33</field>
+            <field name="parent_id" ref="cgnc_class_3"/>
+        </record>
+
+        <record id="cgnc_34" model="account.group">
+            <field name="name">34 — Stocks de produits en cours</field>
+            <field name="code_prefix_start">34</field>
+            <field name="code_prefix_end">34</field>
+            <field name="parent_id" ref="cgnc_class_3"/>
+        </record>
+
+        <record id="cgnc_35" model="account.group">
+            <field name="name">35 — Stocks de produits finis</field>
+            <field name="code_prefix_start">35</field>
+            <field name="code_prefix_end">35</field>
+            <field name="parent_id" ref="cgnc_class_3"/>
+        </record>
+
+        <record id="cgnc_37" model="account.group">
+            <field name="name">37 — Stocks en cours de route</field>
+            <field name="code_prefix_start">37</field>
+            <field name="code_prefix_end">37</field>
+            <field name="parent_id" ref="cgnc_class_3"/>
+        </record>
+
+        <record id="cgnc_39" model="account.group">
+            <field name="name">39 — Provisions pour dépréciation des stocks</field>
+            <field name="code_prefix_start">39</field>
+            <field name="code_prefix_end">39</field>
+            <field name="parent_id" ref="cgnc_class_3"/>
+        </record>
+
+        <!-- ============================================================
+             CLASSE 4 — Comptes de passif circulant — Tiers
+        ============================================================ -->
+        <record id="cgnc_class_4" model="account.group">
+            <field name="name">Classe 4 — Passif circulant — Tiers</field>
+            <field name="code_prefix_start">4</field>
+            <field name="code_prefix_end">4</field>
+        </record>
+
+        <record id="cgnc_41" model="account.group">
+            <field name="name">41 — Clients et comptes rattachés</field>
+            <field name="code_prefix_start">41</field>
+            <field name="code_prefix_end">41</field>
+            <field name="parent_id" ref="cgnc_class_4"/>
+        </record>
+
+        <record id="cgnc_42" model="account.group">
+            <field name="name">42 — Personnel et comptes rattachés</field>
+            <field name="code_prefix_start">42</field>
+            <field name="code_prefix_end">42</field>
+            <field name="parent_id" ref="cgnc_class_4"/>
+        </record>
+
+        <record id="cgnc_43" model="account.group">
+            <field name="name">43 — Organismes sociaux et comptes rattachés</field>
+            <field name="code_prefix_start">43</field>
+            <field name="code_prefix_end">43</field>
+            <field name="parent_id" ref="cgnc_class_4"/>
+        </record>
+
+        <record id="cgnc_44" model="account.group">
+            <field name="name">44 — État et collectivités publiques</field>
+            <field name="code_prefix_start">44</field>
+            <field name="code_prefix_end">44</field>
+            <field name="parent_id" ref="cgnc_class_4"/>
+        </record>
+
+        <record id="cgnc_45" model="account.group">
+            <field name="name">45 — Comptes d'associés</field>
+            <field name="code_prefix_start">45</field>
+            <field name="code_prefix_end">45</field>
+            <field name="parent_id" ref="cgnc_class_4"/>
+        </record>
+
+        <record id="cgnc_46" model="account.group">
+            <field name="name">46 — Débiteurs et créditeurs divers</field>
+            <field name="code_prefix_start">46</field>
+            <field name="code_prefix_end">46</field>
+            <field name="parent_id" ref="cgnc_class_4"/>
+        </record>
+
+        <record id="cgnc_47" model="account.group">
+            <field name="name">47 — Comptes de régularisation — Passif</field>
+            <field name="code_prefix_start">47</field>
+            <field name="code_prefix_end">47</field>
+            <field name="parent_id" ref="cgnc_class_4"/>
+        </record>
+
+        <record id="cgnc_48" model="account.group">
+            <field name="name">48 — Autres comptes de tiers</field>
+            <field name="code_prefix_start">48</field>
+            <field name="code_prefix_end">48</field>
+            <field name="parent_id" ref="cgnc_class_4"/>
+        </record>
+
+        <record id="cgnc_49" model="account.group">
+            <field name="name">49 — Provisions pour dépréciation des comptes de tiers</field>
+            <field name="code_prefix_start">49</field>
+            <field name="code_prefix_end">49</field>
+            <field name="parent_id" ref="cgnc_class_4"/>
+        </record>
+
+        <!-- ============================================================
+             CLASSE 5 — Comptes de trésorerie
+        ============================================================ -->
+        <record id="cgnc_class_5" model="account.group">
+            <field name="name">Classe 5 — Trésorerie</field>
+            <field name="code_prefix_start">5</field>
+            <field name="code_prefix_end">5</field>
+        </record>
+
+        <record id="cgnc_51" model="account.group">
+            <field name="name">51 — Trésorerie — Actif</field>
+            <field name="code_prefix_start">51</field>
+            <field name="code_prefix_end">51</field>
+            <field name="parent_id" ref="cgnc_class_5"/>
+        </record>
+
+        <record id="cgnc_52" model="account.group">
+            <field name="name">52 — Banques, trésoreries et établissements financiers</field>
+            <field name="code_prefix_start">52</field>
+            <field name="code_prefix_end">52</field>
+            <field name="parent_id" ref="cgnc_class_5"/>
+        </record>
+
+        <record id="cgnc_53" model="account.group">
+            <field name="name">53 — Caisses, régies d'avances et accréditifs</field>
+            <field name="code_prefix_start">53</field>
+            <field name="code_prefix_end">53</field>
+            <field name="parent_id" ref="cgnc_class_5"/>
+        </record>
+
+        <record id="cgnc_54" model="account.group">
+            <field name="name">54 — Chèques et valeurs à encaisser</field>
+            <field name="code_prefix_start">54</field>
+            <field name="code_prefix_end">54</field>
+            <field name="parent_id" ref="cgnc_class_5"/>
+        </record>
+
+        <record id="cgnc_55" model="account.group">
+            <field name="name">55 — Instruments financiers dérivés</field>
+            <field name="code_prefix_start">55</field>
+            <field name="code_prefix_end">55</field>
+            <field name="parent_id" ref="cgnc_class_5"/>
+        </record>
+
+        <record id="cgnc_59" model="account.group">
+            <field name="name">59 — Provisions pour dépréciation des comptes de trésorerie</field>
+            <field name="code_prefix_start">59</field>
+            <field name="code_prefix_end">59</field>
+            <field name="parent_id" ref="cgnc_class_5"/>
+        </record>
+
+        <!-- ============================================================
+             CLASSE 6 — Comptes de charges
+        ============================================================ -->
+        <record id="cgnc_class_6" model="account.group">
+            <field name="name">Classe 6 — Charges</field>
+            <field name="code_prefix_start">6</field>
+            <field name="code_prefix_end">6</field>
+        </record>
+
+        <record id="cgnc_61" model="account.group">
+            <field name="name">61 — Charges d'exploitation</field>
+            <field name="code_prefix_start">61</field>
+            <field name="code_prefix_end">61</field>
+            <field name="parent_id" ref="cgnc_class_6"/>
+        </record>
+
+        <record id="cgnc_62" model="account.group">
+            <field name="name">62 — Charges externes</field>
+            <field name="code_prefix_start">62</field>
+            <field name="code_prefix_end">62</field>
+            <field name="parent_id" ref="cgnc_class_6"/>
+        </record>
+
+        <record id="cgnc_63" model="account.group">
+            <field name="name">63 — Impôts et taxes</field>
+            <field name="code_prefix_start">63</field>
+            <field name="code_prefix_end">63</field>
+            <field name="parent_id" ref="cgnc_class_6"/>
+        </record>
+
+        <record id="cgnc_64" model="account.group">
+            <field name="name">64 — Charges de personnel</field>
+            <field name="code_prefix_start">64</field>
+            <field name="code_prefix_end">64</field>
+            <field name="parent_id" ref="cgnc_class_6"/>
+        </record>
+
+        <record id="cgnc_65" model="account.group">
+            <field name="name">65 — Autres charges d'exploitation</field>
+            <field name="code_prefix_start">65</field>
+            <field name="code_prefix_end">65</field>
+            <field name="parent_id" ref="cgnc_class_6"/>
+        </record>
+
+        <record id="cgnc_66" model="account.group">
+            <field name="name">66 — Charges financières</field>
+            <field name="code_prefix_start">66</field>
+            <field name="code_prefix_end">66</field>
+            <field name="parent_id" ref="cgnc_class_6"/>
+        </record>
+
+        <record id="cgnc_67" model="account.group">
+            <field name="name">67 — Charges non courantes</field>
+            <field name="code_prefix_start">67</field>
+            <field name="code_prefix_end">67</field>
+            <field name="parent_id" ref="cgnc_class_6"/>
+        </record>
+
+        <record id="cgnc_68" model="account.group">
+            <field name="name">68 — Dotations aux amortissements et provisions</field>
+            <field name="code_prefix_start">68</field>
+            <field name="code_prefix_end">68</field>
+            <field name="parent_id" ref="cgnc_class_6"/>
+        </record>
+
+        <record id="cgnc_69" model="account.group">
+            <field name="name">69 — Impôts sur les résultats</field>
+            <field name="code_prefix_start">69</field>
+            <field name="code_prefix_end">69</field>
+            <field name="parent_id" ref="cgnc_class_6"/>
+        </record>
+
+        <!-- ============================================================
+             CLASSE 7 — Comptes de produits
+        ============================================================ -->
+        <record id="cgnc_class_7" model="account.group">
+            <field name="name">Classe 7 — Produits</field>
+            <field name="code_prefix_start">7</field>
+            <field name="code_prefix_end">7</field>
+        </record>
+
+        <record id="cgnc_71" model="account.group">
+            <field name="name">71 — Produits d'exploitation</field>
+            <field name="code_prefix_start">71</field>
+            <field name="code_prefix_end">71</field>
+            <field name="parent_id" ref="cgnc_class_7"/>
+        </record>
+
+        <record id="cgnc_72" model="account.group">
+            <field name="name">72 — Produits des cessions d'immobilisations</field>
+            <field name="code_prefix_start">72</field>
+            <field name="code_prefix_end">72</field>
+            <field name="parent_id" ref="cgnc_class_7"/>
+        </record>
+
+        <record id="cgnc_73" model="account.group">
+            <field name="name">73 — Variation des stocks de produits</field>
+            <field name="code_prefix_start">73</field>
+            <field name="code_prefix_end">73</field>
+            <field name="parent_id" ref="cgnc_class_7"/>
+        </record>
+
+        <record id="cgnc_74" model="account.group">
+            <field name="name">74 — Immobilisations produites par l'entreprise pour elle-même</field>
+            <field name="code_prefix_start">74</field>
+            <field name="code_prefix_end">74</field>
+            <field name="parent_id" ref="cgnc_class_7"/>
+        </record>
+
+        <record id="cgnc_75" model="account.group">
+            <field name="name">75 — Autres produits d'exploitation</field>
+            <field name="code_prefix_start">75</field>
+            <field name="code_prefix_end">75</field>
+            <field name="parent_id" ref="cgnc_class_7"/>
+        </record>
+
+        <record id="cgnc_76" model="account.group">
+            <field name="name">76 — Produits financiers</field>
+            <field name="code_prefix_start">76</field>
+            <field name="code_prefix_end">76</field>
+            <field name="parent_id" ref="cgnc_class_7"/>
+        </record>
+
+        <record id="cgnc_77" model="account.group">
+            <field name="name">77 — Produits non courants</field>
+            <field name="code_prefix_start">77</field>
+            <field name="code_prefix_end">77</field>
+            <field name="parent_id" ref="cgnc_class_7"/>
+        </record>
+
+        <record id="cgnc_78" model="account.group">
+            <field name="name">78 — Reprises sur amortissements et provisions</field>
+            <field name="code_prefix_start">78</field>
+            <field name="code_prefix_end">78</field>
+            <field name="parent_id" ref="cgnc_class_7"/>
+        </record>
+
+        <record id="cgnc_79" model="account.group">
+            <field name="name">79 — Transferts de charges</field>
+            <field name="code_prefix_start">79</field>
+            <field name="code_prefix_end">79</field>
+            <field name="parent_id" ref="cgnc_class_7"/>
+        </record>
+
+    </data>
+</odoo>

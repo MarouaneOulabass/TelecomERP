@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        telecom_fleet_data.xml
+        ========================
+        No static seed data is required for this module:
+        - Vehicles are company-specific and created by each tenant
+        - Vehicle categories are defined as a Selection field (no separate model)
+        - Maintenance types are Selection values (no separate model)
+
+        This file is kept as a placeholder for future reference data
+        (e.g., common garage prestataires, maintenance checklists).
+    -->
+</odoo>

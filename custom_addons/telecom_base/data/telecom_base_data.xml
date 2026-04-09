@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Default specialties -->
+        <record id="specialite_fibre_optique" model="telecom.specialite">
+            <field name="name">Fibre optique (FTTH/FTTB)</field>
+            <field name="code">FIBR</field>
+        </record>
+        <record id="specialite_rf_mobile" model="telecom.specialite">
+            <field name="name">Radio Fréquence (2G/3G/4G/5G)</field>
+            <field name="code">RF</field>
+        </record>
+        <record id="specialite_courant_fort" model="telecom.specialite">
+            <field name="name">Courant fort</field>
+            <field name="code">CF</field>
+        </record>
+        <record id="specialite_courant_faible" model="telecom.specialite">
+            <field name="name">Courant faible</field>
+            <field name="code">CFA</field>
+        </record>
+        <record id="specialite_pylone" model="telecom.specialite">
+            <field name="name">Pylône / Travaux en hauteur</field>
+            <field name="code">PYL</field>
+        </record>
+        <record id="specialite_energie" model="telecom.specialite">
+            <field name="name">Énergie / Groupe électrogène</field>
+            <field name="code">NRG</field>
+        </record>
+        <record id="specialite_civil" model="telecom.specialite">
+            <field name="name">Génie civil</field>
+            <field name="code">GC</field>
+        </record>
+
+    </data>
+</odoo>

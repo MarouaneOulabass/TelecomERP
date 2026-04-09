@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.avance.demarrage — List view
+    ================================================================ -->
+
+    <record id="view_telecom_avance_list" model="ir.ui.view">
+        <field name="name">telecom.avance.demarrage.list</field>
+        <field name="model">telecom.avance.demarrage</field>
+        <field name="arch" type="xml">
+            <list string="Avances de démarrage"
+                  decoration-success="state == 'rembourse'"
+                  decoration-warning="state == 'en_cours_remboursement'"
+                  decoration-muted="state == 'en_attente'">
+                <field name="name" string="N° Avance"/>
+                <field name="project_id" string="Projet"/>
+                <field name="client_id" string="Client"/>
+                <field name="contract_id" string="Contrat"/>
+                <field name="taux_avance" string="Taux (%)" widget="percentage"/>
+                <field name="montant_avance" string="Montant théorique" sum="Total théorique"/>
+                <field name="montant_verse" string="Montant versé" sum="Total versé"/>
+                <field name="total_rembourse" string="Remboursé" sum="Total remboursé"/>
+                <field name="solde_restant" string="Solde restant" sum="Total solde"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="state" string="État" widget="badge"
+                       decoration-secondary="state == 'en_attente'"
+                       decoration-info="state == 'verse'"
+                       decoration-warning="state == 'en_cours_remboursement'"
+                       decoration-success="state == 'rembourse'"/>
+                <field name="date_versement" string="Date versement" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.avance.demarrage — Form view
+    ================================================================ -->
+
+    <record id="view_telecom_avance_form" model="ir.ui.view">
+        <field name="name">telecom.avance.demarrage.form</field>
+        <field name="model">telecom.avance.demarrage</field>
+        <field name="arch" type="xml">
+            <form string="Avance de démarrage">
+
+                <!-- ── Status bar ─────────────────────────────────── -->
+                <header>
+                    <button name="action_marquer_versee"
+                            string="Marquer versée"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'en_attente'"/>
+                    <button name="action_demarrer_remboursement"
+                            string="Démarrer remboursements"
+                            type="object"
+                            class="btn-warning"
+                            invisible="state != 'verse'"/>
+                    <button name="action_marquer_rembourse"
+                            string="Solder l'avance"
+                            type="object"
+                            class="btn-success"
+                            invisible="state != 'en_cours_remboursement'"/>
+                    <button name="action_reset_attente"
+                            string="Réinitialiser"
+                            type="object"
+                            class="btn-secondary"
+                            groups="telecom_base.group_telecom_admin"
+                            invisible="state == 'en_attente'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="en_attente,verse,en_cours_remboursement,rembourse"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" placeholder="N° Avance (auto)"/>
+                        </h1>
+                    </div>
+
+                    <!-- ── Section 1 : Identification ─────────────── -->
+                    <group string="Identification">
+                        <group>
+                            <field name="project_id"/>
+                            <field name="contract_id"/>
+                            <field name="client_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" options="{'no_create': True}"/>
+                            <field name="montant_marche"/>
+                            <field name="taux_avance" widget="percentage"/>
+                            <field name="montant_avance" class="fw-bold"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Section 2 : Versement ──────────────────── -->
+                    <group string="Versement effectif">
+                        <group>
+                            <field name="date_versement"/>
+                            <field name="montant_verse"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Section 3 : Récapitulatif remboursements── -->
+                    <group string="Récapitulatif remboursements" invisible="state == 'en_attente'">
+                        <group>
+                            <field name="total_rembourse"/>
+                            <field name="solde_restant" class="fw-bold"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Tab : Remboursements ────────────────────── -->
+                    <notebook>
+                        <page string="Remboursements" name="remboursements">
+                            <field name="remboursement_ids">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="situation_id"/>
+                                    <field name="montant" sum="Total remboursé"/>
+                                    <field name="notes"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes internes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- ── Chatter ────────────────────────────────────── -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.avance.demarrage — Search view
+    ================================================================ -->
+
+    <record id="view_telecom_avance_search" model="ir.ui.view">
+        <field name="name">telecom.avance.demarrage.search</field>
+        <field name="model">telecom.avance.demarrage</field>
+        <field name="arch" type="xml">
+            <search string="Recherche avances de démarrage">
+                <field name="name" string="N° Avance"/>
+                <field name="project_id" string="Projet"/>
+                <field name="client_id" string="Client"/>
+                <field name="contract_id" string="Contrat"/>
+
+                <!-- Filters -->
+                <filter string="En attente" name="filter_en_attente"
+                        domain="[('state', '=', 'en_attente')]"/>
+                <filter string="Versées" name="filter_verse"
+                        domain="[('state', '=', 'verse')]"/>
+                <filter string="En cours de remboursement" name="filter_en_cours"
+                        domain="[('state', '=', 'en_cours_remboursement')]"/>
+                <filter string="Remboursées" name="filter_rembourse"
+                        domain="[('state', '=', 'rembourse')]"/>
+                <separator/>
+                <filter string="Solde non nul" name="filter_solde"
+                        domain="[('solde_restant', '>', 0)]"/>
+
+                <!-- Group by -->
+                <group expand="0" string="Grouper par">
+                    <filter string="Projet" name="group_project"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter string="Client" name="group_client"
+                            context="{'group_by': 'client_id'}"/>
+                    <filter string="État" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Window action
+    ================================================================ -->
+
+    <record id="action_telecom_avance_demarrage" model="ir.actions.act_window">
+        <field name="name">Avances de démarrage</field>
+        <field name="res_model">telecom.avance.demarrage</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_telecom_avance_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Enregistrer une nouvelle avance de démarrage
+            </p>
+            <p>
+                Les avances de démarrage (10 % ou 15 % du montant marché) sont versées
+                en début de projet et récupérées progressivement sur les situations de travaux.
+            </p>
+        </field>
+    </record>
+
+</odoo>

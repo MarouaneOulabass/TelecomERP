@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Équipements — Top-level submenu under TelecomERP root
+    ================================================================ -->
+    <menuitem id="menu_telecom_equipment_root"
+              name="Équipements"
+              parent="telecom_base.menu_telecom_root"
+              sequence="20"/>
+
+    <!-- Équipements list/form/kanban -->
+    <menuitem id="menu_telecom_equipment"
+              name="Équipements"
+              parent="menu_telecom_equipment_root"
+              action="action_telecom_equipment"
+              sequence="10"
+              groups="telecom_base.group_telecom_technicien"/>
+
+    <!-- Outillages terrain -->
+    <menuitem id="menu_telecom_outillage"
+              name="Outillages terrain"
+              parent="menu_telecom_equipment_root"
+              action="action_telecom_outillage"
+              sequence="20"
+              groups="telecom_base.group_telecom_technicien"/>
+
+    <!-- ================================================================
+         Configuration — Catégories (under existing config menu)
+    ================================================================ -->
+    <menuitem id="menu_telecom_equipment_categories"
+              name="Catégories d'équipements"
+              parent="telecom_base.menu_telecom_config"
+              action="action_telecom_equipment_category"
+              sequence="20"
+              groups="telecom_base.group_telecom_admin"/>
+
+</odoo>

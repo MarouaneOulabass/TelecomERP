@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         account.move — Customer Invoice : inject RAS + legal mentions
+    ================================================================ -->
+    <record id="view_move_form_localization_ma_invoice" model="ir.ui.view">
+        <field name="name">account.move.form.localization.ma.invoice</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+
+            <!-- ── RAS group — inserted after the invoice lines ──────── -->
+            <xpath expr="//page[@name='invoice_tab']" position="inside">
+                <group string="Retenue à la Source (RAS)" name="group_ras"
+                       attrs="{'invisible': [('move_type', 'not in', ['in_invoice', 'in_refund', 'out_invoice', 'out_refund'])]}">
+                    <group>
+                        <field name="ras_applicable"/>
+                        <field name="ras_amount"
+                               attrs="{'invisible': [('ras_applicable', '=', False)]}"
+                               widget="monetary"/>
+                        <field name="ras_certificate_number"
+                               attrs="{'invisible': [('ras_applicable', '=', False)]}"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <!-- ── Legal mentions tab ────────────────────────────────── -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Mentions légales" name="page_legal_mentions">
+                    <group string="Identifiants légaux du client" name="group_legal_ids"
+                           col="4">
+                        <field name="ice_client" readonly="1"/>
+                        <field name="if_client" readonly="1"/>
+                        <field name="rc_client" readonly="1"/>
+                    </group>
+                    <group string="Bloc mentions légales (impression)" name="group_legal_text">
+                        <field name="invoice_legal_mentions"
+                               nolabel="1"
+                               readonly="1"
+                               widget="text"
+                               colspan="2"/>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- ================================================================
+         account.move — Vendor Bill : same extension (shared form in v17)
+         No separate record needed — the form view above covers both
+         via account.view_move_form which is used for all move types.
+    ================================================================ -->
+
+</odoo>

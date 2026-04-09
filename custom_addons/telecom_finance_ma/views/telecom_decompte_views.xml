@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.decompte — List view
+    ================================================================ -->
+
+    <record id="view_telecom_decompte_list" model="ir.ui.view">
+        <field name="name">telecom.decompte.list</field>
+        <field name="model">telecom.decompte</field>
+        <field name="arch" type="xml">
+            <list string="Décomptes de travaux"
+                  decoration-danger="delai_depasse == True"
+                  decoration-muted="state == 'paye'">
+                <field name="name" string="N° Décompte"/>
+                <field name="decompte_type" string="Type" widget="badge"
+                       decoration-info="decompte_type == 'provisoire'"
+                       decoration-success="decompte_type == 'definitif'"/>
+                <field name="project_id" string="Projet"/>
+                <field name="client_id" string="Client"/>
+                <field name="numero_decompte" string="N°" width="50px"/>
+                <field name="date_decompte" string="Date"/>
+                <field name="total_ht_cumul" string="Total HT cumulé" sum="Total HT"/>
+                <field name="net_apres_ras" string="Net après RAS" sum="Total net"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="state" string="État" widget="badge"
+                       decoration-secondary="state == 'draft'"
+                       decoration-info="state in ('soumis', 'contradictoire')"
+                       decoration-warning="state == 'approuve'"
+                       decoration-success="state in ('signe', 'paye')"/>
+                <field name="delai_depasse" string="⚠ Délai" widget="boolean"/>
+                <field name="date_paiement_prevu" string="Échéance" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.decompte — Form view
+    ================================================================ -->
+
+    <record id="view_telecom_decompte_form" model="ir.ui.view">
+        <field name="name">telecom.decompte.form</field>
+        <field name="model">telecom.decompte</field>
+        <field name="arch" type="xml">
+            <form string="Décompte de travaux">
+
+                <!-- ── Status bar ─────────────────────────────────── -->
+                <header>
+                    <button name="action_soumettre"
+                            string="Soumettre"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approuver"
+                            string="Approuver"
+                            type="object"
+                            class="btn-primary"
+                            groups="telecom_base.group_telecom_responsable"
+                            invisible="state != 'soumis'"/>
+                    <button name="action_contradictoire"
+                            string="Phase contradictoire"
+                            type="object"
+                            class="btn-warning"
+                            groups="telecom_base.group_telecom_responsable"
+                            invisible="state not in ('soumis', 'approuve')"/>
+                    <button name="action_signer"
+                            string="Signer"
+                            type="object"
+                            class="btn-success"
+                            groups="telecom_base.group_telecom_responsable"
+                            invisible="state not in ('approuve', 'contradictoire')"/>
+                    <button name="action_creer_facture"
+                            string="Créer la facture"
+                            type="object"
+                            class="btn-success"
+                            groups="telecom_base.group_telecom_charge_affaires"
+                            invisible="state != 'signe' or invoice_id != False"/>
+                    <button name="action_marquer_paye"
+                            string="Marquer payé"
+                            type="object"
+                            class="btn-success"
+                            groups="telecom_base.group_telecom_responsable"
+                            invisible="state != 'signe'"/>
+                    <button name="action_print_decompte"
+                            string="Imprimer décompte"
+                            type="object"
+                            icon="fa-print"/>
+                    <button name="action_reset_draft"
+                            string="Remettre en brouillon"
+                            type="object"
+                            class="btn-secondary"
+                            groups="telecom_base.group_telecom_admin"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,soumis,approuve,signe,paye"/>
+                </header>
+
+                <!-- ── Smart buttons ──────────────────────────────── -->
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_invoice"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-file-text-o"
+                            invisible="not invoice_id">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Facture</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- ── Alert banner ───────────────────────────────── -->
+                <div class="alert alert-danger" role="alert"
+                     invisible="not delai_depasse">
+                    <strong>⚠ Délai de paiement légal dépassé !</strong>
+                    Le délai de 60 jours (loi 69-21) est dépassé.
+                    Date limite : <field name="date_paiement_prevu" readonly="1" class="oe_inline"/>.
+                </div>
+
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="text-muted"/>
+                        <h1>
+                            <field name="name" readonly="1" placeholder="N° Décompte (auto)"/>
+                        </h1>
+                        <h4>
+                            <field name="decompte_type" widget="radio" options="{'horizontal': True}"/>
+                        </h4>
+                    </div>
+
+                    <!-- ── Section 1 : Identification ─────────────── -->
+                    <group string="Identification">
+                        <group>
+                            <field name="project_id"/>
+                            <field name="contract_id"/>
+                            <field name="client_id"/>
+                            <field name="pv_id"
+                                   domain="[('project_id', '=', project_id)]"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="numero_decompte"/>
+                            <field name="date_decompte"/>
+                            <field name="currency_id" options="{'no_create': True}"/>
+                            <field name="montant_marche_ht"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Section 2 : Cumul travaux ──────────────── -->
+                    <group string="I — Cumul des travaux HT">
+                        <group>
+                            <field name="montant_travaux_ht"/>
+                            <field name="montant_travaux_supplementaires"/>
+                            <field name="montant_revisions_prix"/>
+                        </group>
+                        <group>
+                            <field name="total_ht_cumul"
+                                   class="fw-bold"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Section 3 : Déductions ─────────────────── -->
+                    <group string="II — Déductions">
+                        <group>
+                            <field name="retenue_garantie_taux" widget="percentage"/>
+                            <field name="retenue_garantie_cumul"/>
+                            <field name="avances_versees"/>
+                            <field name="avances_remboursees"/>
+                            <field name="avance_periode"/>
+                        </group>
+                        <group>
+                            <field name="situations_anterieures"/>
+                            <separator string="Base TVA"/>
+                            <field name="base_tva" class="fw-bold"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Section 4 : TVA ────────────────────────── -->
+                    <group string="III — TVA et Net">
+                        <group>
+                            <field name="tva_taux" widget="percentage"/>
+                            <field name="tva_montant"/>
+                            <field name="net_a_regler" class="fw-bold"/>
+                        </group>
+                        <group>
+                            <field name="ras_montant"/>
+                            <div class="o_wrap_field o_field_widget" colspan="2">
+                                <label for="net_apres_ras" class="o_form_label"/>
+                                <div class="o_field_widget">
+                                    <field name="net_apres_ras"
+                                           class="fw-bold fs-5 text-success"/>
+                                </div>
+                            </div>
+                        </group>
+                    </group>
+
+                    <!-- ── Section 5 : Libération RG (définitif) ──── -->
+                    <group string="IV — Libération retenue de garantie"
+                           invisible="decompte_type != 'definitif'">
+                        <group>
+                            <field name="liberation_retenue" widget="boolean_toggle"/>
+                            <field name="montant_liberation_rg"
+                                   invisible="not liberation_retenue"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Section 6 : Délai de paiement ─────────── -->
+                    <group string="Suivi délai de paiement (loi 69-21)">
+                        <group>
+                            <field name="date_soumission"/>
+                            <field name="date_paiement_prevu"/>
+                        </group>
+                        <group>
+                            <field name="delai_depasse" widget="boolean_toggle"/>
+                            <field name="invoice_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Notes ─────────────────────────────────── -->
+                    <group string="Notes internes">
+                        <field name="notes" nolabel="1"
+                               placeholder="Observations, réserves contradictoires, références..."/>
+                    </group>
+                </sheet>
+
+                <!-- ── Chatter ────────────────────────────────────── -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.decompte — Search view
+    ================================================================ -->
+
+    <record id="view_telecom_decompte_search" model="ir.ui.view">
+        <field name="name">telecom.decompte.search</field>
+        <field name="model">telecom.decompte</field>
+        <field name="arch" type="xml">
+            <search string="Recherche décomptes de travaux">
+                <field name="name" string="N° Décompte"/>
+                <field name="project_id" string="Projet"/>
+                <field name="client_id" string="Client"/>
+                <field name="contract_id" string="Contrat"/>
+
+                <!-- Filters -->
+                <filter string="Provisoires" name="filter_provisoire"
+                        domain="[('decompte_type', '=', 'provisoire')]"/>
+                <filter string="Définitifs" name="filter_definitif"
+                        domain="[('decompte_type', '=', 'definitif')]"/>
+                <separator/>
+                <filter string="Brouillons" name="filter_draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter string="Soumis" name="filter_soumis"
+                        domain="[('state', '=', 'soumis')]"/>
+                <filter string="Signés" name="filter_signe"
+                        domain="[('state', '=', 'signe')]"/>
+                <filter string="Payés" name="filter_paye"
+                        domain="[('state', '=', 'paye')]"/>
+                <separator/>
+                <filter string="⚠ Délai dépassé" name="filter_delai_depasse"
+                        domain="[('delai_depasse', '=', True)]"/>
+
+                <!-- Group by -->
+                <group expand="0" string="Grouper par">
+                    <filter string="Projet" name="group_project"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter string="Type" name="group_type"
+                            context="{'group_by': 'decompte_type'}"/>
+                    <filter string="État" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Client" name="group_client"
+                            context="{'group_by': 'client_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Window action
+    ================================================================ -->
+
+    <record id="action_telecom_decompte" model="ir.actions.act_window">
+        <field name="name">Décomptes de travaux</field>
+        <field name="res_model">telecom.decompte</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_telecom_decompte_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer un nouveau décompte de travaux
+            </p>
+            <p>
+                Les décomptes (CCAG Travaux) formalisent le règlement financier
+                des marchés publics de travaux télécom.
+            </p>
+        </field>
+    </record>
+
+</odoo>

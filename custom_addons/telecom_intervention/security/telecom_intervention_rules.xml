@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             RECORD RULES — telecom.intervention
+             ============================================================ -->
+
+        <!-- Technicien: can only see interventions they are assigned to
+             (either as a member of technician_ids or as chef_chantier_id).
+             Uses a domain with a sub-select for the M2M relation.          -->
+        <record id="rule_intervention_technicien" model="ir.rule">
+            <field name="name">Intervention: technicien voit les siennes</field>
+            <field name="model_id" ref="model_telecom_intervention"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_technicien'))]"/>
+            <field name="domain_force">
+                ['|',
+                    ('technician_ids.user_id', '=', user.id),
+                    ('chef_chantier_id.user_id', '=', user.id)]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Chef de chantier: sees all interventions in their company -->
+        <record id="rule_intervention_chef_chantier" model="ir.rule">
+            <field name="name">Intervention: chef de chantier voit sa société</field>
+            <field name="model_id" ref="model_telecom_intervention"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_chef_chantier'))]"/>
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Chargé d'affaires: sees all interventions in their company -->
+        <record id="rule_intervention_charge_affaires" model="ir.rule">
+            <field name="name">Intervention: chargé d'affaires voit sa société</field>
+            <field name="model_id" ref="model_telecom_intervention"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_charge_affaires'))]"/>
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Responsable: sees all interventions in their company -->
+        <record id="rule_intervention_responsable" model="ir.rule">
+            <field name="name">Intervention: responsable voit sa société</field>
+            <field name="model_id" ref="model_telecom_intervention"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_responsable'))]"/>
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Admin: global access — no domain restriction -->
+        <record id="rule_intervention_admin" model="ir.rule">
+            <field name="name">Intervention: admin accès global</field>
+            <field name="model_id" ref="model_telecom_intervention"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- ============================================================
+             RECORD RULES — telecom.intervention.photo
+             ============================================================ -->
+
+        <!-- Technicien: can only see photos of their own interventions -->
+        <record id="rule_photo_technicien" model="ir.rule">
+            <field name="name">Photo: technicien voit les siennes</field>
+            <field name="model_id" ref="model_telecom_intervention_photo"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_technicien'))]"/>
+            <field name="domain_force">
+                ['|',
+                    ('intervention_id.technician_ids.user_id', '=', user.id),
+                    ('intervention_id.chef_chantier_id.user_id', '=', user.id)]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ============================================================
+             RECORD RULES — telecom.materiel.consomme
+             ============================================================ -->
+
+        <!-- Technicien: can only see materials of their own interventions -->
+        <record id="rule_materiel_technicien" model="ir.rule">
+            <field name="name">Matériel: technicien voit les siens</field>
+            <field name="model_id" ref="model_telecom_materiel_consomme"/>
+            <field name="groups" eval="[(4, ref('telecom_base.group_telecom_technicien'))]"/>
+            <field name="domain_force">
+                ['|',
+                    ('intervention_id.technician_ids.user_id', '=', user.id),
+                    ('intervention_id.chef_chantier_id.user_id', '=', user.id)]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

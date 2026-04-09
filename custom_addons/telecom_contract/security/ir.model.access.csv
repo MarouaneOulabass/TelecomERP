@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_telecom_contract_charge_affaires,telecom.contract.charge,model_telecom_contract,telecom_base.group_telecom_charge_affaires,1,1,1,0
+access_telecom_contract_responsable,telecom.contract.responsable,model_telecom_contract,telecom_base.group_telecom_responsable,1,1,1,1
+access_telecom_contract_admin,telecom.contract.admin,model_telecom_contract,telecom_base.group_telecom_admin,1,1,1,1
+access_telecom_caution_charge_affaires,telecom.caution.bancaire.charge,model_telecom_caution_bancaire,telecom_base.group_telecom_charge_affaires,1,1,1,0
+access_telecom_caution_responsable,telecom.caution.bancaire.responsable,model_telecom_caution_bancaire,telecom_base.group_telecom_responsable,1,1,1,1
+access_telecom_caution_admin,telecom.caution.bancaire.admin,model_telecom_caution_bancaire,telecom_base.group_telecom_admin,1,1,1,1

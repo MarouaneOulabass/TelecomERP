@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         report.telecom.finance.analysis — List view
+    ================================================================ -->
+    <record id="view_report_finance_list" model="ir.ui.view">
+        <field name="name">report.telecom.finance.analysis.list</field>
+        <field name="model">report.telecom.finance.analysis</field>
+        <field name="arch" type="xml">
+            <list string="Analyse financière" create="false" edit="false" delete="false">
+                <field name="year" string="Année"/>
+                <field name="month" string="Mois"/>
+                <field name="project_name" string="Projet"/>
+                <field name="client_id" string="Client"/>
+                <field name="nb_situations" string="Nb situations" sum="Total"/>
+                <field name="montant_situation_ht_total" string="Total situations (MAD)"
+                       digits="[16,2]" sum="Total"/>
+                <field name="nb_decomptes" string="Nb décomptes" sum="Total"/>
+                <field name="net_a_regler_total" string="Net à régler (MAD)"
+                       digits="[16,2]" sum="Total"/>
+                <field name="nb_delais_depasses" string="Délais dépassés" sum="Total"
+                       decoration-danger="nb_delais_depasses > 0"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         report.telecom.finance.analysis — Pivot view
+    ================================================================ -->
+    <record id="view_report_finance_pivot" model="ir.ui.view">
+        <field name="name">report.telecom.finance.analysis.pivot</field>
+        <field name="model">report.telecom.finance.analysis</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse financière projets" disable_linking="True">
+                <field name="month" type="row"/>
+                <field name="project_id" type="col"/>
+                <field name="montant_situation_ht_total" type="measure" string="Total situations (MAD)"/>
+                <field name="net_a_regler_total" type="measure" string="Net à régler (MAD)"/>
+                <field name="nb_situations" type="measure" string="Nb situations"/>
+                <field name="nb_decomptes" type="measure" string="Nb décomptes"/>
+                <field name="nb_delais_depasses" type="measure" string="Délais dépassés"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         report.telecom.finance.analysis — Graph view
+    ================================================================ -->
+    <record id="view_report_finance_graph" model="ir.ui.view">
+        <field name="name">report.telecom.finance.analysis.graph</field>
+        <field name="model">report.telecom.finance.analysis</field>
+        <field name="arch" type="xml">
+            <graph string="Montants situations par mois" type="bar" stacked="False">
+                <field name="month" type="row"/>
+                <field name="montant_situation_ht_total" type="measure" string="Total situations (MAD)"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         report.telecom.finance.analysis — Search view
+    ================================================================ -->
+    <record id="view_report_finance_search" model="ir.ui.view">
+        <field name="name">report.telecom.finance.analysis.search</field>
+        <field name="model">report.telecom.finance.analysis</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher analyse financière">
+
+                <field name="project_name" string="Projet"/>
+                <field name="client_id" string="Client"/>
+                <field name="month" string="Mois"/>
+
+                <!-- Filters -->
+                <filter string="Mois en cours"
+                        name="filter_current_month"
+                        domain="[('month', '=', context_today().strftime('%Y-%m'))]"/>
+                <filter string="Année en cours"
+                        name="filter_current_year"
+                        domain="[('year', '=', context_today().strftime('%Y'))]"/>
+                <separator/>
+                <filter string="Délais dépassés"
+                        name="filter_delai_depasse"
+                        domain="[('nb_delais_depasses', '>', 0)]"/>
+                <filter string="Avec situations"
+                        name="filter_has_situations"
+                        domain="[('nb_situations', '>', 0)]"/>
+                <filter string="Avec décomptes"
+                        name="filter_has_decomptes"
+                        domain="[('nb_decomptes', '>', 0)]"/>
+
+                <!-- Group-by options -->
+                <group expand="0" string="Regrouper par">
+                    <filter string="Projet"
+                            name="group_project"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter string="Client"
+                            name="group_client"
+                            context="{'group_by': 'client_id'}"/>
+                    <filter string="Mois"
+                            name="group_month"
+                            context="{'group_by': 'month'}"/>
+                    <filter string="Année"
+                            name="group_year"
+                            context="{'group_by': 'year'}"/>
+                    <filter string="Société"
+                            name="group_company"
+                            context="{'group_by': 'company_id'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+</odoo>

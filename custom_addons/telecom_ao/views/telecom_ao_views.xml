@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         telecom.ao — Kanban view
+    ============================================================ -->
+    <record id="view_telecom_ao_kanban" model="ir.ui.view">
+        <field name="name">telecom.ao.kanban</field>
+        <field name="model">telecom.ao</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state"
+                    class="o_kanban_small_column"
+                    quick_create="false">
+                <field name="state"/>
+                <field name="color"/>
+                <field name="priority"/>
+                <field name="jours_avant_remise"/>
+                <field name="date_remise"/>
+                <field name="montant_estimatif"/>
+                <field name="currency_id"/>
+                <field name="maitre_ouvrage_id"/>
+                <field name="reference_dao"/>
+                <field name="responsable_id"/>
+                <progressbar field="state"
+                             colors='{"gagne": "success", "perdu": "danger", "soumis": "warning", "abandonne": "muted"}'/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top mb4">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                                <field name="priority" widget="priority"/>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div t-if="record.reference_dao.raw_value">
+                                    <span class="text-muted">Réf. DAO : </span>
+                                    <field name="reference_dao"/>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Maître d'ouvrage : </span>
+                                    <field name="maitre_ouvrage_id"/>
+                                </div>
+                                <div t-if="record.date_remise.raw_value">
+                                    <span class="text-muted">Remise : </span>
+                                    <field name="date_remise"/>
+                                    <span t-if="record.jours_avant_remise.raw_value > 0"
+                                          t-attf-class="badge ms-1 #{record.jours_avant_remise.raw_value &lt;= 7 ? 'bg-danger' : record.jours_avant_remise.raw_value &lt;= 30 ? 'bg-warning' : 'bg-info'}">
+                                        J-<t t-esc="record.jours_avant_remise.raw_value"/>
+                                    </span>
+                                    <span t-if="record.jours_avant_remise.raw_value &lt;= 0 and record.date_remise.raw_value"
+                                          class="badge ms-1 bg-secondary">
+                                        Délai dépassé
+                                    </span>
+                                </div>
+                                <div t-if="record.montant_estimatif.raw_value">
+                                    <span class="text-muted">Estimatif : </span>
+                                    <field name="montant_estimatif" widget="monetary"/>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'gagne'"
+                                           decoration-danger="state == 'perdu'"
+                                           decoration-warning="state == 'soumis'"
+                                           decoration-info="state == 'etude'"
+                                           decoration-muted="state in ('abandonne', 'projet')"/>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="responsable_id" widget="many2one_avatar_user"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.ao — List view
+    ============================================================ -->
+    <record id="view_telecom_ao_list" model="ir.ui.view">
+        <field name="name">telecom.ao.list</field>
+        <field name="model">telecom.ao</field>
+        <field name="arch" type="xml">
+            <list string="Appels d'Offres"
+                  decoration-success="state == 'gagne'"
+                  decoration-danger="state == 'perdu'"
+                  decoration-warning="state == 'soumis'"
+                  decoration-muted="state in ('abandonne', 'projet')">
+                <field name="priority" widget="priority" nolabel="1"/>
+                <field name="numero_ao" string="N° AO"/>
+                <field name="name" string="Titre"/>
+                <field name="reference_dao" optional="show"/>
+                <field name="maitre_ouvrage_id"/>
+                <field name="date_remise"/>
+                <field name="jours_avant_remise" string="J-" optional="show"/>
+                <field name="montant_estimatif" optional="show"/>
+                <field name="montant_soumis" optional="show"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'gagne'"
+                       decoration-danger="state == 'perdu'"
+                       decoration-warning="state == 'soumis'"
+                       decoration-info="state == 'etude'"
+                       decoration-muted="state in ('abandonne', 'projet')"/>
+                <field name="responsable_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.ao — Form view
+    ============================================================ -->
+    <record id="view_telecom_ao_form" model="ir.ui.view">
+        <field name="name">telecom.ao.form</field>
+        <field name="model">telecom.ao</field>
+        <field name="arch" type="xml">
+            <form string="Appel d'Offres">
+                <header>
+                    <!-- State transition buttons -->
+                    <button name="action_etude"
+                            string="Mettre en étude"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'detecte'"/>
+                    <button name="action_soumettre"
+                            string="Soumettre l'offre"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'etude'"/>
+                    <button name="action_gagner"
+                            string="Marquer Gagné"
+                            type="object"
+                            class="btn-success"
+                            invisible="state != 'soumis'"/>
+                    <button name="action_perdre"
+                            string="Marquer Perdu"
+                            type="object"
+                            class="btn-danger"
+                            invisible="state != 'soumis'"/>
+                    <button name="action_transformer_projet"
+                            string="Transformer en projet"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'gagne'"/>
+                    <button name="action_abandonner"
+                            string="Abandonner"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state in ('abandonne', 'projet', 'gagne')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="detecte,etude,soumis,gagne,projet"
+                           readonly="1"/>
+                </header>
+
+                <sheet>
+                    <!-- Smart buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_telecom_bpu_ligne"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-list-ol">
+                            <field name="bpu_count" widget="statinfo" string="Lignes BPU"/>
+                        </button>
+                        <button name="action_view_contract"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o"
+                                invisible="not contract_id">
+                            <span class="o_stat_text">Contrat</span>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name" string="Titre de l'AO"/>
+                        <h1>
+                            <field name="name" placeholder="Titre de l'appel d'offres…"/>
+                        </h1>
+                        <div class="o_row">
+                            <field name="numero_ao" readonly="1"/>
+                            <field name="priority" widget="priority"/>
+                        </div>
+                    </div>
+
+                    <group>
+                        <group string="Identification">
+                            <field name="reference_dao"/>
+                            <field name="maitre_ouvrage_id"/>
+                            <field name="responsable_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Contrat résultant">
+                            <field name="contract_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <!-- TAB 1: AO Details -->
+                        <page string="Appel d'Offres" name="ao_details">
+                            <group>
+                                <group string="Calendrier">
+                                    <field name="date_reception_dao"/>
+                                    <field name="date_remise"/>
+                                    <field name="date_ouverture_plis"/>
+                                    <field name="lots_vises"/>
+                                </group>
+                                <group string="Montants HT">
+                                    <field name="currency_id" groups="base.group_multi_currency"/>
+                                    <field name="montant_estimatif"/>
+                                    <field name="montant_soumis"/>
+                                    <field name="montant_bpu_total" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- TAB 2: BPU Lines -->
+                        <page string="BPU" name="bpu">
+                            <field name="bpu_ids" widget="one2many_list" nolabel="1">
+                                <list editable="bottom" string="Bordereau de Prix Unitaires">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="section" optional="show"/>
+                                    <field name="code"/>
+                                    <field name="designation"/>
+                                    <field name="unite"/>
+                                    <field name="quantite"/>
+                                    <field name="prix_unitaire"/>
+                                    <field name="montant_ht" readonly="1"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="notes" optional="hide"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="montant_bpu_total"
+                                       string="Total BPU HT"
+                                       class="oe_subtotal_footer_separator"
+                                       readonly="1"/>
+                            </group>
+                        </page>
+
+                        <!-- TAB 3: Cautions -->
+                        <page string="Cautions bancaires" name="cautions">
+                            <group>
+                                <group string="Caution provisoire (1,5%)">
+                                    <field name="caution_provisoire_montant" readonly="1"/>
+                                    <field name="caution_provisoire_fournie"/>
+                                    <field name="caution_provisoire_date"
+                                           invisible="not caution_provisoire_fournie"/>
+                                    <field name="caution_provisoire_banque"
+                                           invisible="not caution_provisoire_fournie"/>
+                                </group>
+                                <group string="Caution définitive (3%)">
+                                    <field name="caution_definitif_montant" readonly="1"/>
+                                    <p class="text-muted" colspan="2"
+                                       invisible="state != 'gagne'">
+                                        À constituer après attribution du marché.
+                                    </p>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- TAB 4: Documents -->
+                        <page string="Documents" name="documents">
+                            <field name="document_ids" widget="many2many_binary"
+                                   string="Pièces jointes"/>
+                        </page>
+
+                        <!-- TAB 5: Notes -->
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes internes…" nolabel="1"/>
+                            <group invisible="state != 'perdu'">
+                                <field name="motif_perte"
+                                       placeholder="Décrivez le motif de la perte de l'AO…"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.ao — Search view
+    ============================================================ -->
+    <record id="view_telecom_ao_search" model="ir.ui.view">
+        <field name="name">telecom.ao.search</field>
+        <field name="model">telecom.ao</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher des AO">
+                <field name="name" string="Titre / Référence"
+                       filter_domain="['|', ('name', 'ilike', self), ('reference_dao', 'ilike', self), ('numero_ao', 'ilike', self)]"/>
+                <field name="maitre_ouvrage_id"/>
+                <field name="responsable_id"/>
+
+                <!-- Filters -->
+                <filter name="filter_detecte"   string="Détectés"           domain="[('state','=','detecte')]"/>
+                <filter name="filter_etude"      string="En étude"           domain="[('state','=','etude')]"/>
+                <filter name="filter_soumis"     string="Soumis"             domain="[('state','=','soumis')]"/>
+                <filter name="filter_gagne"      string="Gagnés"             domain="[('state','=','gagne')]"/>
+                <filter name="filter_perdu"      string="Perdus"             domain="[('state','=','perdu')]"/>
+                <filter name="filter_abandonne"  string="Abandonnés"         domain="[('state','=','abandonne')]"/>
+                <separator/>
+                <filter name="filter_mon_ao"
+                        string="Mes AO"
+                        domain="[('responsable_id','=',uid)]"/>
+                <filter name="filter_urgent"
+                        string="Urgents (remise ≤ 7 j)"
+                        domain="[('jours_avant_remise','&lt;=',7), ('jours_avant_remise','&gt;=',0), ('state','not in',['gagne','perdu','projet','abandonne'])]"/>
+                <separator/>
+                <filter name="filter_remise_ce_mois"
+                        string="Remise ce mois-ci"
+                        domain="[('date_remise','&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                 ('date_remise','&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+
+                <!-- Group by -->
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_state"           string="État"               context="{'group_by': 'state'}"/>
+                    <filter name="group_maitre_ouvrage"  string="Maître d'ouvrage"   context="{'group_by': 'maitre_ouvrage_id'}"/>
+                    <filter name="group_responsable"     string="Chargé d'affaires"  context="{'group_by': 'responsable_id'}"/>
+                    <filter name="group_date_remise"     string="Date remise"        context="{'group_by': 'date_remise'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         telecom.ao — Action
+    ============================================================ -->
+    <record id="action_telecom_ao" model="ir.actions.act_window">
+        <field name="name">Appels d'Offres</field>
+        <field name="res_model">telecom.ao</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_telecom_ao_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre premier Appel d'Offres
+            </p>
+            <p>
+                Gérez votre pipeline commercial : détection, étude, soumission, résultat.
+            </p>
+        </field>
+    </record>
+
+</odoo>

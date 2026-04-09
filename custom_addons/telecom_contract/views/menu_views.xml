@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         Commercial menu is already defined in telecom_ao.
+         We add items under it here.
+    ============================================================ -->
+
+    <!-- Contrats -->
+    <menuitem id="menu_telecom_contracts"
+              name="Contrats"
+              parent="telecom_ao.menu_telecom_commercial"
+              action="action_telecom_contract"
+              sequence="30"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+    <!-- Cautions bancaires -->
+    <menuitem id="menu_telecom_cautions"
+              name="Cautions bancaires"
+              parent="telecom_ao.menu_telecom_commercial"
+              action="action_telecom_caution_bancaire"
+              sequence="40"
+              groups="telecom_base.group_telecom_charge_affaires"/>
+
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         REPORT ACTION — Bon d'Intervention PDF
+         ================================================================ -->
+    <record id="action_report_telecom_intervention" model="ir.actions.report">
+        <field name="name">Bon d'Intervention</field>
+        <field name="model">telecom.intervention</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">telecom_intervention.report_telecom_intervention</field>
+        <field name="report_file">telecom_intervention.report_telecom_intervention</field>
+        <field name="binding_model_id" ref="model_telecom_intervention"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_a4"/>
+    </record>
+
+</odoo>

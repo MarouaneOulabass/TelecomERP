@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root menu -->
+    <menuitem id="menu_telecom_root"
+              name="TelecomERP"
+              web_icon="telecom_base,static/description/icon.png"
+              sequence="10"/>
+
+    <!-- Configuration submenu -->
+    <menuitem id="menu_telecom_config"
+              name="Configuration"
+              parent="menu_telecom_root"
+              sequence="100"
+              groups="telecom_base.group_telecom_admin"/>
+
+    <menuitem id="menu_telecom_certifications"
+              name="Certifications partenaires"
+              parent="menu_telecom_config"
+              action="action_telecom_certification"
+              sequence="10"/>
+
+</odoo>
