@@ -290,7 +290,7 @@
                 <progressbar field="state"
                              colors='{"livre": "success", "maintenance": "warning", "desactive": "danger"}'/>
                 <templates>
-                    <t t-name="kanban-card">
+                    <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_color_#{record.color.raw_value} oe_kanban_card oe_kanban_global_click">
                             <div class="oe_kanban_content">
                                 <div class="o_kanban_record_top">

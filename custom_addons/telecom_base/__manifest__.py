@@ -17,6 +17,11 @@
         'views/telecom_welcome_views.xml',
         'views/menu_views.xml',
     ],
+    'assets': {
+        'web.assets_web': [
+            'telecom_base/static/src/js/clipboard_fix.js',
+        ],
+    },
     'installable': True,
     'application': True,
     'auto_install': False,
