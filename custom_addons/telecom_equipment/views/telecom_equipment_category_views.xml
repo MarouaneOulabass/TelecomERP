@@ -8,13 +8,13 @@
         <field name="name">telecom.equipment.category.list</field>
         <field name="model">telecom.equipment.category</field>
         <field name="arch" type="xml">
-            <list string="Catégories d'équipements">
+            <tree string="Catégories d'équipements">
                 <field name="complete_name"/>
                 <field name="code"/>
                 <field name="parent_id" optional="show"/>
                 <field name="equipment_count" string="Équipements"/>
                 <field name="active" optional="show" column_invisible="1"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -51,11 +51,11 @@
                     </group>
                     <group string="Sous-catégories">
                         <field name="child_ids" nolabel="1">
-                            <list>
+                            <tree>
                                 <field name="complete_name"/>
                                 <field name="code"/>
                                 <field name="equipment_count" string="Équipements"/>
-                            </list>
+                            </tree>
                         </field>
                     </group>
                     <group string="Description">

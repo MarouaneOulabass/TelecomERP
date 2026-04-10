@@ -8,7 +8,7 @@
         <field name="name">telecom.outillage.list</field>
         <field name="model">telecom.outillage</field>
         <field name="arch" type="xml">
-            <list string="Outillages terrain"
+            <tree string="Outillages terrain"
                   decoration-warning="etalonnage_expiring == True"
                   decoration-danger="state == 'hors_service'">
                 <field name="name"/>
@@ -24,7 +24,7 @@
                 <field name="affecte_a" optional="show"/>
                 <field name="date_prochain_etalonnage" optional="show"/>
                 <field name="etalonnage_expiring" column_invisible="1"/>
-            </list>
+            </tree>
         </field>
     </record>
 

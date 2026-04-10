@@ -8,7 +8,7 @@
         <field name="name">report.telecom.finance.analysis.list</field>
         <field name="model">report.telecom.finance.analysis</field>
         <field name="arch" type="xml">
-            <list string="Analyse financière" create="false" edit="false" delete="false">
+            <tree string="Analyse financière" create="false" edit="false" delete="false">
                 <field name="year" string="Année"/>
                 <field name="month" string="Mois"/>
                 <field name="project_name" string="Projet"/>
@@ -21,7 +21,7 @@
                        digits="[16,2]" sum="Total"/>
                 <field name="nb_delais_depasses" string="Délais dépassés" sum="Total"
                        decoration-danger="nb_delais_depasses > 0"/>
-            </list>
+            </tree>
         </field>
     </record>
 

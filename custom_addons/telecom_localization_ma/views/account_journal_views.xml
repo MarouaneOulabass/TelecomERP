@@ -13,16 +13,16 @@
             <!-- Add LCN tab inside the existing notebook -->
             <xpath expr="//notebook" position="inside">
                 <page string="LCN" name="page_lcn"
-                      attrs="{'invisible': [('type', 'not in', ['bank', 'cash'])]}">
+                      invisible="type not in ('bank', 'cash')">
                     <group string="Lettre de Change Normalisée (LCN)" name="group_lcn">
                         <group>
                             <field name="is_lcn"/>
                             <field name="lcn_bank_ref"
-                                   attrs="{'invisible': [('is_lcn', '=', False)],
-                                           'required': [('is_lcn', '=', True)]}"/>
+                                   invisible="not is_lcn"
+                                   required="is_lcn"/>
                         </group>
                         <group>
-                            <div attrs="{'invisible': [('is_lcn', '=', False)]}"
+                            <div invisible="not is_lcn"
                                  class="alert alert-info" role="alert">
                                 Ce journal est configuré pour la gestion des
                                 <strong>Lettres de Change Normalisées (LCN)</strong>.

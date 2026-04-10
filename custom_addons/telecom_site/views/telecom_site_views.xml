@@ -8,7 +8,7 @@
         <field name="name">telecom.site.list</field>
         <field name="model">telecom.site</field>
         <field name="arch" type="xml">
-            <list string="Sites télécom"
+            <tree string="Sites télécom"
                   decoration-muted="state == 'desactive'"
                   decoration-success="state == 'livre'"
                   decoration-warning="bail_expiration_warning == True">
@@ -25,7 +25,7 @@
                        decoration-danger="state == 'desactive'"/>
                 <field name="operateur_ids" widget="many2many_tags"/>
                 <field name="bail_expiration_warning" invisible="1"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -85,21 +85,7 @@
                                    string="Documents"
                                    widget="statinfo"/>
                         </button>
-                        <!--
-                            Intervention smart button.
-                            The name "action_view_interventions" will be defined on
-                            telecom.site by the telecom_intervention module.
-                            We keep it here as a placeholder; it is hidden when count = 0.
-                        -->
-                        <button name="action_view_interventions"
-                                type="object"
-                                class="oe_stat_button"
-                                icon="fa-wrench"
-                                invisible="intervention_count == 0">
-                            <field name="intervention_count"
-                                   string="Interventions"
-                                   widget="statinfo"/>
-                        </button>
+                        <!-- Intervention smart button added by telecom_intervention via xpath -->
                         <button name="action_open_in_maps"
                                 type="object"
                                 class="oe_stat_button"
@@ -252,7 +238,7 @@
                         <page string="Documents" name="documents">
                             <field name="document_ids"
                                    nolabel="1">
-                                <list editable="bottom">
+                                <tree editable="bottom">
                                     <field name="name"/>
                                     <field name="document_type"/>
                                     <field name="date"/>
@@ -260,7 +246,7 @@
                                     <field name="filename" invisible="1"/>
                                     <field name="description"
                                            optional="show"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
 
@@ -493,12 +479,12 @@
         <field name="name">telecom.technologie.list</field>
         <field name="model">telecom.technologie</field>
         <field name="arch" type="xml">
-            <list string="Technologies" editable="top">
+            <tree string="Technologies" editable="top">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
                 <field name="active"/>
-            </list>
+            </tree>
         </field>
     </record>
 

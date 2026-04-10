@@ -20,8 +20,8 @@
         # Initial data
         'data/telecom_equipment_data.xml',
         # Views
-        'views/telecom_equipment_category_views.xml',
         'views/telecom_equipment_views.xml',
+        'views/telecom_equipment_category_views.xml',
         'views/telecom_outillage_views.xml',
         'views/menu_views.xml',
         # Reports

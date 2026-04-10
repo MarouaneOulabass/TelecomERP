@@ -14,7 +14,7 @@
                         type="object"
                         class="oe_stat_button"
                         icon="fa-certificate"
-                        attrs="{'invisible': [('is_company', '=', False)]}">
+                        invisible="not is_company">
                     <field name="certification_count" widget="statinfo" string="Certifications"/>
                 </button>
             </xpath>
@@ -31,27 +31,27 @@
                             <field name="cnss_number"/>
                             <field name="forme_juridique"/>
                             <field name="capital_social"
-                                   attrs="{'invisible': [('is_company', '=', False)]}"/>
+                                   invisible="not is_company"/>
                             <field name="capital_currency_id"
-                                   attrs="{'invisible': [('is_company', '=', False)]}"
+                                   invisible="not is_company"
                                    groups="base.group_multi_currency"/>
                         </group>
                         <group string="Classification télécom">
                             <field name="partner_type"/>
                             <field name="specialite_ids"
                                    widget="many2many_tags"
-                                   attrs="{'invisible': [('partner_type', 'not in', ['subcontractor'])]}"/>
+                                   invisible="partner_type not in ('subcontractor',)"/>
                             <field name="apporteur_affaires"/>
                             <field name="taux_commission"
-                                   attrs="{'invisible': [('apporteur_affaires', '=', False)]}"/>
+                                   invisible="not apporteur_affaires"/>
                         </group>
                     </group>
                     <separator string="Certifications &amp; Agréments"
-                               attrs="{'invisible': [('is_company', '=', False)]}"/>
+                               invisible="not is_company"/>
                     <field name="certification_ids"
-                           attrs="{'invisible': [('is_company', '=', False)]}"
+                           invisible="not is_company"
                            context="{'default_partner_id': active_id}">
-                        <list string="Certifications" editable="bottom">
+                        <tree string="Certifications" editable="bottom">
                             <field name="name"/>
                             <field name="certification_type"/>
                             <field name="reference"/>
@@ -60,7 +60,7 @@
                                    decoration-success="state == 'valid'"
                                    decoration-warning="state == 'expiring_soon'"
                                    decoration-danger="state == 'expired'"/>
-                        </list>
+                        </tree>
                     </field>
                 </page>
             </xpath>

@@ -29,7 +29,7 @@
         <field name="name">telecom.vehicle.entretien.list</field>
         <field name="model">telecom.vehicle.entretien</field>
         <field name="arch" type="xml">
-            <list string="Entretiens"
+            <tree string="Entretiens"
                   decoration-info="entretien_type == 'revision'"
                   decoration-warning="entretien_type in ('courroie', 'freins', 'pneus')">
                 <field name="date"/>
@@ -46,7 +46,7 @@
                 <field name="currency_id" column_invisible="1"/>
                 <field name="prochain_entretien_km" optional="hide"/>
                 <field name="prochain_entretien_date" optional="hide"/>
-            </list>
+            </tree>
         </field>
     </record>
 

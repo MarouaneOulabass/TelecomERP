@@ -8,7 +8,7 @@
         <field name="name">telecom.contract.list</field>
         <field name="model">telecom.contract</field>
         <field name="arch" type="xml">
-            <list string="Contrats"
+            <tree string="Contrats"
                   decoration-success="state == 'actif' and not expiry_warning"
                   decoration-warning="state == 'actif' and expiry_warning"
                   decoration-muted="state in ('resilie', 'expire')"
@@ -30,7 +30,7 @@
                        decoration-muted="state == 'brouillon'"/>
                 <field name="responsable_id" widget="many2one_avatar_user" optional="show"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -163,19 +163,19 @@
                         <page string="Sites couverts" name="sites">
                             <field name="sites_couverts" nolabel="1"
                                    widget="many2many_list">
-                                <list string="Sites">
+                                <tree string="Sites">
                                     <field name="name"/>
                                     <field name="code_interne" optional="show"/>
                                     <field name="site_type" optional="show"/>
                                     <field name="wilaya" optional="show"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
 
                         <!-- TAB 4: Bank guarantees -->
                         <page string="Cautions bancaires" name="cautions">
                             <field name="caution_bancaire_ids" nolabel="1">
-                                <list editable="bottom"
+                                <tree editable="bottom"
                                       string="Cautions bancaires"
                                       decoration-danger="state == 'expired'"
                                       decoration-warning="state == 'expiring_soon'"
@@ -193,7 +193,7 @@
                                            decoration-warning="state == 'expiring_soon'"
                                            decoration-danger="state == 'expired'"
                                            decoration-muted="state == 'liberee'"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
 

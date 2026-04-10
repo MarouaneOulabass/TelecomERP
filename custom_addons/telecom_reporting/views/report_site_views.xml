@@ -8,7 +8,7 @@
         <field name="name">report.telecom.site.analysis.list</field>
         <field name="model">report.telecom.site.analysis</field>
         <field name="arch" type="xml">
-            <list string="Sites" create="false" edit="false" delete="false">
+            <tree string="Sites" create="false" edit="false" delete="false">
                 <field name="code_interne" string="Code"/>
                 <field name="name" string="Nom du site"/>
                 <field name="wilaya" string="Région"/>
@@ -23,7 +23,7 @@
                 <field name="intervention_count_total" string="Interventions (total)" sum="Total"/>
                 <field name="intervention_count_month" string="Interventions (mois)" sum="Total"/>
                 <field name="last_intervention_date" string="Dernière intervention"/>
-            </list>
+            </tree>
         </field>
     </record>
 

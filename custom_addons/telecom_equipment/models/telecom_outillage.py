@@ -211,13 +211,13 @@ class TelecomOutillage(models.Model):
 
     @api.depends('date_prochain_etalonnage')
     def _compute_etalonnage_expiring(self):
-        """Flag tools whose calibration expires within the next 60 days."""
+        """Flag tools whose calibration expires within the next 60 days or is overdue."""
         today = date.today()
         threshold = today + timedelta(days=60)
         for tool in self:
             if (
                 tool.date_prochain_etalonnage
-                and today <= tool.date_prochain_etalonnage <= threshold
+                and (tool.date_prochain_etalonnage <= threshold)
             ):
                 tool.etalonnage_expiring = True
             else:

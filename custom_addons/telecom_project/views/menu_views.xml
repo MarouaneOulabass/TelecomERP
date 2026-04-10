@@ -14,7 +14,7 @@
     <menuitem id="menu_telecom_projets_all"
               name="Tous les projets"
               parent="menu_telecom_projets"
-              action="project.action_view_all_project"
+              action="project.open_view_project_all"
               sequence="10"
               groups="telecom_base.group_telecom_charge_affaires"/>
 

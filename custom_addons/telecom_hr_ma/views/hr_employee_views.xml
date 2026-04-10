@@ -32,28 +32,31 @@
             </xpath>
 
             <!-- Habilitations expiring warning banner -->
+            <xpath expr="//sheet" position="inside">
+                <field name="habilitations_expiring" invisible="1"/>
+            </xpath>
             <xpath expr="//sheet" position="before">
                 <div class="alert alert-warning"
                      role="alert"
-                     attrs="{'invisible': [('habilitations_expiring', '=', False)]}">
+                     invisible="not habilitations_expiring">
                     <i class="fa fa-exclamation-triangle"/> Une ou plusieurs habilitations de cet employé expirent dans moins de 60 jours ou sont déjà expirées. Veuillez renouveler les habilitations concernées.
                 </div>
             </xpath>
 
             <!-- New page: Terrain &amp; Compétences -->
-            <xpath expr="//page[@name='resume']" position="after">
+            <xpath expr="//page[@name='hr_settings']" position="after">
                 <page name="telecom_terrain" string="Terrain &amp; Compétences"
                       groups="telecom_base.group_telecom_technicien">
                     <group>
                         <group string="Profil terrain">
                             <field name="telecom_technicien" widget="boolean_toggle"/>
                             <field name="niveau_technicien"
-                                   attrs="{'invisible': [('telecom_technicien', '=', False)]}"/>
+                                   invisible="not telecom_technicien"/>
                             <field name="zone_intervention"
-                                   attrs="{'invisible': [('telecom_technicien', '=', False)]}"/>
+                                   invisible="not telecom_technicien"/>
                         </group>
                         <group string="Spécialités techniques"
-                               attrs="{'invisible': [('telecom_technicien', '=', False)]}">
+                               invisible="not telecom_technicien">
                             <field name="specialite_ids"
                                    widget="many2many_tags"
                                    nolabel="1"
@@ -63,9 +66,9 @@
 
                     <!-- Habilitations inline list -->
                     <separator string="Habilitations sécurité"
-                               attrs="{'invisible': [('telecom_technicien', '=', False)]}"/>
+                               invisible="not telecom_technicien"/>
                     <field name="habilitation_ids"
-                           attrs="{'invisible': [('telecom_technicien', '=', False)]}"
+                           invisible="not telecom_technicien"
                            context="{'default_employee_id': active_id}">
                         <tree editable="bottom" decoration-danger="state == 'expired'"
                               decoration-warning="state == 'expiring_soon'">
@@ -82,9 +85,9 @@
 
                     <!-- EPI dotations inline list -->
                     <separator string="Dotations EPI"
-                               attrs="{'invisible': [('telecom_technicien', '=', False)]}"/>
+                               invisible="not telecom_technicien"/>
                     <field name="epi_dotation_ids"
-                           attrs="{'invisible': [('telecom_technicien', '=', False)]}"
+                           invisible="not telecom_technicien"
                            context="{'default_employee_id': active_id}">
                         <tree editable="bottom" decoration-danger="state == 'expired'"
                               decoration-warning="state == 'expiring_soon'">

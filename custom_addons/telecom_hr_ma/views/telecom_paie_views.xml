@@ -39,24 +39,24 @@
                 <header>
                     <button name="action_confirmer" type="object"
                             string="Confirmer" class="btn-primary"
-                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            invisible="state != 'draft'"
                             groups="telecom_base.group_telecom_responsable"/>
                     <button name="action_valider" type="object"
                             string="Valider"
-                            attrs="{'invisible': [('state', '!=', 'confirme')]}"
+                            invisible="state != 'confirme'"
                             groups="telecom_base.group_telecom_responsable"/>
                     <button name="action_marquer_paye" type="object"
                             string="Marquer payé" class="btn-success"
-                            attrs="{'invisible': [('state', '!=', 'valide')]}"
+                            invisible="state != 'valide'"
                             groups="telecom_base.group_telecom_responsable"/>
                     <button name="action_remettre_brouillon" type="object"
                             string="Remettre en brouillon"
-                            attrs="{'invisible': [('state', '!=', 'confirme')]}"
+                            invisible="state != 'confirme'"
                             groups="telecom_base.group_telecom_admin"/>
                     <button name="%(action_report_telecom_paie)d" type="action"
                             string="Imprimer bulletin" class="btn-secondary"
                             icon="fa-print"
-                            attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                            invisible="state == 'draft'"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,confirme,valide,paye"/>
                 </header>
@@ -69,7 +69,7 @@
                         <h4>
                             <field name="sequence_number" readonly="1"
                                    placeholder="N° attribué à la confirmation"
-                                   attrs="{'invisible': [('sequence_number', '=', False)]}"/>
+                                   invisible="not sequence_number"/>
                         </h4>
                     </div>
 
@@ -77,14 +77,14 @@
                     <group string="En-tête">
                         <group>
                             <field name="employee_id"
-                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                   readonly="state != 'draft'"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                         <group>
                             <field name="date_from"
-                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                   readonly="state != 'draft'"/>
                             <field name="date_to"
-                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                   readonly="state != 'draft'"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                     </group>
@@ -93,7 +93,7 @@
                     <group string="Éléments de salaire">
                         <group>
                             <field name="salaire_base"
-                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                   readonly="state != 'draft'"/>
                             <field name="nbr_jours_travailles"/>
                             <field name="nbr_jours_presents" readonly="1"/>
                             <field name="nbr_heures_sup" readonly="1"/>

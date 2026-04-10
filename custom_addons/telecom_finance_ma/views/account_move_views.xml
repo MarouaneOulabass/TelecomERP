@@ -13,7 +13,7 @@
         <field name="arch" type="xml">
 
             <!-- Append TelecomERP fields after the existing 'Other Info' tab content -->
-            <xpath expr="//page[@name='other_tab']" position="after">
+            <xpath expr="//page[@name='other_info']" position="after">
                 <page string="TelecomERP Finance" name="telecom_finance_tab"
                       invisible="move_type not in ('out_invoice', 'out_refund')">
                     <group string="Liens documents travaux">
@@ -62,9 +62,9 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_tree"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='payment_state']" position="after">
+            <xpath expr="//field[@name='state']" position="after">
                 <field name="alerte_delai_paiement"
-                       string="⚠ Délai"
+                       string="Alerte Délai"
                        optional="show"
                        widget="boolean"/>
             </xpath>

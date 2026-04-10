@@ -9,7 +9,7 @@
         <field name="name">telecom.project.site.list</field>
         <field name="model">telecom.project.site</field>
         <field name="arch" type="xml">
-            <list string="Sites de projet"
+            <tree string="Sites de projet"
                   decoration-success="state == 'livre'"
                   decoration-muted="state == 'suspendu'"
                   decoration-warning="state in ('recette', 'travaux_en_cours')">
@@ -26,7 +26,7 @@
                 <field name="date_fin_prevu"/>
                 <field name="date_livraison_reel" optional="show"/>
                 <field name="intervention_count" optional="show"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -116,7 +116,7 @@
                                    context="{'default_project_id': project_id,
                                              'default_project_site_id': active_id,
                                              'default_pv_type': 'partiel'}">
-                                <list string="PV partiels">
+                                <tree string="PV partiels">
                                     <field name="name" readonly="1"/>
                                     <field name="date_pv"/>
                                     <field name="redige_par"/>
@@ -125,7 +125,7 @@
                                            decoration-success="state == 'approuve'"
                                            decoration-warning="state == 'signe'"
                                            decoration-muted="state == 'draft'"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
 

@@ -234,7 +234,7 @@ class TelecomEquipment(models.Model):
     # Computed fields
     # ------------------------------------------------------------------
 
-    @api.depends('category_id', 'category_id.code', 'id')
+    @api.depends('category_id', 'category_id.code')
     def _compute_code(self):
         """
         Generate a code of the form EQ/<CAT_CODE>/<5-digit-id>.

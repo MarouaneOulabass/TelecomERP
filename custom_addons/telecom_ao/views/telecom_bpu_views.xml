@@ -8,7 +8,7 @@
         <field name="name">telecom.bpu.ligne.list</field>
         <field name="model">telecom.bpu.ligne</field>
         <field name="arch" type="xml">
-            <list string="Lignes BPU" default_order="ao_id, sequence">
+            <tree string="Lignes BPU" default_order="ao_id, sequence">
                 <field name="ao_id"/>
                 <field name="section"/>
                 <field name="code"/>
@@ -18,7 +18,7 @@
                 <field name="prix_unitaire"/>
                 <field name="montant_ht"/>
                 <field name="currency_id" optional="hide" column_invisible="1"/>
-            </list>
+            </tree>
         </field>
     </record>
 

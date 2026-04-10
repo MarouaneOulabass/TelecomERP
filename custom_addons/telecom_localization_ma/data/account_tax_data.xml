@@ -11,6 +11,19 @@
     -->
     <data noupdate="1">
 
+        <!-- Tax groups for Morocco -->
+        <record id="tax_group_tva_ma" model="account.tax.group">
+            <field name="name">TVA Maroc</field>
+            <field name="sequence">10</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="tax_group_ras_ma" model="account.tax.group">
+            <field name="name">RAS Maroc</field>
+            <field name="sequence">20</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
         <!-- ============================================================
              TVA 20 % — Taux normal
         ============================================================ -->
@@ -23,8 +36,9 @@
             <field name="price_include">False</field>
             <field name="include_base_amount">False</field>
             <field name="is_ras">False</field>
+            <field name="tax_group_id" ref="tax_group_tva_ma"/>
             <field name="invoice_label">TVA 20 %</field>
-            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+            <field name="country_id" ref="base.ma"/>
         </record>
 
         <record id="tax_tva_20_achat" model="account.tax">
@@ -36,8 +50,9 @@
             <field name="price_include">False</field>
             <field name="include_base_amount">False</field>
             <field name="is_ras">False</field>
+            <field name="tax_group_id" ref="tax_group_tva_ma"/>
             <field name="invoice_label">TVA 20 %</field>
-            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+            <field name="country_id" ref="base.ma"/>
         </record>
 
         <!-- ============================================================
@@ -52,8 +67,9 @@
             <field name="price_include">False</field>
             <field name="include_base_amount">False</field>
             <field name="is_ras">False</field>
+            <field name="tax_group_id" ref="tax_group_tva_ma"/>
             <field name="invoice_label">TVA 14 %</field>
-            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+            <field name="country_id" ref="base.ma"/>
         </record>
 
         <record id="tax_tva_14_achat" model="account.tax">
@@ -65,8 +81,9 @@
             <field name="price_include">False</field>
             <field name="include_base_amount">False</field>
             <field name="is_ras">False</field>
+            <field name="tax_group_id" ref="tax_group_tva_ma"/>
             <field name="invoice_label">TVA 14 %</field>
-            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+            <field name="country_id" ref="base.ma"/>
         </record>
 
         <!-- ============================================================
@@ -81,8 +98,9 @@
             <field name="price_include">False</field>
             <field name="include_base_amount">False</field>
             <field name="is_ras">False</field>
+            <field name="tax_group_id" ref="tax_group_tva_ma"/>
             <field name="invoice_label">TVA 10 %</field>
-            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+            <field name="country_id" ref="base.ma"/>
         </record>
 
         <record id="tax_tva_10_achat" model="account.tax">
@@ -94,8 +112,9 @@
             <field name="price_include">False</field>
             <field name="include_base_amount">False</field>
             <field name="is_ras">False</field>
+            <field name="tax_group_id" ref="tax_group_tva_ma"/>
             <field name="invoice_label">TVA 10 %</field>
-            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+            <field name="country_id" ref="base.ma"/>
         </record>
 
         <!-- ============================================================
@@ -110,8 +129,9 @@
             <field name="price_include">False</field>
             <field name="include_base_amount">False</field>
             <field name="is_ras">False</field>
+            <field name="tax_group_id" ref="tax_group_tva_ma"/>
             <field name="invoice_label">TVA 7 %</field>
-            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+            <field name="country_id" ref="base.ma"/>
         </record>
 
         <record id="tax_tva_7_achat" model="account.tax">
@@ -123,8 +143,9 @@
             <field name="price_include">False</field>
             <field name="include_base_amount">False</field>
             <field name="is_ras">False</field>
+            <field name="tax_group_id" ref="tax_group_tva_ma"/>
             <field name="invoice_label">TVA 7 %</field>
-            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+            <field name="country_id" ref="base.ma"/>
         </record>
 
         <!-- ============================================================
@@ -139,8 +160,9 @@
             <field name="price_include">False</field>
             <field name="include_base_amount">False</field>
             <field name="is_ras">False</field>
+            <field name="tax_group_id" ref="tax_group_tva_ma"/>
             <field name="invoice_label">TVA 0 % Exo.</field>
-            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+            <field name="country_id" ref="base.ma"/>
         </record>
 
         <!-- ============================================================
@@ -157,8 +179,9 @@
             <field name="price_include">False</field>
             <field name="include_base_amount">False</field>
             <field name="is_ras">True</field>
+            <field name="tax_group_id" ref="tax_group_ras_ma"/>
             <field name="invoice_label">RAS 10 %</field>
-            <field name="tax_group_id" ref="account.tax_group_taxes"/>
+            <field name="country_id" ref="base.ma"/>
         </record>
 
     </data>

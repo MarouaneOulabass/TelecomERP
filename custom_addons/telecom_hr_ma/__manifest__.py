@@ -24,7 +24,7 @@ et telecom_site (telecom.site).
         'telecom_site',
         'hr',
         'hr_contract',
-        'hr_leave',
+        'hr_holidays',
         'mail',
     ],
     'data': [
@@ -34,16 +34,16 @@ et telecom_site (telecom.site).
         # Data
         'data/telecom_paie_sequence.xml',
         'data/telecom_hr_data.xml',
-        # Views
-        'views/hr_employee_views.xml',
+        # Reports — must load before views that reference report actions
+        'report/telecom_paie_report.xml',
+        'report/telecom_paie_template.xml',
+        # Views — action definitions must load before hr_employee_views
         'views/telecom_habilitation_views.xml',
         'views/telecom_epi_views.xml',
         'views/telecom_pointage_views.xml',
         'views/telecom_paie_views.xml',
+        'views/hr_employee_views.xml',
         'views/menu_views.xml',
-        # Reports
-        'report/telecom_paie_report.xml',
-        'report/telecom_paie_template.xml',
     ],
     'installable': True,
     'application': False,

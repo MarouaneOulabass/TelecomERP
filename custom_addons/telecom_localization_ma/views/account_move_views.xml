@@ -13,14 +13,14 @@
             <!-- ── RAS group — inserted after the invoice lines ──────── -->
             <xpath expr="//page[@name='invoice_tab']" position="inside">
                 <group string="Retenue à la Source (RAS)" name="group_ras"
-                       attrs="{'invisible': [('move_type', 'not in', ['in_invoice', 'in_refund', 'out_invoice', 'out_refund'])]}">
+                       invisible="move_type not in ('in_invoice', 'in_refund', 'out_invoice', 'out_refund')">
                     <group>
                         <field name="ras_applicable"/>
                         <field name="ras_amount"
-                               attrs="{'invisible': [('ras_applicable', '=', False)]}"
+                               invisible="not ras_applicable"
                                widget="monetary"/>
                         <field name="ras_certificate_number"
-                               attrs="{'invisible': [('ras_applicable', '=', False)]}"/>
+                               invisible="not ras_applicable"/>
                     </group>
                 </group>
             </xpath>

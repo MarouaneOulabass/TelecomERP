@@ -5,7 +5,7 @@
         <field name="name">telecom.certification.list</field>
         <field name="model">telecom.certification</field>
         <field name="arch" type="xml">
-            <list string="Certifications" decoration-warning="state == 'expiring_soon'"
+            <tree string="Certifications" decoration-warning="state == 'expiring_soon'"
                   decoration-danger="state == 'expired'">
                 <field name="partner_id"/>
                 <field name="name"/>
@@ -17,7 +17,7 @@
                        decoration-success="state == 'valid'"
                        decoration-warning="state == 'expiring_soon'"
                        decoration-danger="state == 'expired'"/>
-            </list>
+            </tree>
         </field>
     </record>
 

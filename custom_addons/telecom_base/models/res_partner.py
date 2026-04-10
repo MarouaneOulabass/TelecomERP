@@ -82,7 +82,7 @@ class ResPartner(models.Model):
     @api.constrains('ice')
     def _check_ice(self):
         for rec in self:
-            if rec.ice and not re.match(r'^\d{15}$', rec.ice):
+            if rec.ice and (len(rec.ice) != 15 or not rec.ice.isdigit()):
                 raise ValidationError("L'ICE doit contenir exactement 15 chiffres.")
 
     def action_view_certifications(self):

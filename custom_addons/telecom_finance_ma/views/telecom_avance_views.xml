@@ -9,7 +9,7 @@
         <field name="name">telecom.avance.demarrage.list</field>
         <field name="model">telecom.avance.demarrage</field>
         <field name="arch" type="xml">
-            <list string="Avances de démarrage"
+            <tree string="Avances de démarrage"
                   decoration-success="state == 'rembourse'"
                   decoration-warning="state == 'en_cours_remboursement'"
                   decoration-muted="state == 'en_attente'">
@@ -24,12 +24,12 @@
                 <field name="solde_restant" string="Solde restant" sum="Total solde"/>
                 <field name="currency_id" column_invisible="True"/>
                 <field name="state" string="État" widget="badge"
-                       decoration-secondary="state == 'en_attente'"
+                       decoration-muted="state == 'en_attente'"
                        decoration-info="state == 'verse'"
                        decoration-warning="state == 'en_cours_remboursement'"
                        decoration-success="state == 'rembourse'"/>
                 <field name="date_versement" string="Date versement" optional="show"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -113,13 +113,13 @@
                     <notebook>
                         <page string="Remboursements" name="remboursements">
                             <field name="remboursement_ids">
-                                <list editable="bottom">
+                                <tree editable="bottom">
                                     <field name="date"/>
                                     <field name="situation_id"/>
                                     <field name="montant" sum="Total remboursé"/>
                                     <field name="notes"/>
                                     <field name="currency_id" column_invisible="True"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                         <page string="Notes" name="notes">

@@ -78,6 +78,11 @@ class TelecomAo(models.Model):
         default=lambda self: self.env.user,
     )
 
+    color = fields.Integer(
+        string='Couleur kanban',
+        default=0,
+    )
+
     # ------------------------------------------------------------------
     # Dates
     # ------------------------------------------------------------------

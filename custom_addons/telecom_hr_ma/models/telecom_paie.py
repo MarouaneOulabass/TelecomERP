@@ -342,7 +342,7 @@ class TelecomPaieBulletin(models.Model):
                 rec.prime_anciennete = 0.0
                 continue
             emp = rec.employee_id
-            date_embauche = emp.date_start  # standard hr field
+            date_embauche = emp.first_contract_date  # Odoo 17 hr.employee field
             if not date_embauche:
                 rec.prime_anciennete = 0.0
                 continue

@@ -29,11 +29,11 @@
                        decoration-danger="state == 'refuse'"/>
                 <button name="action_valider" type="object" string="Valider"
                         icon="fa-check" class="btn-success"
-                        attrs="{'invisible': [('state', '!=', 'draft')]}"
+                        invisible="state != 'draft'"
                         groups="telecom_base.group_telecom_chef_chantier"/>
                 <button name="action_refuser" type="object" string="Refuser"
                         icon="fa-times" class="btn-danger"
-                        attrs="{'invisible': [('state', '!=', 'draft')]}"
+                        invisible="state != 'draft'"
                         groups="telecom_base.group_telecom_chef_chantier"/>
             </tree>
         </field>
@@ -47,15 +47,15 @@
                 <header>
                     <button name="action_valider" type="object"
                             string="Valider" class="btn-primary"
-                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            invisible="state != 'draft'"
                             groups="telecom_base.group_telecom_chef_chantier"/>
                     <button name="action_refuser" type="object"
                             string="Refuser" class="btn-danger"
-                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            invisible="state != 'draft'"
                             groups="telecom_base.group_telecom_chef_chantier"/>
                     <button name="action_remettre_brouillon" type="object"
                             string="Remettre en brouillon"
-                            attrs="{'invisible': [('state', '=', 'draft')]}"
+                            invisible="state == 'draft'"
                             groups="telecom_base.group_telecom_admin"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,valide"/>
@@ -72,7 +72,7 @@
                         </group>
                         <group string="Validation">
                             <field name="chef_validation_id"
-                                   attrs="{'required': [('state', '=', 'valide')]}"/>
+                                   required="state == 'valide'"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                     </group>

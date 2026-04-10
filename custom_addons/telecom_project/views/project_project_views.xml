@@ -87,7 +87,7 @@
                            widget="one2many_list"
                            context="{'default_project_id': active_id}"
                            colspan="2">
-                        <list string="Sites du projet" editable="bottom">
+                        <tree string="Sites du projet" editable="bottom">
                             <field name="site_id"/>
                             <field name="lot_id"/>
                             <field name="responsable_site_id"/>
@@ -100,7 +100,7 @@
                             <field name="date_livraison_reel"/>
                             <!-- keep project_id hidden, filled by context -->
                             <field name="project_id" column_invisible="1"/>
-                        </list>
+                        </tree>
                     </field>
 
                 </page>
@@ -116,9 +116,9 @@
     <record id="view_project_telecom_list_inherit" model="ir.ui.view">
         <field name="name">project.project.telecom.list</field>
         <field name="model">project.project</field>
-        <field name="inherit_id" ref="project.view_project_project_list_view"/>
+        <field name="inherit_id" ref="project.view_project"/>
         <field name="arch" type="xml">
-            <xpath expr="//list" position="inside">
+            <xpath expr="//tree" position="inside">
                 <field name="project_type" optional="show"/>
                 <field name="operateur_id" optional="show"/>
                 <field name="sites_total" optional="show"/>

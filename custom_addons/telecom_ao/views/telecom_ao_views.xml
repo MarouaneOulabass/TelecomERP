@@ -87,7 +87,7 @@
         <field name="name">telecom.ao.list</field>
         <field name="model">telecom.ao</field>
         <field name="arch" type="xml">
-            <list string="Appels d'Offres"
+            <tree string="Appels d'Offres"
                   decoration-success="state == 'gagne'"
                   decoration-danger="state == 'perdu'"
                   decoration-warning="state == 'soumis'"
@@ -110,7 +110,7 @@
                        decoration-muted="state in ('abandonne', 'projet')"/>
                 <field name="responsable_id" widget="many2one_avatar_user" optional="show"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -222,7 +222,7 @@
                         <!-- TAB 2: BPU Lines -->
                         <page string="BPU" name="bpu">
                             <field name="bpu_ids" widget="one2many_list" nolabel="1">
-                                <list editable="bottom" string="Bordereau de Prix Unitaires">
+                                <tree editable="bottom" string="Bordereau de Prix Unitaires">
                                     <field name="sequence" widget="handle"/>
                                     <field name="section" optional="show"/>
                                     <field name="code"/>
@@ -233,7 +233,7 @@
                                     <field name="montant_ht" readonly="1"/>
                                     <field name="currency_id" column_invisible="1"/>
                                     <field name="notes" optional="hide"/>
-                                </list>
+                                </tree>
                             </field>
                             <group class="oe_subtotal_footer">
                                 <field name="montant_bpu_total"
@@ -296,7 +296,7 @@
         <field name="arch" type="xml">
             <search string="Rechercher des AO">
                 <field name="name" string="Titre / Référence"
-                       filter_domain="['|', ('name', 'ilike', self), ('reference_dao', 'ilike', self), ('numero_ao', 'ilike', self)]"/>
+                       filter_domain="['|', '|', ('name', 'ilike', self), ('reference_dao', 'ilike', self), ('numero_ao', 'ilike', self)]"/>
                 <field name="maitre_ouvrage_id"/>
                 <field name="responsable_id"/>
 
@@ -313,7 +313,7 @@
                         domain="[('responsable_id','=',uid)]"/>
                 <filter name="filter_urgent"
                         string="Urgents (remise ≤ 7 j)"
-                        domain="[('jours_avant_remise','&lt;=',7), ('jours_avant_remise','&gt;=',0), ('state','not in',['gagne','perdu','projet','abandonne'])]"/>
+                        domain="[('date_remise','&gt;=', context_today().strftime('%Y-%m-%d')), ('date_remise','&lt;=', (context_today() + relativedelta(days=7)).strftime('%Y-%m-%d')), ('state','not in',['gagne','perdu','projet','abandonne'])]"/>
                 <separator/>
                 <filter name="filter_remise_ce_mois"
                         string="Remise ce mois-ci"

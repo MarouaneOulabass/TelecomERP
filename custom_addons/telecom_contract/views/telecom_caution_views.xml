@@ -8,7 +8,7 @@
         <field name="name">telecom.caution.bancaire.list</field>
         <field name="model">telecom.caution.bancaire</field>
         <field name="arch" type="xml">
-            <list string="Cautions bancaires"
+            <tree string="Cautions bancaires"
                   default_order="date_expiration asc"
                   decoration-danger="state == 'expired'"
                   decoration-warning="state == 'expiring_soon'"
@@ -29,7 +29,7 @@
                        decoration-danger="state == 'expired'"
                        decoration-muted="state == 'liberee'"/>
                 <field name="beneficiaire_id" optional="hide"/>
-            </list>
+            </tree>
         </field>
     </record>
 

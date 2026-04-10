@@ -9,7 +9,7 @@
         <field name="name">telecom.decompte.list</field>
         <field name="model">telecom.decompte</field>
         <field name="arch" type="xml">
-            <list string="Décomptes de travaux"
+            <tree string="Décomptes de travaux"
                   decoration-danger="delai_depasse == True"
                   decoration-muted="state == 'paye'">
                 <field name="name" string="N° Décompte"/>
@@ -24,13 +24,13 @@
                 <field name="net_apres_ras" string="Net après RAS" sum="Total net"/>
                 <field name="currency_id" column_invisible="True"/>
                 <field name="state" string="État" widget="badge"
-                       decoration-secondary="state == 'draft'"
+                       decoration-muted="state == 'draft'"
                        decoration-info="state in ('soumis', 'contradictoire')"
                        decoration-warning="state == 'approuve'"
                        decoration-success="state in ('signe', 'paye')"/>
                 <field name="delai_depasse" string="⚠ Délai" widget="boolean"/>
                 <field name="date_paiement_prevu" string="Échéance" optional="show"/>
-            </list>
+            </tree>
         </field>
     </record>
 

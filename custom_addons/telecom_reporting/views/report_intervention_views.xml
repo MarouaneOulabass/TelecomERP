@@ -8,7 +8,7 @@
         <field name="name">report.telecom.intervention.analysis.list</field>
         <field name="model">report.telecom.intervention.analysis</field>
         <field name="arch" type="xml">
-            <list string="Interventions" create="false" edit="false" delete="false">
+            <tree string="Interventions" create="false" edit="false" delete="false">
                 <field name="month" string="Mois"/>
                 <field name="site_name" string="Site"/>
                 <field name="wilaya" string="Région"/>
@@ -18,7 +18,7 @@
                 <field name="count_total" string="Nb" sum="Total"/>
                 <field name="count_sla_depasse" string="SLA dépassés" sum="Total SLA"/>
                 <field name="duree_moyenne" string="Durée (h)" digits="[8,2]" sum="Total heures"/>
-            </list>
+            </tree>
         </field>
     </record>
 

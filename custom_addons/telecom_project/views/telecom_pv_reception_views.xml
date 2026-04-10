@@ -9,7 +9,7 @@
         <field name="name">telecom.pv.reception.list</field>
         <field name="model">telecom.pv.reception</field>
         <field name="arch" type="xml">
-            <list string="PV de réception"
+            <tree string="PV de réception"
                   decoration-success="state == 'approuve'"
                   decoration-info="state == 'signe'"
                   decoration-muted="state == 'draft'">
@@ -28,7 +28,7 @@
                        decoration-warning="state == 'signe'"
                        decoration-muted="state == 'draft'"/>
                 <field name="date_signature" optional="show"/>
-            </list>
+            </tree>
         </field>
     </record>
 

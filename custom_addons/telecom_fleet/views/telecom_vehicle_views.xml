@@ -112,7 +112,7 @@
         <field name="name">telecom.vehicle.list</field>
         <field name="model">telecom.vehicle</field>
         <field name="arch" type="xml">
-            <list string="Véhicules"
+            <tree string="Véhicules"
                   decoration-warning="assurance_expiring or visite_technique_expiring or vignette_expiring or entretien_km_alerte"
                   decoration-danger="state == 'hors_service'"
                   decoration-muted="state == 'vendu'">
@@ -135,7 +135,7 @@
                 <field name="visite_technique_expiring" column_invisible="1"/>
                 <field name="vignette_expiring" column_invisible="1"/>
                 <field name="entretien_km_alerte" column_invisible="1"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -296,7 +296,7 @@
                             </group>
                             <separator string="Historique des entretiens"/>
                             <field name="entretien_ids" nolabel="1">
-                                <list string="Entretiens"
+                                <tree string="Entretiens"
                                       editable="bottom"
                                       decoration-info="entretien_type == 'revision'"
                                       decoration-warning="entretien_type in ('courroie', 'freins')">
@@ -309,7 +309,7 @@
                                     <field name="currency_id" column_invisible="1"/>
                                     <field name="prochain_entretien_km" optional="hide"/>
                                     <field name="prochain_entretien_date" optional="hide"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
 

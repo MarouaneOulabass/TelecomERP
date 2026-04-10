@@ -9,7 +9,7 @@
         <field name="name">telecom.situation.list</field>
         <field name="model">telecom.situation</field>
         <field name="arch" type="xml">
-            <list string="Situations de travaux"
+            <tree string="Situations de travaux"
                   decoration-danger="delai_depasse == True"
                   decoration-muted="state == 'paye'">
                 <field name="name" string="N° Situation"/>
@@ -23,13 +23,13 @@
                 <field name="net_a_payer" string="Net à payer" sum="Total net"/>
                 <field name="currency_id" column_invisible="True"/>
                 <field name="state" string="État" widget="badge"
-                       decoration-secondary="state == 'draft'"
+                       decoration-muted="state == 'draft'"
                        decoration-info="state == 'soumis'"
                        decoration-warning="state == 'approuve'"
                        decoration-success="state in ('facture', 'paye')"/>
                 <field name="delai_depasse" string="⚠ Délai" widget="boolean"/>
                 <field name="date_paiement_prevu" string="Échéance" optional="show"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -176,7 +176,7 @@
                     <notebook>
                         <page string="Détail par lot / site" name="detail_lignes">
                             <field name="situation_line_ids">
-                                <list editable="bottom">
+                                <tree editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="lot_id"/>
                                     <field name="site_id"/>
@@ -192,7 +192,7 @@
                                     <field name="montant_periode"
                                            sum="Total période"/>
                                     <field name="currency_id" column_invisible="True"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                         <page string="Notes" name="notes">

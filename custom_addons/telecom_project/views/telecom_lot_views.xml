@@ -9,7 +9,7 @@
         <field name="name">telecom.lot.list</field>
         <field name="model">telecom.lot</field>
         <field name="arch" type="xml">
-            <list string="Lots de projet"
+            <tree string="Lots de projet"
                   decoration-success="state == 'livre'"
                   decoration-muted="state == 'suspendu'"
                   decoration-info="state == 'en_cours'">
@@ -26,7 +26,7 @@
                        decoration-success="state == 'livre'"
                        decoration-warning="state == 'en_cours'"
                        decoration-muted="state == 'suspendu'"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -82,7 +82,7 @@
 
                     <!-- Progress bar -->
                     <div class="o_row mb-3">
-                        <label string="Avancement : "/>
+                        <span class="o_form_label">Avancement : </span>
                         <field name="taux_avancement" widget="progressbar" readonly="1"
                                style="width: 300px;"/>
                     </div>
@@ -109,7 +109,7 @@
                         <page string="Sites du lot">
                             <field name="project_site_ids"
                                    context="{'default_project_id': project_id, 'default_lot_id': active_id}">
-                                <list string="Sites" editable="bottom"
+                                <tree string="Sites" editable="bottom"
                                       decoration-success="state == 'livre'"
                                       decoration-muted="state == 'suspendu'">
                                     <field name="site_id"/>
@@ -124,7 +124,7 @@
                                     <field name="date_livraison_reel" optional="show"/>
                                     <field name="notes_avancement" optional="hide"/>
                                     <field name="project_id" column_invisible="1"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                     </notebook>

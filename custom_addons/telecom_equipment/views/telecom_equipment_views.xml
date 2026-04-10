@@ -8,7 +8,7 @@
         <field name="name">telecom.equipment.list</field>
         <field name="model">telecom.equipment</field>
         <field name="arch" type="xml">
-            <list string="Équipements télécom"
+            <tree string="Équipements télécom"
                   decoration-warning="garantie_expiring == True"
                   decoration-danger="state == 'en_panne'">
                 <field name="code" optional="show"/>
@@ -25,7 +25,7 @@
                        decoration-muted="state in ('retire', 'mis_au_rebut')"/>
                 <field name="date_fin_garantie" optional="show"/>
                 <field name="garantie_expiring" column_invisible="1"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -156,7 +156,7 @@
                         <!-- Tab 4 : Historique -->
                         <page string="Historique" name="historique">
                             <field name="historique_ids" nolabel="1">
-                                <list editable="bottom" string="Historique des événements">
+                                <tree editable="bottom" string="Historique des événements">
                                     <field name="date"/>
                                     <field name="event_type"/>
                                     <field name="description"/>
@@ -164,7 +164,7 @@
                                     <field name="site_id" optional="show"/>
                                     <field name="cout" optional="show"/>
                                     <field name="currency_id" optional="hide" column_invisible="1"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
 

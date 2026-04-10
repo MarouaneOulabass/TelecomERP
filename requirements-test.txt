@@ -1,0 +1,27 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# TelecomERP — Dépendances de test BDD
+# ─────────────────────────────────────────────────────────────────────────────
+# Installation: pip install -r requirements-test.txt
+#
+# Ces packages sont installés DANS le conteneur Odoo pour exécuter les tests.
+# Voir bin/pre-deploy-tests.sh pour la commande complète.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# BDD framework — Gherkin parser + pytest integration
+pytest>=7.4.0
+pytest-bdd>=7.1.2
+
+# Coverage
+pytest-cov>=4.1.0
+
+# Reporting HTML (optionnel — lisible par le métier)
+pytest-html>=4.1.1
+
+# Pretty output
+pytest-sugar>=1.0.0
+
+# Parameterized tests support (utilisé dans Scenario Outline)
+# already included in pytest-bdd
+
+# Freeze time for date-dependent scenarios (SLA, bail expiry, délai paiement)
+freezegun>=1.4.0

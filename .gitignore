@@ -29,3 +29,9 @@ Thumbs.db
 # Docker volumes (ne pas versionner les données)
 pgdata/
 odoo_data/
+
+# Junk
+=*
+CLAUDE*.md
+!CLAUDE.md
+test-reports/
