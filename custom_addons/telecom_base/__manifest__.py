@@ -16,6 +16,7 @@
         'views/telecom_welcome_template.xml',
         'views/telecom_welcome_views.xml',
         'views/menu_views.xml',
+        'data/hide_native_menus.xml',
     ],
     'assets': {
         'web.assets_web': [

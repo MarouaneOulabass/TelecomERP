@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Hide native Odoo top-level menus that are replaced by TelecomERP modules.
+        Menus are restricted to group_no_one (debug mode only), not deleted.
+        To restore: remove the groups="base.group_no_one" override.
+    -->
+
+    <!-- CRM — replaced by telecom_ao -->
+    <record id="crm.crm_menu_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Project — replaced by telecom_project -->
+    <record id="project.menu_main_pm" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Employees — replaced by telecom_hr_ma -->
+    <record id="hr.menu_hr_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Time Off — accessible via RH -->
+    <record id="hr_holidays.menu_hr_holidays_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Purchase — accessible via menus internes -->
+    <record id="purchase.menu_purchase_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Inventory — accessible via equipements/fleet -->
+    <record id="stock.menu_stock_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Maintenance — replaced by telecom_equipment -->
+    <record id="maintenance.menu_maintenance_title" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Calendar — accessible via pointage -->
+    <record id="calendar.mail_menu_calendar" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- To-do — not used -->
+    <record id="project_todo.menu_todo_todos" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Dashboards (spreadsheet) — replaced by telecom_reporting -->
+    <record id="spreadsheet_dashboard.spreadsheet_dashboard_menu_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Discuss — hide for cleaner bar, messaging still works via chatter -->
+    <record id="mail.menu_root_discuss" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Apps — admin technique only (already debug) -->
+    <record id="base.menu_management" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+</odoo>
