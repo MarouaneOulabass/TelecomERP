@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Dashboard Action using Kanban grouped by module -->
+    <record id="action_telecom_test_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard Tests BDD</field>
+        <field name="res_model">telecom.test.feature</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_telecom_test_feature_search"/>
+        <field name="context">{'search_default_group_module': 1}</field>
+    </record>
+
+</odoo>

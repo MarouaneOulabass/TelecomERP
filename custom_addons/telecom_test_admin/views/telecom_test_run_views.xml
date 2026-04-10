@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_telecom_test_run_tree" model="ir.ui.view">
+        <field name="name">telecom.test.run.tree</field>
+        <field name="model">telecom.test.run</field>
+        <field name="arch" type="xml">
+            <tree string="Exécutions de tests"
+                  decoration-success="state == 'done' and failed == 0"
+                  decoration-danger="state == 'done' and failed > 0"
+                  decoration-info="state == 'running'">
+                <field name="date_start"/>
+                <field name="module_filter"/>
+                <field name="total_tests"/>
+                <field name="passed"/>
+                <field name="failed"/>
+                <field name="pass_rate" widget="progressbar"/>
+                <field name="duration"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-info="state == 'running'"
+                       decoration-danger="state == 'error'"/>
+                <field name="launched_by"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_telecom_test_run_form" model="ir.ui.view">
+        <field name="name">telecom.test.run.form</field>
+        <field name="model">telecom.test.run</field>
+        <field name="arch" type="xml">
+            <form string="Exécution de tests">
+                <header>
+                    <button name="action_run_tests"
+                            string="Lancer les tests"
+                            type="object" class="oe_highlight"
+                            icon="fa-play"
+                            invisible="state == 'running'"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <span invisible="state != 'running'" class="text-info">
+                                Tests en cours...
+                            </span>
+                            <span invisible="state != 'done'">
+                                <field name="passed" class="text-success"/> /
+                                <field name="total_tests"/> tests
+                            </span>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="module_filter"
+                                   placeholder="Vide = tous les modules"/>
+                            <field name="launched_by"/>
+                        </group>
+                        <group string="Résultats">
+                            <field name="state" widget="badge"/>
+                            <field name="total_tests"/>
+                            <field name="passed"/>
+                            <field name="failed"/>
+                            <field name="errors"/>
+                            <field name="pass_rate" widget="progressbar"/>
+                            <field name="duration" widget="float_time"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="date_start"/>
+                        </group>
+                        <group>
+                            <field name="date_end"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Sortie pytest" name="output">
+                            <field name="output" nolabel="1" readonly="1"
+                                   widget="ace" options="{'mode': 'text'}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_telecom_test_run" model="ir.actions.act_window">
+        <field name="name">Exécutions de tests</field>
+        <field name="res_model">telecom.test.run</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Quick action: New test run (all modules) -->
+    <record id="action_telecom_test_run_new" model="ir.actions.act_window">
+        <field name="name">Lancer les tests</field>
+        <field name="res_model">telecom.test.run</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

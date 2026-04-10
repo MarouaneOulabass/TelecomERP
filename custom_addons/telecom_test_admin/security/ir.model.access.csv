@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_test_feature_admin,telecom.test.feature admin,model_telecom_test_feature,telecom_base.group_telecom_admin,1,1,1,1
+access_test_feature_user,telecom.test.feature user,model_telecom_test_feature,telecom_base.group_telecom_responsable,1,0,0,0
+access_test_scenario_admin,telecom.test.scenario admin,model_telecom_test_scenario,telecom_base.group_telecom_admin,1,1,1,1
+access_test_scenario_user,telecom.test.scenario user,model_telecom_test_scenario,telecom_base.group_telecom_responsable,1,0,0,0
+access_test_run_admin,telecom.test.run admin,model_telecom_test_run,telecom_base.group_telecom_admin,1,1,1,1
+access_test_run_user,telecom.test.run user,model_telecom_test_run,telecom_base.group_telecom_responsable,1,0,0,0

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Feature Tree View -->
+    <record id="view_telecom_test_feature_tree" model="ir.ui.view">
+        <field name="name">telecom.test.feature.tree</field>
+        <field name="model">telecom.test.feature</field>
+        <field name="arch" type="xml">
+            <tree string="Fichiers de tests BDD"
+                  decoration-success="last_run_status == 'success'"
+                  decoration-danger="last_run_status == 'fail'"
+                  decoration-warning="last_run_status == 'partial'"
+                  decoration-muted="last_run_status == 'not_run'">
+                <field name="module"/>
+                <field name="feature_title"/>
+                <field name="scenario_count"/>
+                <field name="last_run_passed"/>
+                <field name="last_run_failed"/>
+                <field name="last_run_status" widget="badge"
+                       decoration-success="last_run_status == 'success'"
+                       decoration-danger="last_run_status in ('fail',)"
+                       decoration-warning="last_run_status == 'partial'"/>
+                <field name="last_run_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Feature Form View -->
+    <record id="view_telecom_test_feature_form" model="ir.ui.view">
+        <field name="name">telecom.test.feature.form</field>
+        <field name="model">telecom.test.feature</field>
+        <field name="arch" type="xml">
+            <form string="Fichier de test BDD">
+                <header>
+                    <button name="action_sync_features"
+                            string="Synchroniser tous les .feature"
+                            type="object" class="oe_highlight"
+                            icon="fa-refresh"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-list-ol"
+                                name="%(action_telecom_test_scenario)d" type="action"
+                                context="{'search_default_feature_id': active_id}">
+                            <field name="scenario_count" widget="statinfo" string="Scénarios"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="feature_title" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="module"/>
+                            <field name="name"/>
+                            <field name="file_path"/>
+                        </group>
+                        <group>
+                            <field name="last_run_status" widget="badge"/>
+                            <field name="last_run_passed"/>
+                            <field name="last_run_failed"/>
+                            <field name="last_run_date"/>
+                        </group>
+                    </group>
+                    <group string="Description (lisible par le métier)">
+                        <field name="description" nolabel="1" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Contenu .feature" name="content">
+                            <field name="content" widget="ace" options="{'mode': 'gherkin'}"
+                                   readonly="1" nolabel="1"/>
+                        </page>
+                        <page string="Scénarios" name="scenarios">
+                            <field name="scenario_ids" nolabel="1">
+                                <tree decoration-success="last_status == 'passed'"
+                                      decoration-danger="last_status in ('failed','error')">
+                                    <field name="name"/>
+                                    <field name="scenario_type"/>
+                                    <field name="last_status" widget="badge"
+                                           decoration-success="last_status == 'passed'"
+                                           decoration-danger="last_status in ('failed','error')"/>
+                                    <field name="last_run_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Feature Kanban View -->
+    <record id="view_telecom_test_feature_kanban" model="ir.ui.view">
+        <field name="name">telecom.test.feature.kanban</field>
+        <field name="model">telecom.test.feature</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_small_column">
+                <field name="module"/>
+                <field name="feature_title"/>
+                <field name="scenario_count"/>
+                <field name="last_run_status"/>
+                <field name="last_run_passed"/>
+                <field name="last_run_failed"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)}">
+                            <div class="o_kanban_card_header">
+                                <strong><field name="module"/></strong>
+                            </div>
+                            <div class="o_kanban_card_content">
+                                <field name="feature_title"/>
+                                <div class="mt-2">
+                                    <span class="badge text-bg-primary">
+                                        <field name="scenario_count"/> scénarios
+                                    </span>
+                                    <span t-if="record.last_run_passed.raw_value"
+                                          class="badge text-bg-success ms-1">
+                                        <field name="last_run_passed"/> OK
+                                    </span>
+                                    <span t-if="record.last_run_failed.raw_value"
+                                          class="badge text-bg-danger ms-1">
+                                        <field name="last_run_failed"/> KO
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_telecom_test_feature_search" model="ir.ui.view">
+        <field name="name">telecom.test.feature.search</field>
+        <field name="model">telecom.test.feature</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="module"/>
+                <field name="feature_title"/>
+                <filter name="success" string="Tous passent" domain="[('last_run_status','=','success')]"/>
+                <filter name="failed" string="Avec échecs" domain="[('last_run_status','in',['fail','partial'])]"/>
+                <filter name="not_run" string="Jamais exécuté" domain="[('last_run_status','=','not_run')]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_module" string="Module" context="{'group_by': 'module'}"/>
+                    <filter name="group_status" string="Statut" context="{'group_by': 'last_run_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_telecom_test_feature" model="ir.actions.act_window">
+        <field name="name">Fichiers de tests (.feature)</field>
+        <field name="res_model">telecom.test.feature</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_telecom_test_feature_search"/>
+        <field name="context">{'search_default_group_module': 1}</field>
+    </record>
+
+</odoo>
