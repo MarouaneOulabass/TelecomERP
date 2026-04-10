@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_telecom_welcome" model="ir.actions.client">
+        <field name="name">TelecomERP — Accueil</field>
+        <field name="tag">telecom_welcome</field>
+    </record>
+
+    <!-- Fallback: use a Qweb action instead of client action -->
+    <record id="action_telecom_welcome_page" model="ir.actions.act_url">
+        <field name="name">Accueil TelecomERP</field>
+        <field name="url">/telecom/welcome</field>
+        <field name="target">self</field>
+    </record>
+
+</odoo>

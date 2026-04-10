@@ -13,6 +13,8 @@
         'views/res_partner_views.xml',
         'views/res_company_views.xml',
         'views/telecom_certification_views.xml',
+        'views/telecom_welcome_template.xml',
+        'views/telecom_welcome_views.xml',
         'views/menu_views.xml',
     ],
     'installable': True,
