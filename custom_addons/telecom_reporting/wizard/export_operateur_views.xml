@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Export Opérateur Wizard — Form view
+    ================================================================ -->
+
+    <record id="view_export_operateur_wizard_form" model="ir.ui.view">
+        <field name="name">telecom.export.operateur.wizard.form</field>
+        <field name="model">telecom.export.operateur.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Export interventions format opérateur">
+                <group invisible="state != 'draft'">
+                    <group string="Période">
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group string="Filtres">
+                        <field name="operateur_id"/>
+                        <field name="format_export"/>
+                    </group>
+                </group>
+                <group invisible="state != 'done'">
+                    <group string="Fichier généré">
+                        <field name="file_name" readonly="1"/>
+                        <field name="file_data" filename="file_name" readonly="1"/>
+                    </group>
+                </group>
+                <field name="state" invisible="1"/>
+                <footer>
+                    <button name="action_generate" type="object"
+                            string="Générer l'export"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open the wizard -->
+    <record id="action_export_operateur_wizard" model="ir.actions.act_window">
+        <field name="name">Export format opérateur</field>
+        <field name="res_model">telecom.export.operateur.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

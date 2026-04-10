@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Report action: Bilan social CNSS annuel
+         Bound to telecom.paie.bulletin — multi-record PDF export.
+         Generates a consolidated annual CNSS social balance sheet
+         grouped by employee showing: months worked, total brut,
+         total CNSS salarie, total CNSS patronal, total AMO.
+    ================================================================ -->
+
+    <record id="action_report_telecom_bilan_social_annuel" model="ir.actions.report">
+        <field name="name">Bilan social CNSS annuel</field>
+        <field name="model">telecom.paie.bulletin</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">telecom_reporting.report_telecom_bilan_social_annuel_template</field>
+        <field name="report_file">telecom_reporting.report_telecom_bilan_social_annuel_template</field>
+        <field name="print_report_name">
+            'Bilan_Social_CNSS_Annuel_%s' % (docs[0].date_from.strftime('%Y') if docs else 'export')
+        </field>
+        <field name="binding_model_id" ref="telecom_hr_ma.model_telecom_paie_bulletin"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ================================================================
+         QWeb PDF template: Bilan social CNSS annuel
+         Groups payslips by employee across an entire year.
+         Per employee: Name, CNSS number, months worked, total salaire brut,
+         total CNSS salarie, total CNSS patronal, total AMO salarie, total AMO patronal.
+    ================================================================ -->
+
+    <template id="report_telecom_bilan_social_annuel_template">
+        <t t-call="web.html_container">
+            <t t-set="company" t-value="docs[0].company_id if docs else env.company"/>
+
+            <!-- Determine year from first doc -->
+            <t t-set="report_year" t-value="docs[0].date_from.year if docs else ''"/>
+
+            <!-- Month label helper (French) -->
+            <t t-set="MONTH_FR" t-value="{
+                1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril',
+                5: 'Mai', 6: 'Juin', 7: 'Juillet', 8: 'Août',
+                9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
+            }"/>
+
+            <!-- Group docs by employee -->
+            <t t-set="employee_data" t-value="{}"/>
+            <t t-foreach="docs" t-as="bulletin">
+                <t t-set="emp_id" t-value="bulletin.employee_id.id"/>
+                <t t-if="emp_id not in employee_data">
+                    <t t-set="_" t-value="employee_data.__setitem__(emp_id, {
+                        'employee': bulletin.employee_id,
+                        'months': 0,
+                        'salaire_brut': 0.0,
+                        'cnss_salarie': 0.0,
+                        'cnss_patronal': 0.0,
+                        'amo_salarie': 0.0,
+                        'amo_patronal': 0.0,
+                    })"/>
+                </t>
+                <t t-set="_" t-value="employee_data[emp_id].__setitem__('months', employee_data[emp_id]['months'] + 1)"/>
+                <t t-set="_" t-value="employee_data[emp_id].__setitem__('salaire_brut', employee_data[emp_id]['salaire_brut'] + bulletin.salaire_base)"/>
+                <t t-set="_" t-value="employee_data[emp_id].__setitem__('cnss_salarie', employee_data[emp_id]['cnss_salarie'] + bulletin.cnss_salarie)"/>
+                <t t-set="_" t-value="employee_data[emp_id].__setitem__('cnss_patronal', employee_data[emp_id]['cnss_patronal'] + bulletin.cnss_patronal)"/>
+                <t t-set="_" t-value="employee_data[emp_id].__setitem__('amo_salarie', employee_data[emp_id]['amo_salarie'] + bulletin.amo_salarie)"/>
+                <t t-set="_" t-value="employee_data[emp_id].__setitem__('amo_patronal', employee_data[emp_id]['amo_patronal'] + bulletin.amo_patronal)"/>
+            </t>
+
+            <!-- Compute grand totals -->
+            <t t-set="grand_salaire" t-value="sum(d['salaire_brut'] for d in employee_data.values())"/>
+            <t t-set="grand_cnss_sal" t-value="sum(d['cnss_salarie'] for d in employee_data.values())"/>
+            <t t-set="grand_cnss_pat" t-value="sum(d['cnss_patronal'] for d in employee_data.values())"/>
+            <t t-set="grand_amo_sal" t-value="sum(d['amo_salarie'] for d in employee_data.values())"/>
+            <t t-set="grand_amo_pat" t-value="sum(d['amo_patronal'] for d in employee_data.values())"/>
+
+            <t t-call="web.external_layout">
+                <div class="page">
+
+                    <!-- PAGE HEADER -->
+                    <div class="row mb-4">
+                        <div class="col-8">
+                            <h3 class="text-uppercase" style="color:#1a5276; border-bottom:2px solid #1a5276; padding-bottom:6px;">
+                                <strong>Bilan Social CNSS / AMO -- Annuel <t t-esc="report_year"/></strong>
+                            </h3>
+                            <table class="table table-sm table-borderless" style="font-size:11px; width:auto;">
+                                <tr>
+                                    <td style="width:180px;"><strong>Societe :</strong></td>
+                                    <td><t t-esc="company.name"/></td>
+                                </tr>
+                                <tr t-if="company.vat">
+                                    <td><strong>IF (Identifiant Fiscal) :</strong></td>
+                                    <td><t t-esc="company.vat"/></td>
+                                </tr>
+                                <tr t-if="company.street">
+                                    <td><strong>Adresse :</strong></td>
+                                    <td>
+                                        <t t-esc="company.street"/>
+                                        <t t-if="company.city">, <t t-esc="company.city"/></t>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-4 text-right" style="font-size:11px;">
+                            <div style="border:1px solid #1a5276; padding:10px; border-radius:4px;">
+                                <p class="mb-1">
+                                    <strong>Exercice :</strong>
+                                    <t t-esc="report_year"/>
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Nb employes :</strong>
+                                    <t t-esc="len(employee_data)"/>
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Date d'edition :</strong>
+                                    <t t-esc="context_today().strftime('%d/%m/%Y')"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EMPLOYEE DETAIL TABLE -->
+                    <h5 class="mt-3" style="color:#1a5276; border-bottom:1px solid #1a5276;">
+                        RECAPITULATIF PAR EMPLOYE
+                    </h5>
+                    <table class="table table-sm table-bordered" style="font-size:9.5px;">
+                        <thead class="thead-light">
+                            <tr style="background-color:#d6e4f0;">
+                                <th class="text-center">#</th>
+                                <th>N CNSS</th>
+                                <th>Nom et prenom</th>
+                                <th class="text-center">Mois travailles</th>
+                                <th class="text-right">Total salaire brut (MAD)</th>
+                                <th class="text-right">CNSS salarie (MAD)</th>
+                                <th class="text-right">CNSS patronal (MAD)</th>
+                                <th class="text-right">AMO salarie (MAD)</th>
+                                <th class="text-right">AMO patronal (MAD)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="row_idx" t-value="0"/>
+                            <t t-foreach="employee_data.values()" t-as="emp_row">
+                                <t t-set="row_idx" t-value="row_idx + 1"/>
+                                <tr>
+                                    <td class="text-center"><t t-esc="row_idx"/></td>
+                                    <td><t t-esc="emp_row['employee'].cnss_number or '--'"/></td>
+                                    <td>
+                                        <strong><t t-esc="emp_row['employee'].name"/></strong>
+                                        <t t-if="emp_row['employee'].job_title">
+                                            <br/>
+                                            <small style="color:#666;">
+                                                <t t-esc="emp_row['employee'].job_title"/>
+                                            </small>
+                                        </t>
+                                    </td>
+                                    <td class="text-center"><t t-esc="emp_row['months']"/></td>
+                                    <td class="text-right"><t t-esc="'%.2f' % emp_row['salaire_brut']"/></td>
+                                    <td class="text-right"><t t-esc="'%.2f' % emp_row['cnss_salarie']"/></td>
+                                    <td class="text-right"><t t-esc="'%.2f' % emp_row['cnss_patronal']"/></td>
+                                    <td class="text-right"><t t-esc="'%.2f' % emp_row['amo_salarie']"/></td>
+                                    <td class="text-right"><t t-esc="'%.2f' % emp_row['amo_patronal']"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background-color:#1a5276; color:white; font-weight:bold;">
+                                <td colspan="3" class="text-right">TOTAUX</td>
+                                <td class="text-center">--</td>
+                                <td class="text-right"><t t-esc="'%.2f' % grand_salaire"/></td>
+                                <td class="text-right"><t t-esc="'%.2f' % grand_cnss_sal"/></td>
+                                <td class="text-right"><t t-esc="'%.2f' % grand_cnss_pat"/></td>
+                                <td class="text-right"><t t-esc="'%.2f' % grand_amo_sal"/></td>
+                                <td class="text-right"><t t-esc="'%.2f' % grand_amo_pat"/></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <!-- SUMMARY -->
+                    <div class="row mt-3">
+                        <div class="col-6 offset-6">
+                            <table class="table table-sm table-bordered"
+                                   style="font-size:11px; background-color:#f0f5fb;">
+                                <thead>
+                                    <tr style="background-color:#1a5276; color:white;">
+                                        <th colspan="2" class="text-center">
+                                            Recapitulatif charges annuelles
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Total CNSS salarie</td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f' % grand_cnss_sal"/> MAD
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total CNSS patronal</td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f' % grand_cnss_pat"/> MAD
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total AMO salarie</td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f' % grand_amo_sal"/> MAD
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total AMO patronal</td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f' % grand_amo_pat"/> MAD
+                                        </td>
+                                    </tr>
+                                    <tr style="font-weight:bold; background-color:#d6e4f0;">
+                                        <td>Total charges patronales</td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f' % (grand_cnss_pat + grand_amo_pat)"/> MAD
+                                        </td>
+                                    </tr>
+                                    <tr style="font-weight:bold; background-color:#1a5276; color:white;">
+                                        <td>MASSE SALARIALE BRUTE ANNUELLE</td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f' % grand_salaire"/> MAD
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SIGNATURE BLOCK -->
+                    <div class="row mt-5" style="font-size:10px;">
+                        <div class="col-4 text-center">
+                            <p style="border-top:1px solid #333; padding-top:6px; margin-top:40px;">
+                                <strong>Etabli par :</strong><br/>
+                                Responsable RH / Paie
+                            </p>
+                        </div>
+                        <div class="col-4 text-center">
+                            <p style="border-top:1px solid #333; padding-top:6px; margin-top:40px;">
+                                <strong>Verifie par :</strong><br/>
+                                Directeur Financier
+                            </p>
+                        </div>
+                        <div class="col-4 text-center">
+                            <p style="border-top:1px solid #333; padding-top:6px; margin-top:40px;">
+                                <strong>Approuve par :</strong><br/>
+                                Directeur General
+                                <br/>
+                                <small>(Cachet + Signature)</small>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- LEGAL NOTICE -->
+                    <div class="row mt-4" style="font-size:8.5px; color:#555;">
+                        <div class="col-12">
+                            <hr/>
+                            <p class="mb-0">
+                                <strong>Base legale :</strong>
+                                Bilan social annuel etabli conformement au Dahir portant loi n 1-72-184
+                                du 15 joumada II 1392 (27 juillet 1972) relatif au regime de securite
+                                sociale.  Taux CNSS : 4,48 % salarie / 10,64 % patronal (plafond
+                                6 000 MAD/mois) -- Taux AMO : 2,26 % salarie / 3,96 % patronal
+                                (sans plafond).  Ce document constitue un recapitulatif annuel des
+                                cotisations sociales et doit etre conserve pendant 10 ans.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

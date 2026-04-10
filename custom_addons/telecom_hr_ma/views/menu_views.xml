@@ -51,6 +51,14 @@
               sequence="50"
               groups="telecom_base.group_telecom_chef_chantier"/>
 
+    <!-- Level 1: Export DAMANCOM -->
+    <menuitem id="menu_damancom_export"
+              name="Export DAMANCOM"
+              parent="menu_telecom_rh"
+              action="action_damancom_export_wizard"
+              sequence="35"
+              groups="telecom_base.group_telecom_responsable"/>
+
     <!-- Configuration sub-menu (under TelecomERP global config) -->
     <menuitem id="menu_telecom_rh_config"
               name="RH — Configuration"

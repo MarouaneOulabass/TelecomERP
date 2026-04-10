@@ -43,6 +43,8 @@ et telecom_site (telecom.site).
         'views/telecom_pointage_views.xml',
         'views/telecom_paie_views.xml',
         'views/hr_employee_views.xml',
+        # Wizard — before menu
+        'wizard/damancom_export_views.xml',
         'views/menu_views.xml',
     ],
     'installable': True,

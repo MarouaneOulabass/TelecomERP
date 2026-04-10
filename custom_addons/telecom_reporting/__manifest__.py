@@ -40,9 +40,12 @@
         'views/report_site_views.xml',
         'views/report_finance_views.xml',
         'views/telecom_dashboard_views.xml',
+        # Wizard — before menus
+        'wizard/export_operateur_views.xml',
         'views/menu_views.xml',
         # Reports (PDF)
         'report/telecom_bilan_social.xml',
+        'report/telecom_bilan_social_annuel.xml',
     ],
     'installable': True,
     'application': False,

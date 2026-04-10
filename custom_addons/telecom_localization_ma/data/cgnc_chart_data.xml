@@ -460,5 +460,535 @@
             <field name="parent_id" ref="cgnc_class_7"/>
         </record>
 
+        <!-- ============================================================
+             ACCOUNT.ACCOUNT — Principal CGNC accounts
+             These provide a usable chart of accounts skeleton.
+             account_type values are Odoo 17 standard types.
+        ============================================================ -->
+
+        <!-- CLASSE 1 — Financement permanent -->
+        <record id="cgnc_account_1111" model="account.account">
+            <field name="code">1111</field>
+            <field name="name">Capital social</field>
+            <field name="account_type">equity</field>
+        </record>
+        <record id="cgnc_account_1140" model="account.account">
+            <field name="code">1140</field>
+            <field name="name">Réserve légale</field>
+            <field name="account_type">equity</field>
+        </record>
+        <record id="cgnc_account_1181" model="account.account">
+            <field name="code">1181</field>
+            <field name="name">Résultat net de l'exercice (bénéfice)</field>
+            <field name="account_type">equity</field>
+        </record>
+        <record id="cgnc_account_1189" model="account.account">
+            <field name="code">1189</field>
+            <field name="name">Résultat net de l'exercice (perte)</field>
+            <field name="account_type">equity</field>
+        </record>
+        <record id="cgnc_account_1200" model="account.account">
+            <field name="code">1200</field>
+            <field name="name">Résultats nets en instance d'affectation</field>
+            <field name="account_type">equity</field>
+        </record>
+        <record id="cgnc_account_1311" model="account.account">
+            <field name="code">1311</field>
+            <field name="name">Subventions d'investissement reçues</field>
+            <field name="account_type">equity</field>
+        </record>
+        <record id="cgnc_account_1410" model="account.account">
+            <field name="code">1410</field>
+            <field name="name">Emprunts obligataires</field>
+            <field name="account_type">liability_non_current</field>
+        </record>
+        <record id="cgnc_account_1481" model="account.account">
+            <field name="code">1481</field>
+            <field name="name">Emprunts auprès des établissements de crédit</field>
+            <field name="account_type">liability_non_current</field>
+        </record>
+        <record id="cgnc_account_1511" model="account.account">
+            <field name="code">1511</field>
+            <field name="name">Provisions pour litiges</field>
+            <field name="account_type">liability_non_current</field>
+        </record>
+        <record id="cgnc_account_1515" model="account.account">
+            <field name="code">1515</field>
+            <field name="name">Provisions pour garanties données aux clients</field>
+            <field name="account_type">liability_non_current</field>
+        </record>
+
+        <!-- CLASSE 2 — Actif immobilisé -->
+        <record id="cgnc_account_2111" model="account.account">
+            <field name="code">2111</field>
+            <field name="name">Frais de constitution</field>
+            <field name="account_type">asset_non_current</field>
+        </record>
+        <record id="cgnc_account_2210" model="account.account">
+            <field name="code">2210</field>
+            <field name="name">Brevets, marques, droits et valeurs similaires</field>
+            <field name="account_type">asset_non_current</field>
+        </record>
+        <record id="cgnc_account_2220" model="account.account">
+            <field name="code">2220</field>
+            <field name="name">Fonds commercial</field>
+            <field name="account_type">asset_non_current</field>
+        </record>
+        <record id="cgnc_account_2230" model="account.account">
+            <field name="code">2230</field>
+            <field name="name">Logiciels</field>
+            <field name="account_type">asset_non_current</field>
+        </record>
+        <record id="cgnc_account_2311" model="account.account">
+            <field name="code">2311</field>
+            <field name="name">Terrains nus</field>
+            <field name="account_type">asset_fixed</field>
+        </record>
+        <record id="cgnc_account_2321" model="account.account">
+            <field name="code">2321</field>
+            <field name="name">Bâtiments</field>
+            <field name="account_type">asset_fixed</field>
+        </record>
+        <record id="cgnc_account_2331" model="account.account">
+            <field name="code">2331</field>
+            <field name="name">Installations techniques</field>
+            <field name="account_type">asset_fixed</field>
+        </record>
+        <record id="cgnc_account_2340" model="account.account">
+            <field name="code">2340</field>
+            <field name="name">Matériel de transport</field>
+            <field name="account_type">asset_fixed</field>
+        </record>
+        <record id="cgnc_account_2351" model="account.account">
+            <field name="code">2351</field>
+            <field name="name">Mobilier de bureau</field>
+            <field name="account_type">asset_fixed</field>
+        </record>
+        <record id="cgnc_account_2355" model="account.account">
+            <field name="code">2355</field>
+            <field name="name">Matériel informatique</field>
+            <field name="account_type">asset_fixed</field>
+        </record>
+        <record id="cgnc_account_2380" model="account.account">
+            <field name="code">2380</field>
+            <field name="name">Autres immobilisations corporelles</field>
+            <field name="account_type">asset_fixed</field>
+        </record>
+        <record id="cgnc_account_2411" model="account.account">
+            <field name="code">2411</field>
+            <field name="name">Prêts au personnel</field>
+            <field name="account_type">asset_non_current</field>
+        </record>
+        <record id="cgnc_account_2481" model="account.account">
+            <field name="code">2481</field>
+            <field name="name">Titres de participation</field>
+            <field name="account_type">asset_non_current</field>
+        </record>
+        <record id="cgnc_account_2711" model="account.account">
+            <field name="code">2711</field>
+            <field name="name">Immobilisations corporelles en cours</field>
+            <field name="account_type">asset_fixed</field>
+        </record>
+        <record id="cgnc_account_2811" model="account.account">
+            <field name="code">2811</field>
+            <field name="name">Amortissements des frais de constitution</field>
+            <field name="account_type">asset_non_current</field>
+        </record>
+        <record id="cgnc_account_2831" model="account.account">
+            <field name="code">2831</field>
+            <field name="name">Amortissements des installations techniques</field>
+            <field name="account_type">asset_fixed</field>
+        </record>
+        <record id="cgnc_account_2832" model="account.account">
+            <field name="code">2832</field>
+            <field name="name">Amortissements du matériel de transport</field>
+            <field name="account_type">asset_fixed</field>
+        </record>
+        <record id="cgnc_account_2835" model="account.account">
+            <field name="code">2835</field>
+            <field name="name">Amortissements du matériel informatique</field>
+            <field name="account_type">asset_fixed</field>
+        </record>
+
+        <!-- CLASSE 3 — Actif circulant (Stocks) -->
+        <record id="cgnc_account_3111" model="account.account">
+            <field name="code">3111</field>
+            <field name="name">Marchandises (groupe A)</field>
+            <field name="account_type">asset_current</field>
+        </record>
+        <record id="cgnc_account_3121" model="account.account">
+            <field name="code">3121</field>
+            <field name="name">Matières premières</field>
+            <field name="account_type">asset_current</field>
+        </record>
+        <record id="cgnc_account_3123" model="account.account">
+            <field name="code">3123</field>
+            <field name="name">Emballages</field>
+            <field name="account_type">asset_current</field>
+        </record>
+        <record id="cgnc_account_3141" model="account.account">
+            <field name="code">3141</field>
+            <field name="name">Fournitures de bureau</field>
+            <field name="account_type">asset_current</field>
+        </record>
+        <record id="cgnc_account_3411" model="account.account">
+            <field name="code">3411</field>
+            <field name="name">Fournisseurs — avances et acomptes versés</field>
+            <field name="account_type">asset_current</field>
+        </record>
+        <record id="cgnc_account_3421" model="account.account">
+            <field name="code">3421</field>
+            <field name="name">Clients</field>
+            <field name="account_type">asset_receivable</field>
+            <field name="reconcile" eval="True"/>
+        </record>
+        <record id="cgnc_account_3424" model="account.account">
+            <field name="code">3424</field>
+            <field name="name">Clients douteux ou litigieux</field>
+            <field name="account_type">asset_receivable</field>
+            <field name="reconcile" eval="True"/>
+        </record>
+        <record id="cgnc_account_3425" model="account.account">
+            <field name="code">3425</field>
+            <field name="name">Clients — effets à recevoir</field>
+            <field name="account_type">asset_receivable</field>
+            <field name="reconcile" eval="True"/>
+        </record>
+        <record id="cgnc_account_3451" model="account.account">
+            <field name="code">3451</field>
+            <field name="name">État — subventions à recevoir</field>
+            <field name="account_type">asset_current</field>
+        </record>
+        <record id="cgnc_account_3455" model="account.account">
+            <field name="code">3455</field>
+            <field name="name">État — TVA récupérable</field>
+            <field name="account_type">asset_current</field>
+        </record>
+        <record id="cgnc_account_3458" model="account.account">
+            <field name="code">3458</field>
+            <field name="name">État — autres comptes débiteurs</field>
+            <field name="account_type">asset_current</field>
+        </record>
+        <record id="cgnc_account_3461" model="account.account">
+            <field name="code">3461</field>
+            <field name="name">Associés — comptes d'apport en société</field>
+            <field name="account_type">asset_current</field>
+        </record>
+        <record id="cgnc_account_3481" model="account.account">
+            <field name="code">3481</field>
+            <field name="name">Créances sur cessions d'immobilisations</field>
+            <field name="account_type">asset_current</field>
+        </record>
+        <record id="cgnc_account_3491" model="account.account">
+            <field name="code">3491</field>
+            <field name="name">Provisions pour dépréciation des comptes clients</field>
+            <field name="account_type">asset_current</field>
+        </record>
+
+        <!-- CLASSE 4 — Passif circulant (Tiers) -->
+        <record id="cgnc_account_4411" model="account.account">
+            <field name="code">4411</field>
+            <field name="name">Fournisseurs</field>
+            <field name="account_type">liability_payable</field>
+            <field name="reconcile" eval="True"/>
+        </record>
+        <record id="cgnc_account_4415" model="account.account">
+            <field name="code">4415</field>
+            <field name="name">Fournisseurs — effets à payer</field>
+            <field name="account_type">liability_payable</field>
+            <field name="reconcile" eval="True"/>
+        </record>
+        <record id="cgnc_account_4421" model="account.account">
+            <field name="code">4421</field>
+            <field name="name">Fournisseurs — avances et acomptes reçus</field>
+            <field name="account_type">liability_current</field>
+        </record>
+        <record id="cgnc_account_4432" model="account.account">
+            <field name="code">4432</field>
+            <field name="name">Rémunérations dues au personnel</field>
+            <field name="account_type">liability_current</field>
+        </record>
+        <record id="cgnc_account_4441" model="account.account">
+            <field name="code">4441</field>
+            <field name="name">CNSS</field>
+            <field name="account_type">liability_current</field>
+        </record>
+        <record id="cgnc_account_4443" model="account.account">
+            <field name="code">4443</field>
+            <field name="name">Caisses de retraite (CIMR)</field>
+            <field name="account_type">liability_current</field>
+        </record>
+        <record id="cgnc_account_4445" model="account.account">
+            <field name="code">4445</field>
+            <field name="name">Mutuelles (AMO)</field>
+            <field name="account_type">liability_current</field>
+        </record>
+        <record id="cgnc_account_4452" model="account.account">
+            <field name="code">4452</field>
+            <field name="name">État — impôts, taxes et assimilés</field>
+            <field name="account_type">liability_current</field>
+        </record>
+        <record id="cgnc_account_4455" model="account.account">
+            <field name="code">4455</field>
+            <field name="name">État — TVA facturée</field>
+            <field name="account_type">liability_current</field>
+        </record>
+        <record id="cgnc_account_4456" model="account.account">
+            <field name="code">4456</field>
+            <field name="name">État — TVA due (déclaration)</field>
+            <field name="account_type">liability_current</field>
+        </record>
+        <record id="cgnc_account_4457" model="account.account">
+            <field name="code">4457</field>
+            <field name="name">État — impôts et taxes à payer</field>
+            <field name="account_type">liability_current</field>
+        </record>
+        <record id="cgnc_account_4458" model="account.account">
+            <field name="code">4458</field>
+            <field name="name">État — autres comptes créditeurs</field>
+            <field name="account_type">liability_current</field>
+        </record>
+        <record id="cgnc_account_4481" model="account.account">
+            <field name="code">4481</field>
+            <field name="name">Dettes sur acquisitions d'immobilisations</field>
+            <field name="account_type">liability_current</field>
+        </record>
+        <record id="cgnc_account_4491" model="account.account">
+            <field name="code">4491</field>
+            <field name="name">Produits constatés d'avance</field>
+            <field name="account_type">liability_current</field>
+        </record>
+
+        <!-- CLASSE 5 — Trésorerie -->
+        <record id="cgnc_account_5111" model="account.account">
+            <field name="code">5111</field>
+            <field name="name">Chèques à encaisser ou à l'encaissement</field>
+            <field name="account_type">asset_cash</field>
+        </record>
+        <record id="cgnc_account_5141" model="account.account">
+            <field name="code">5141</field>
+            <field name="name">Banques (solde débiteur)</field>
+            <field name="account_type">asset_cash</field>
+        </record>
+        <record id="cgnc_account_5143" model="account.account">
+            <field name="code">5143</field>
+            <field name="name">Trésorerie Générale</field>
+            <field name="account_type">asset_cash</field>
+        </record>
+        <record id="cgnc_account_5161" model="account.account">
+            <field name="code">5161</field>
+            <field name="name">Caisse centrale</field>
+            <field name="account_type">asset_cash</field>
+        </record>
+        <record id="cgnc_account_5165" model="account.account">
+            <field name="code">5165</field>
+            <field name="name">Régie d'avances et accréditifs</field>
+            <field name="account_type">asset_cash</field>
+        </record>
+
+        <!-- CLASSE 6 — Charges -->
+        <record id="cgnc_account_6111" model="account.account">
+            <field name="code">6111</field>
+            <field name="name">Achats de marchandises</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6121" model="account.account">
+            <field name="code">6121</field>
+            <field name="name">Achats de matières premières</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6122" model="account.account">
+            <field name="code">6122</field>
+            <field name="name">Achats de matières et fournitures consommables</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6125" model="account.account">
+            <field name="code">6125</field>
+            <field name="name">Achats non stockés de matières et fournitures</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6131" model="account.account">
+            <field name="code">6131</field>
+            <field name="name">Locations et charges locatives</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6133" model="account.account">
+            <field name="code">6133</field>
+            <field name="name">Entretien et réparations</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6134" model="account.account">
+            <field name="code">6134</field>
+            <field name="name">Primes d'assurance</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6141" model="account.account">
+            <field name="code">6141</field>
+            <field name="name">Études, recherches et documentation</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6142" model="account.account">
+            <field name="code">6142</field>
+            <field name="name">Transports</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6143" model="account.account">
+            <field name="code">6143</field>
+            <field name="name">Déplacements, missions et réceptions</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6145" model="account.account">
+            <field name="code">6145</field>
+            <field name="name">Frais postaux et frais de télécommunications</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6147" model="account.account">
+            <field name="code">6147</field>
+            <field name="name">Services bancaires</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6161" model="account.account">
+            <field name="code">6161</field>
+            <field name="name">Sous-traitance générale</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6167" model="account.account">
+            <field name="code">6167</field>
+            <field name="name">Honoraires</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6171" model="account.account">
+            <field name="code">6171</field>
+            <field name="name">Impôts et taxes directes</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6174" model="account.account">
+            <field name="code">6174</field>
+            <field name="name">Impôts et taxes indirectes</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6181" model="account.account">
+            <field name="code">6181</field>
+            <field name="name">Rémunérations du personnel</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6182" model="account.account">
+            <field name="code">6182</field>
+            <field name="name">Primes et gratifications</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6183" model="account.account">
+            <field name="code">6183</field>
+            <field name="name">Indemnités et avantages divers</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6184" model="account.account">
+            <field name="code">6184</field>
+            <field name="name">Charges sociales (CNSS, AMO, CIMR)</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6191" model="account.account">
+            <field name="code">6191</field>
+            <field name="name">Dotations d'exploitation aux amortissements de l'immobilisé</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6311" model="account.account">
+            <field name="code">6311</field>
+            <field name="name">Intérêts des emprunts et dettes</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6386" model="account.account">
+            <field name="code">6386</field>
+            <field name="name">Escomptes accordés</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6701" model="account.account">
+            <field name="code">6701</field>
+            <field name="name">VNA des immobilisations corporelles cédées</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6706" model="account.account">
+            <field name="code">6706</field>
+            <field name="name">Pénalités et amendes fiscales</field>
+            <field name="account_type">expense</field>
+        </record>
+        <record id="cgnc_account_6701_is" model="account.account">
+            <field name="code">6710</field>
+            <field name="name">Impôts sur les bénéfices (IS)</field>
+            <field name="account_type">expense</field>
+        </record>
+
+        <!-- CLASSE 7 — Produits -->
+        <record id="cgnc_account_7111" model="account.account">
+            <field name="code">7111</field>
+            <field name="name">Ventes de marchandises au Maroc</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7121" model="account.account">
+            <field name="code">7121</field>
+            <field name="name">Ventes de biens produits au Maroc</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7124" model="account.account">
+            <field name="code">7124</field>
+            <field name="name">Ventes de services produits au Maroc</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7127" model="account.account">
+            <field name="code">7127</field>
+            <field name="name">Ventes et produits accessoires</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7128" model="account.account">
+            <field name="code">7128</field>
+            <field name="name">Ventes de biens et services à l'étranger</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7131" model="account.account">
+            <field name="code">7131</field>
+            <field name="name">Variation des stocks de marchandises</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7141" model="account.account">
+            <field name="code">7141</field>
+            <field name="name">Immobilisations produites par l'entreprise pour elle-même</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7181" model="account.account">
+            <field name="code">7181</field>
+            <field name="name">Produits divers de gestion courante</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7311" model="account.account">
+            <field name="code">7311</field>
+            <field name="name">Intérêts et produits assimilés</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7386" model="account.account">
+            <field name="code">7386</field>
+            <field name="name">Escomptes obtenus</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7510" model="account.account">
+            <field name="code">7510</field>
+            <field name="name">Produits des cessions d'immobilisations</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7580" model="account.account">
+            <field name="code">7580</field>
+            <field name="name">Autres produits non courants</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7911" model="account.account">
+            <field name="code">7911</field>
+            <field name="name">Reprises sur amortissements de l'immobilisé</field>
+            <field name="account_type">income</field>
+        </record>
+        <record id="cgnc_account_7960" model="account.account">
+            <field name="code">7960</field>
+            <field name="name">Transferts de charges financières</field>
+            <field name="account_type">income</field>
+        </record>
+
     </data>
 </odoo>

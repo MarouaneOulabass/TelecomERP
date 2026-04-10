@@ -15,3 +15,5 @@ access_pointage_chantier_admin,telecom.pointage.chantier.admin,model_telecom_poi
 access_paie_bulletin_charge_affaires,telecom.paie.bulletin.charge,model_telecom_paie_bulletin,telecom_base.group_telecom_charge_affaires,1,0,0,0
 access_paie_bulletin_responsable,telecom.paie.bulletin.responsable,model_telecom_paie_bulletin,telecom_base.group_telecom_responsable,1,1,1,0
 access_paie_bulletin_admin,telecom.paie.bulletin.admin,model_telecom_paie_bulletin,telecom_base.group_telecom_admin,1,1,1,1
+access_damancom_export_responsable,telecom.damancom.export.wizard.responsable,model_telecom_damancom_export_wizard,telecom_base.group_telecom_responsable,1,1,1,1
+access_damancom_export_admin,telecom.damancom.export.wizard.admin,model_telecom_damancom_export_wizard,telecom_base.group_telecom_admin,1,1,1,1

@@ -25,6 +25,54 @@
               sequence="10"
               groups="telecom_base.group_telecom_responsable"/>
 
+    <!-- 2.1b Dashboard Direction — Finance (CA) -->
+    <menuitem id="menu_telecom_reporting_direction_finance"
+              name="Direction — CA et Finance"
+              parent="menu_telecom_reporting"
+              action="action_dashboard_direction_finance"
+              sequence="11"
+              groups="telecom_base.group_telecom_responsable"/>
+
+    <!-- 2.1c Dashboard Direction — Sites déployés -->
+    <menuitem id="menu_telecom_reporting_direction_sites"
+              name="Direction — Sites déployés"
+              parent="menu_telecom_reporting"
+              action="action_dashboard_direction_sites"
+              sequence="12"
+              groups="telecom_base.group_telecom_responsable"/>
+
+    <!-- 2.1d Dashboard Direction — Interventions mois -->
+    <menuitem id="menu_telecom_reporting_direction_interventions"
+              name="Direction — Interventions du mois"
+              parent="menu_telecom_reporting"
+              action="action_dashboard_direction_interventions"
+              sequence="13"
+              groups="telecom_base.group_telecom_responsable"/>
+
+    <!-- 2.1e Dashboard RH — Techniciens sur site -->
+    <menuitem id="menu_telecom_reporting_rh_pointage"
+              name="RH — Techniciens sur site"
+              parent="menu_telecom_reporting"
+              action="action_dashboard_rh_pointage_today"
+              sequence="14"
+              groups="telecom_base.group_telecom_chef_chantier"/>
+
+    <!-- 2.1f Dashboard RH — Habilitations expirant -->
+    <menuitem id="menu_telecom_reporting_rh_habilitations"
+              name="RH — Habilitations expirant"
+              parent="menu_telecom_reporting"
+              action="action_dashboard_rh_habilitations_expiring"
+              sequence="15"
+              groups="telecom_base.group_telecom_chef_chantier"/>
+
+    <!-- 2.1g Dashboard RH — EPI à renouveler -->
+    <menuitem id="menu_telecom_reporting_rh_epi"
+              name="RH — EPI à renouveler"
+              parent="menu_telecom_reporting"
+              action="action_dashboard_rh_epi_renew"
+              sequence="16"
+              groups="telecom_base.group_telecom_chef_chantier"/>
+
     <!-- 2.2 Analyse interventions -->
     <menuitem id="menu_telecom_reporting_interventions"
               name="Interventions"
@@ -49,12 +97,28 @@
               sequence="40"
               groups="telecom_base.group_telecom_responsable"/>
 
-    <!-- 2.5 Bilan social CNSS — opens payslip list + PDF report -->
+    <!-- 2.5 Export format opérateur -->
+    <menuitem id="menu_telecom_reporting_export_operateur"
+              name="Export format opérateur"
+              parent="menu_telecom_reporting"
+              action="action_export_operateur_wizard"
+              sequence="45"
+              groups="telecom_base.group_telecom_responsable"/>
+
+    <!-- 2.6 Bilan social CNSS — opens payslip list + PDF report (monthly) -->
     <menuitem id="menu_telecom_reporting_bilan_social"
-              name="Bilan social CNSS"
+              name="Bilan social CNSS (mensuel)"
               parent="menu_telecom_reporting"
               action="action_bilan_social_cnss"
               sequence="50"
+              groups="telecom_base.group_telecom_responsable"/>
+
+    <!-- 2.7 Bilan social CNSS annuel — opens payslip list for annual PDF report -->
+    <menuitem id="menu_telecom_reporting_bilan_social_annuel"
+              name="Bilan social CNSS (annuel)"
+              parent="menu_telecom_reporting"
+              action="action_bilan_social_cnss"
+              sequence="55"
               groups="telecom_base.group_telecom_responsable"/>
 
 </odoo>
