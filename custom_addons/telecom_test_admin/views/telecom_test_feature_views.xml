@@ -102,7 +102,7 @@
                 <field name="last_run_failed"/>
                 <field name="color"/>
                 <templates>
-                    <t t-name="card">
+                    <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)}">
                             <div class="o_kanban_card_header">
                                 <strong><field name="module"/></strong>

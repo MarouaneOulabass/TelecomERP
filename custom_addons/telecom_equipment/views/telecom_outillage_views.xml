@@ -173,7 +173,7 @@
                 <field name="etalonnage_expiring"/>
                 <field name="date_prochain_etalonnage"/>
                 <templates>
-                    <t t-name="card">
+                    <t t-name="kanban-box">
                         <div class="oe_kanban_global_click">
                             <div class="o_kanban_record_top">
                                 <div class="o_kanban_record_headings">

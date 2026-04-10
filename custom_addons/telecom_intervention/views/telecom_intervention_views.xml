@@ -287,7 +287,7 @@
                 <field name="technician_ids"/>
                 <field name="color"/>
                 <templates>
-                    <t t-name="card">
+                    <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_color_#{record.sla_couleur.raw_value}">
                             <div class="o_kanban_record_top">
                                 <div class="o_kanban_record_headings">
