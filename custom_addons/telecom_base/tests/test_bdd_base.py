@@ -211,3 +211,166 @@ def then_partner_specialites(context, count):
     assert len(p.specialite_ids) == count, (
         f"Spécialités attendues: {count}, obtenues: {len(p.specialite_ids)}"
     )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Odoo 17 compat — Smoke tests: toutes les vues se chargent
+# ─────────────────────────────────────────────────────────────────────────────
+
+import os
+import glob
+import re
+
+
+def _get_telecom_views(env, view_type):
+    """Get all views of a given type for telecom modules."""
+    return env['ir.ui.view'].search([
+        ('model', 'like', 'telecom.%'),
+        ('type', '=', view_type),
+    ])
+
+
+@when(parsers.parse('je valide toutes les vues de type "{view_type}" des modules telecom'))
+def when_validate_views(env, view_type, context):
+    views = _get_telecom_views(env, view_type)
+    errors = []
+    for v in views:
+        try:
+            v._check_xml()
+        except Exception as e:
+            errors.append(f"{v.model} / {v.name} (id={v.id}): {e}")
+    context['view_errors'] = errors
+    context['view_count'] = len(views)
+
+
+@then(parsers.parse('aucune vue {view_type} n\'est cassée'))
+def then_no_broken_views(context, view_type):
+    errors = context.get('view_errors', [])
+    count = context.get('view_count', 0)
+    assert not errors, (
+        f"{len(errors)} vue(s) {view_type} cassée(s) sur {count} :\n"
+        + "\n".join(f"  - {e}" for e in errors)
+    )
+
+
+@when('je charge toutes les actions des modules telecom')
+def when_check_actions(env, context):
+    actions = env['ir.actions.act_window'].search([
+        ('res_model', 'like', 'telecom.%'),
+    ])
+    errors = []
+    for act in actions:
+        if act.res_model not in env:
+            errors.append(f"Action '{act.name}' -> modèle '{act.res_model}' inexistant")
+    context['action_errors'] = errors
+    context['action_count'] = len(actions)
+
+
+@then('aucune action ne référence un modèle inexistant')
+def then_no_broken_actions(context):
+    errors = context.get('action_errors', [])
+    assert not errors, (
+        f"{len(errors)} action(s) cassée(s) :\n"
+        + "\n".join(f"  - {e}" for e in errors)
+    )
+
+
+@when('je vérifie tous les menus des modules telecom')
+def when_check_menus(env, context):
+    menus = env['ir.ui.menu'].search([
+        ('name', 'ilike', 'telecom'),
+    ])
+    errors = []
+    for menu in menus:
+        if menu.action:
+            try:
+                _ = menu.action.res_model
+            except Exception as e:
+                errors.append(f"Menu '{menu.complete_name}': {e}")
+    context['menu_errors'] = errors
+    context['menu_count'] = len(menus)
+
+
+@then('aucun menu ne pointe vers une action inexistante')
+def then_no_broken_menus(context):
+    errors = context.get('menu_errors', [])
+    assert not errors, (
+        f"{len(errors)} menu(s) cassé(s) :\n"
+        + "\n".join(f"  - {e}" for e in errors)
+    )
+
+
+@when('je vérifie les champs de toutes les vues des modules telecom')
+def when_check_view_fields(env, context):
+    views = env['ir.ui.view'].search([
+        ('model', 'like', 'telecom.%'),
+        ('type', 'in', ['form', 'tree', 'search']),
+    ])
+    errors = []
+    for v in views:
+        if v.model not in env:
+            continue
+        model_fields = env[v.model]._fields
+        try:
+            from lxml import etree
+            tree = etree.fromstring(v.arch)
+            for field_el in tree.iter('field'):
+                fname = field_el.get('name')
+                if fname and fname not in model_fields:
+                    # Check if it's a relational sub-field (inside a One2many)
+                    parent = field_el.getparent()
+                    if parent is not None and parent.tag in ('tree', 'form', 'kanban'):
+                        parent_field = parent.getparent()
+                        if parent_field is not None and parent_field.tag == 'field':
+                            continue  # sub-field of a relational, skip
+                    errors.append(
+                        f"{v.model} / {v.name}: champ '{fname}' inexistant"
+                    )
+        except Exception:
+            pass
+    context['field_errors'] = errors
+    context['field_view_count'] = len(views)
+
+
+@then('aucune vue ne référence un champ inexistant')
+def then_no_missing_fields(context):
+    errors = context.get('field_errors', [])
+    assert not errors, (
+        f"{len(errors)} champ(s) manquant(s) :\n"
+        + "\n".join(f"  - {e}" for e in errors)
+    )
+
+
+@when('je scanne les fichiers XML des modules telecom')
+def when_scan_xml_files(env, context):
+    addons_path = os.path.dirname(os.path.dirname(os.path.dirname(
+        os.path.abspath(__file__)
+    )))
+    errors = []
+    deprecated = [
+        ('attrs=', 'attrs est déprécié en Odoo 17'),
+        ('t-name="card"', 'kanban template doit être "kanban-box"'),
+        ('t-name="kanban-card"', 'kanban template doit être "kanban-box"'),
+    ]
+    for xml_file in glob.glob(os.path.join(addons_path, 'telecom_*/views/*.xml')):
+        fname = os.path.basename(xml_file)
+        module = xml_file.split(os.sep)[-3]
+        with open(xml_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        for pattern, msg in deprecated:
+            if pattern in content:
+                # Find line number
+                for i, line in enumerate(content.split('\n'), 1):
+                    if pattern in line:
+                        errors.append(f"{module}/{fname}:{i} — {msg}")
+                        break
+    context['xml_errors'] = errors
+
+
+@then('aucun fichier ne contient de syntaxe dépréciée')
+def then_no_deprecated_syntax(context):
+    errors = context.get('xml_errors', [])
+    assert not errors, (
+        f"{len(errors)} syntaxe(s) dépréciée(s) trouvée(s) :\n"
+        + "\n".join(f"  - {e}" for e in errors)
+    )
