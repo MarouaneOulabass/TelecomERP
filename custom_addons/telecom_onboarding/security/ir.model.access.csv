@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_session_admin,telecom.onboarding.session admin,model_telecom_onboarding_session,telecom_base.group_telecom_admin,1,1,1,1
+access_document_admin,telecom.onboarding.document admin,model_telecom_onboarding_document,telecom_base.group_telecom_admin,1,1,1,1
+access_message_admin,telecom.onboarding.message admin,model_telecom_onboarding_message,telecom_base.group_telecom_admin,1,1,1,1

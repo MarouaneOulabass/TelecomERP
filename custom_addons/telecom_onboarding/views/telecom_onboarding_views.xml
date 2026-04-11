@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Session Tree -->
+    <record id="view_onboarding_session_tree" model="ir.ui.view">
+        <field name="name">telecom.onboarding.session.tree</field>
+        <field name="model">telecom.onboarding.session</field>
+        <field name="arch" type="xml">
+            <tree string="Sessions d'onboarding"
+                  decoration-success="state == 'done'"
+                  decoration-info="state in ('extracting','provisioning')"
+                  decoration-warning="state == 'review'">
+                <field name="company_name"/>
+                <field name="ice"/>
+                <field name="city"/>
+                <field name="nb_employees"/>
+                <field name="document_count"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-info="state in ('extracting','provisioning','configuring')"
+                       decoration-danger="state == 'error'"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Session Form — the main onboarding interface -->
+    <record id="view_onboarding_session_form" model="ir.ui.view">
+        <field name="name">telecom.onboarding.session.form</field>
+        <field name="model">telecom.onboarding.session</field>
+        <field name="arch" type="xml">
+            <form string="Onboarding IA">
+                <header>
+                    <button name="action_extract_documents"
+                            string="Analyser les documents"
+                            type="object" class="oe_highlight"
+                            icon="fa-magic"
+                            invisible="state != 'upload'"
+                            confirm="Envoyer les documents à l'IA pour extraction ?"/>
+                    <button name="action_send_message"
+                            string="Envoyer"
+                            type="object" class="oe_highlight"
+                            icon="fa-paper-plane"
+                            invisible="state not in ('review', 'configuring')"/>
+                    <button name="action_generate_and_provision"
+                            string="Configurer et créer le tenant"
+                            type="object" class="oe_highlight"
+                            icon="fa-rocket"
+                            invisible="state != 'configuring'"
+                            confirm="Générer le profil YAML et créer le tenant ?"/>
+                    <button name="action_reset"
+                            string="Recommencer"
+                            type="object"
+                            icon="fa-undo"
+                            invisible="state in ('upload', 'extracting', 'provisioning')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="upload,review,configuring,done"/>
+                </header>
+                <sheet>
+                    <!-- Step 1: Upload -->
+                    <div invisible="state != 'upload'" class="text-center mb-4 mt-4">
+                        <h2><i class="fa fa-cloud-upload me-2"/>Uploadez les documents de la société</h2>
+                        <p class="text-muted">
+                            Registre de Commerce, Organigramme, Statuts, Patente, ICE...
+                            <br/>L'agent IA va extraire automatiquement les informations.
+                        </p>
+                    </div>
+
+                    <field name="document_ids" invisible="state not in ('upload', 'review')" nolabel="1">
+                        <tree editable="bottom">
+                            <field name="name"/>
+                            <field name="doc_type"/>
+                            <field name="file" filename="file_name"/>
+                            <field name="file_name" column_invisible="1"/>
+                        </tree>
+                    </field>
+
+                    <!-- Step 2-3: Extracted data + Conversation -->
+                    <group invisible="state == 'upload'" string="Informations extraites">
+                        <group>
+                            <field name="company_name"/>
+                            <field name="ice"/>
+                            <field name="if_number"/>
+                            <field name="rc_number"/>
+                            <field name="patente"/>
+                        </group>
+                        <group>
+                            <field name="city"/>
+                            <field name="forme_juridique"/>
+                            <field name="capital_social"/>
+                            <field name="nb_employees"/>
+                            <field name="activities"/>
+                        </group>
+                    </group>
+
+                    <!-- Conversation -->
+                    <group invisible="state == 'upload'" string="Conversation avec l'agent IA">
+                        <field name="message_ids" nolabel="1" readonly="1">
+                            <tree create="0" delete="0"
+                                  decoration-info="role == 'assistant'"
+                                  decoration-muted="role == 'system'">
+                                <field name="role" widget="badge"/>
+                                <field name="content"/>
+                                <field name="timestamp"/>
+                            </tree>
+                        </field>
+                        <field name="user_input" placeholder="Tapez votre réponse ici..."
+                               invisible="state not in ('review', 'configuring')"/>
+                    </group>
+
+                    <!-- Step 4: Module selection -->
+                    <group invisible="state not in ('configuring', 'done')" string="Modules à activer">
+                        <group>
+                            <field name="cap_site"/>
+                            <field name="cap_intervention"/>
+                            <field name="cap_hr"/>
+                            <field name="cap_equipment"/>
+                            <field name="cap_fleet"/>
+                            <field name="cap_project"/>
+                        </group>
+                        <group>
+                            <field name="cap_ao"/>
+                            <field name="cap_contract"/>
+                            <field name="cap_finance"/>
+                            <field name="cap_cost"/>
+                            <field name="cap_reporting"/>
+                            <field name="subdomain" placeholder="nom-entreprise"
+                                   required="state == 'configuring'"/>
+                        </group>
+                    </group>
+
+                    <!-- Step 5: Result -->
+                    <notebook invisible="state not in ('done', 'error')">
+                        <page string="Profil YAML généré">
+                            <field name="yaml_profile" readonly="1"
+                                   widget="ace" options="{'mode': 'yaml'}"/>
+                        </page>
+                        <page string="Données brutes extraites">
+                            <field name="extracted_data" readonly="1"/>
+                        </page>
+                    </notebook>
+
+                    <group invisible="state != 'done'">
+                        <field name="tenant_id"/>
+                    </group>
+
+                    <field name="api_key" password="True" invisible="state != 'upload'"
+                           placeholder="sk-ant-... (ou configurer dans les paramètres système)"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_onboarding_session" model="ir.actions.act_window">
+        <field name="name">Onboarding IA</field>
+        <field name="res_model">telecom.onboarding.session</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

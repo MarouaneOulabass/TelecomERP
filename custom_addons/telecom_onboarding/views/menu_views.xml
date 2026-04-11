@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_onboarding_root"
+              name="Onboarding IA"
+              parent="telecom_tenant.menu_telecom_tenant_root"
+              action="action_onboarding_session"
+              sequence="5"/>
+</odoo>
