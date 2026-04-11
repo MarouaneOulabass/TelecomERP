@@ -197,6 +197,11 @@ def given_second_site(env, name, code, context):
 
 @given(parsers.parse('"{n}" AO à l\'état "{state}" existent'))
 def given_n_ao_in_state(env, n, state, context):
+    # Snapshot count before creating test data
+    if 'ao_baseline' not in context:
+        context['ao_baseline'] = {}
+        for s in ['detecte', 'etude', 'soumis', 'gagne', 'perdu', 'abandonne', 'projet']:
+            context['ao_baseline'][s] = env['telecom.ao'].search_count([('state', '=', s)])
     for i in range(int(n)):
         _make_ao(env, state)
     context.setdefault('ao_counts', {})[state] = \
@@ -205,6 +210,10 @@ def given_n_ao_in_state(env, n, state, context):
 
 @given(parsers.parse('"{n}" AO à l\'état "{state}" existe'))
 def given_1_ao_in_state(env, n, state, context):
+    if 'ao_baseline' not in context:
+        context['ao_baseline'] = {}
+        for s in ['detecte', 'etude', 'soumis', 'gagne', 'perdu', 'abandonne', 'projet']:
+            context['ao_baseline'][s] = env['telecom.ao'].search_count([('state', '=', s)])
     for i in range(int(n)):
         _make_ao(env, state)
     context.setdefault('ao_counts', {})[state] = \
@@ -217,18 +226,24 @@ def given_1_ao_in_state(env, n, state, context):
 
 @given(parsers.parse('"{n}" contrat actif de type "{ctype}" existe'))
 def given_1_active_contract(env, n, ctype, context):
+    if 'contract_baseline' not in context:
+        context['contract_baseline'] = env['telecom.contract'].search_count([('state', '=', 'actif')])
     for i in range(int(n)):
         _make_contract(env, contract_type=ctype, state='actif')
 
 
 @given(parsers.parse('"{n}" contrats actifs de type "{ctype}" existent'))
 def given_n_active_contracts(env, n, ctype, context):
+    if 'contract_baseline' not in context:
+        context['contract_baseline'] = env['telecom.contract'].search_count([('state', '=', 'actif')])
     for i in range(int(n)):
         _make_contract(env, contract_type=ctype, state='actif')
 
 
 @given(parsers.parse('"{n}" contrat de type "{ctype}" à l\'état "{state}" existe'))
 def given_n_contracts_in_state(env, n, ctype, state, context):
+    if 'contract_baseline' not in context:
+        context['contract_baseline'] = env['telecom.contract'].search_count([('state', '=', 'actif')])
     for i in range(int(n)):
         _make_contract(env, contract_type=ctype, state=state)
 
@@ -337,26 +352,31 @@ def then_site_analysis_wilaya(env, wilaya, code, context):
 
 @then(parsers.parse('le nombre d\'AO détectés est "{n}"'))
 def then_ao_detectes(env, n, context):
-    count = env['telecom.ao'].search_count([('state', '=', 'detecte')])
-    assert count == int(n), f"AO détectés attendus: {n}, obtenus: {count}"
+    baseline = context.get('ao_baseline', {}).get('detecte', 0)
+    count = env['telecom.ao'].search_count([('state', '=', 'detecte')]) - baseline
+    assert count == int(n), f"AO détectés attendus: {n}, obtenus: {count} (base: {baseline})"
 
 
 @then(parsers.parse('le nombre d\'AO soumis est "{n}"'))
 def then_ao_soumis(env, n, context):
-    count = env['telecom.ao'].search_count([('state', '=', 'soumis')])
+    baseline = context.get('ao_baseline', {}).get('soumis', 0)
+    count = env['telecom.ao'].search_count([('state', '=', 'soumis')]) - baseline
     assert count == int(n), f"AO soumis attendus: {n}, obtenus: {count}"
 
 
 @then(parsers.parse('le nombre d\'AO gagnés est "{n}"'))
 def then_ao_gagnes(env, n, context):
-    count = env['telecom.ao'].search_count([('state', '=', 'gagne')])
+    baseline = context.get('ao_baseline', {}).get('gagne', 0)
+    count = env['telecom.ao'].search_count([('state', '=', 'gagne')]) - baseline
     assert count == int(n), f"AO gagnés attendus: {n}, obtenus: {count}"
 
 
 @then(parsers.parse('le taux de succès AO est de "{pct}" %'))
 def then_ao_success_rate(env, pct, context):
-    gagnes = env['telecom.ao'].search_count([('state', '=', 'gagne')])
-    perdus = env['telecom.ao'].search_count([('state', '=', 'perdu')])
+    baseline_g = context.get('ao_baseline', {}).get('gagne', 0)
+    baseline_p = context.get('ao_baseline', {}).get('perdu', 0)
+    gagnes = env['telecom.ao'].search_count([('state', '=', 'gagne')]) - baseline_g
+    perdus = env['telecom.ao'].search_count([('state', '=', 'perdu')]) - baseline_p
     total = gagnes + perdus
     if total == 0:
         assert False, "Aucun AO gagné ou perdu pour calculer le taux de succès"
@@ -370,8 +390,9 @@ def then_ao_success_rate(env, pct, context):
 
 @then(parsers.parse('le nombre de contrats actifs est "{n}"'))
 def then_active_contracts_count(env, n, context):
-    count = env['telecom.contract'].search_count([('state', '=', 'actif')])
-    assert count == int(n), f"Contrats actifs attendus: {n}, obtenus: {count}"
+    baseline = context.get('contract_baseline', 0)
+    count = env['telecom.contract'].search_count([('state', '=', 'actif')]) - baseline
+    assert count == int(n), f"Contrats actifs attendus: {n}, obtenus: {count} (base: {baseline})"
 
 
 @then(parsers.parse(

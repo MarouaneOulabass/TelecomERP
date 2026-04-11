@@ -10,12 +10,12 @@ Fonctionnalité: Gestion du parc véhicules terrain
   # ── Création véhicule ────────────────────────────────────────────────────
 
   Scénario: Création d'un véhicule avec immatriculation unique
-    Quand je crée un véhicule "Toyota Hilux" avec l'immatriculation "12345-A-78"
+    Quand je crée un véhicule "Toyota Hilux" avec l'immatriculation "TEST-Z-999"
     Alors le véhicule est créé avec succès
 
   Scénario: Immatriculation unique — doublon refusé
-    Soit un véhicule avec l'immatriculation "12345-A-78" existe déjà
-    Quand je tente de créer un véhicule avec la même immatriculation "12345-A-78"
+    Soit un véhicule avec l'immatriculation "TEST-Z-888" existe déjà
+    Quand je tente de créer un véhicule avec la même immatriculation "TEST-Z-888"
     Alors une erreur d'intégrité est levée
 
   # ── Alertes réglementaires ───────────────────────────────────────────────
