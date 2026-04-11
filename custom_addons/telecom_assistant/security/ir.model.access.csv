@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_conversation_user,telecom.assistant.conversation user,model_telecom_assistant_conversation,telecom_base.group_telecom_technicien,1,1,1,0
+access_conversation_admin,telecom.assistant.conversation admin,model_telecom_assistant_conversation,telecom_base.group_telecom_admin,1,1,1,1
+access_message_user,telecom.assistant.message user,model_telecom_assistant_message,telecom_base.group_telecom_technicien,1,0,0,0
+access_message_admin,telecom.assistant.message admin,model_telecom_assistant_message,telecom_base.group_telecom_admin,1,1,1,1
+access_toolcall_user,telecom.assistant.tool.call user,model_telecom_assistant_tool_call,telecom_base.group_telecom_technicien,1,0,0,0
+access_toolcall_admin,telecom.assistant.tool.call admin,model_telecom_assistant_tool_call,telecom_base.group_telecom_admin,1,1,1,1

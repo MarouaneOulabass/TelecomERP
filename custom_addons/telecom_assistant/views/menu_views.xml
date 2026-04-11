@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_assistant_root"
+              name="Assistant IA"
+              sequence="5"
+              web_icon="telecom_assistant,static/description/icon.png"/>
+
+    <menuitem id="menu_assistant_new"
+              name="Nouvelle conversation"
+              parent="menu_assistant_root"
+              action="action_assistant_new"
+              sequence="1"/>
+
+    <menuitem id="menu_assistant_history"
+              name="Historique"
+              parent="menu_assistant_root"
+              action="action_assistant_conversation"
+              sequence="10"/>
+</odoo>

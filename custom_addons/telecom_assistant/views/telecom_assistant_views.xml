@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Conversation Tree -->
+    <record id="view_conversation_tree" model="ir.ui.view">
+        <field name="name">telecom.assistant.conversation.tree</field>
+        <field name="model">telecom.assistant.conversation</field>
+        <field name="arch" type="xml">
+            <tree string="Conversations" create="1">
+                <field name="user_id"/>
+                <field name="create_date"/>
+                <field name="message_count"/>
+                <field name="total_tokens"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Conversation Form — the chat interface -->
+    <record id="view_conversation_form" model="ir.ui.view">
+        <field name="name">telecom.assistant.conversation.form</field>
+        <field name="model">telecom.assistant.conversation</field>
+        <field name="arch" type="xml">
+            <form string="Assistant TelecomERP">
+                <header>
+                    <button name="action_send"
+                            string="Envoyer"
+                            type="object"
+                            class="oe_highlight"
+                            icon="fa-paper-plane"/>
+                </header>
+                <sheet>
+                    <div class="oe_title mb-3">
+                        <h1>
+                            <i class="fa fa-robot me-2" style="color: #e94560;"/>
+                            Assistant TelecomERP
+                        </h1>
+                        <p class="text-muted">
+                            Posez vos questions sur les données de l'ERP en langage naturel.
+                        </p>
+                    </div>
+
+                    <!-- Chat messages -->
+                    <field name="message_ids" nolabel="1" readonly="1">
+                        <tree create="0" delete="0"
+                              decoration-info="role == 'assistant'"
+                              decoration-bf="role == 'user'">
+                            <field name="role" widget="badge"
+                                   decoration-info="role == 'assistant'"
+                                   decoration-success="role == 'user'"/>
+                            <field name="content"/>
+                            <field name="tokens_used"/>
+                            <field name="timestamp"/>
+                        </tree>
+                    </field>
+
+                    <!-- Input -->
+                    <group>
+                        <field name="user_input"
+                               placeholder="Tapez votre question... Ex: Combien on a dépensé en carburant sur le projet FTTH Casablanca ?"
+                               nolabel="1"/>
+                    </group>
+
+                    <group string="Infos" invisible="total_tokens == 0">
+                        <field name="user_id"/>
+                        <field name="total_tokens"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Message Form (detail view with tool calls) -->
+    <record id="view_message_form" model="ir.ui.view">
+        <field name="name">telecom.assistant.message.form</field>
+        <field name="model">telecom.assistant.message</field>
+        <field name="arch" type="xml">
+            <form string="Message assistant" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <field name="role"/>
+                        <field name="content"/>
+                        <field name="tokens_used"/>
+                        <field name="timestamp"/>
+                    </group>
+                    <field name="tool_call_ids" string="Outils appelés" nolabel="1"
+                           invisible="not tool_call_ids">
+                        <tree>
+                            <field name="tool_name"/>
+                            <field name="parameters"/>
+                            <field name="duration_ms"/>
+                            <field name="success" widget="boolean"/>
+                            <field name="error_message"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_assistant_conversation" model="ir.actions.act_window">
+        <field name="name">Assistant IA</field>
+        <field name="res_model">telecom.assistant.conversation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_assistant_new" model="ir.actions.act_window">
+        <field name="name">Nouvelle conversation</field>
+        <field name="res_model">telecom.assistant.conversation</field>
+        <field name="view_mode">form</field>
+    </record>
+
+</odoo>
