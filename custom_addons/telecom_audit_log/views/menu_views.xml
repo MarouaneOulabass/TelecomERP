@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Under Settings for admin only -->
+    <menuitem id="menu_audit_root"
+              name="Audit &amp; Logs"
+              parent="telecom_base.menu_telecom_root"
+              sequence="95"
+              groups="telecom_base.group_telecom_admin"/>
+
+    <menuitem id="menu_audit_log"
+              name="Journal d'audit"
+              parent="menu_audit_root"
+              action="action_audit_log"
+              sequence="10"/>
+
+    <menuitem id="menu_audit_stats"
+              name="Stats d'usage"
+              parent="menu_audit_root"
+              action="action_audit_stats"
+              sequence="20"/>
+
+    <menuitem id="menu_audit_daily"
+              name="Activité quotidienne"
+              parent="menu_audit_root"
+              action="action_audit_activity_daily"
+              sequence="30"/>
+
+    <menuitem id="menu_audit_ai"
+              name="Usage Agent IA"
+              parent="menu_audit_root"
+              action="action_audit_ai_usage"
+              sequence="40"/>
+</odoo>

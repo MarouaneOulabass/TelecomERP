@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Stats Pivot -->
+    <record id="view_audit_log_pivot" model="ir.ui.view">
+        <field name="name">telecom.audit.log.pivot</field>
+        <field name="model">telecom.audit.log</field>
+        <field name="arch" type="xml">
+            <pivot string="Stats d'usage">
+                <field name="user_id" type="row"/>
+                <field name="action_type" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Stats Graph: actions par jour -->
+    <record id="view_audit_log_graph_daily" model="ir.ui.view">
+        <field name="name">telecom.audit.log.graph.daily</field>
+        <field name="model">telecom.audit.log</field>
+        <field name="arch" type="xml">
+            <graph string="Activité par jour" type="bar">
+                <field name="timestamp" interval="day"/>
+                <field name="action_type" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Stats Graph: par module -->
+    <record id="view_audit_log_graph_module" model="ir.ui.view">
+        <field name="name">telecom.audit.log.graph.module</field>
+        <field name="model">telecom.audit.log</field>
+        <field name="arch" type="xml">
+            <graph string="Activité par module" type="pie">
+                <field name="model_description"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_audit_stats" model="ir.actions.act_window">
+        <field name="name">Stats d'usage</field>
+        <field name="res_model">telecom.audit.log</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="search_view_id" ref="view_audit_log_search"/>
+    </record>
+
+    <record id="action_audit_activity_daily" model="ir.actions.act_window">
+        <field name="name">Activité quotidienne</field>
+        <field name="res_model">telecom.audit.log</field>
+        <field name="view_mode">graph,pivot,tree</field>
+        <field name="search_view_id" ref="view_audit_log_search"/>
+        <field name="context">{'search_default_this_week': 1}</field>
+    </record>
+
+    <record id="action_audit_ai_usage" model="ir.actions.act_window">
+        <field name="name">Usage Agent IA</field>
+        <field name="res_model">telecom.audit.log</field>
+        <field name="view_mode">tree,pivot,graph</field>
+        <field name="domain">[('action_type', 'in', ['ai_query', 'ai_onboarding'])]</field>
+        <field name="search_view_id" ref="view_audit_log_search"/>
+    </record>
+
+</odoo>

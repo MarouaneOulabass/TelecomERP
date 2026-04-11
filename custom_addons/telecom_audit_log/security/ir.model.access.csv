@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_audit_log_admin,telecom.audit.log admin,model_telecom_audit_log,telecom_base.group_telecom_admin,1,1,1,0
+access_audit_log_responsable,telecom.audit.log responsable,model_telecom_audit_log,telecom_base.group_telecom_responsable,1,0,0,0
+access_audit_auto_track,telecom.audit.auto.track,model_telecom_audit_auto_track,telecom_base.group_telecom_admin,1,0,0,0

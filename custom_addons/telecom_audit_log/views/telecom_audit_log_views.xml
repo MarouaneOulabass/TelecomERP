@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_audit_log_tree" model="ir.ui.view">
+        <field name="name">telecom.audit.log.tree</field>
+        <field name="model">telecom.audit.log</field>
+        <field name="arch" type="xml">
+            <tree string="Journal d'audit" create="0" edit="0" delete="0"
+                  decoration-info="action_type == 'create'"
+                  decoration-warning="action_type == 'state_change'"
+                  decoration-danger="action_type == 'unlink'"
+                  decoration-success="action_type in ('ai_query', 'ai_onboarding')">
+                <field name="timestamp"/>
+                <field name="user_name"/>
+                <field name="action_type" widget="badge"/>
+                <field name="model_description"/>
+                <field name="record_name"/>
+                <field name="description"/>
+                <field name="old_state"/>
+                <field name="new_state"/>
+                <field name="ip_address"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_audit_log_form" model="ir.ui.view">
+        <field name="name">telecom.audit.log.form</field>
+        <field name="model">telecom.audit.log</field>
+        <field name="arch" type="xml">
+            <form string="Entrée d'audit" create="0" edit="0" delete="0">
+                <sheet>
+                    <group>
+                        <group string="Qui / Quand">
+                            <field name="timestamp"/>
+                            <field name="user_id"/>
+                            <field name="user_name"/>
+                            <field name="ip_address"/>
+                        </group>
+                        <group string="Quoi">
+                            <field name="action_type" widget="badge"/>
+                            <field name="model_name"/>
+                            <field name="model_description"/>
+                            <field name="record_id"/>
+                            <field name="record_name"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                    <group string="Détails du changement" invisible="not old_values and not new_values">
+                        <field name="field_changed"/>
+                        <field name="old_state"/>
+                        <field name="new_state"/>
+                        <field name="old_values"/>
+                        <field name="new_values"/>
+                    </group>
+                    <group string="Agent IA" invisible="action_type not in ('ai_query', 'ai_onboarding')">
+                        <field name="ai_tokens"/>
+                        <field name="ai_tools_used"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_audit_log_search" model="ir.ui.view">
+        <field name="name">telecom.audit.log.search</field>
+        <field name="model">telecom.audit.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="user_name"/>
+                <field name="model_name"/>
+                <field name="record_name"/>
+                <field name="description"/>
+                <filter name="today" string="Aujourd'hui" domain="[('timestamp', '>=', (context_today()).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="this_week" string="Cette semaine" domain="[('timestamp', '>=', (context_today() - relativedelta(weeks=1)).strftime('%%Y-%%m-%%d'))]"/>
+                <separator/>
+                <filter name="creates" string="Créations" domain="[('action_type', '=', 'create')]"/>
+                <filter name="writes" string="Modifications" domain="[('action_type', '=', 'write')]"/>
+                <filter name="state_changes" string="Changements d'état" domain="[('action_type', '=', 'state_change')]"/>
+                <filter name="ai" string="Agent IA" domain="[('action_type', 'in', ['ai_query', 'ai_onboarding'])]"/>
+                <separator/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_user" string="Utilisateur" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_type" string="Type d'action" context="{'group_by': 'action_type'}"/>
+                    <filter name="group_model" string="Module" context="{'group_by': 'model_description'}"/>
+                    <filter name="group_day" string="Jour" context="{'group_by': 'timestamp:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_audit_log" model="ir.actions.act_window">
+        <field name="name">Journal d'audit</field>
+        <field name="res_model">telecom.audit.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_audit_log_search"/>
+        <field name="context">{'search_default_today': 1}</field>
+    </record>
+
+</odoo>
