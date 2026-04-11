@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu under TelecomERP > Couts & Rentabilite -->
+    <menuitem id="menu_cout_financier"
+              name="Couts financiers"
+              parent="telecom_cost.menu_section_costs"
+              action="action_cout_financier"
+              sequence="40"/>
+
+</odoo>

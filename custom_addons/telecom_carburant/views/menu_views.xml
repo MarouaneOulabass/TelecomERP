@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu under TelecomERP > Flotte -->
+    <menuitem id="menu_plein_carburant"
+              name="Pleins carburant"
+              parent="telecom_fleet.menu_telecom_flotte"
+              action="action_plein_carburant"
+              sequence="30"/>
+
+</odoo>

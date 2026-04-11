@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Plein Carburant Tree -->
+    <record id="view_plein_carburant_tree" model="ir.ui.view">
+        <field name="name">telecom.plein.carburant.tree</field>
+        <field name="model">telecom.plein.carburant</field>
+        <field name="arch" type="xml">
+            <tree string="Pleins carburant">
+                <field name="date"/>
+                <field name="vehicle_id"/>
+                <field name="employee_id" optional="show"/>
+                <field name="project_id"/>
+                <field name="lot_id" optional="show"/>
+                <field name="station" optional="hide"/>
+                <field name="litres" sum="Total litres"/>
+                <field name="prix_litre" optional="hide"/>
+                <field name="montant" sum="Total"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="kilometrage" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Plein Carburant Form -->
+    <record id="view_plein_carburant_form" model="ir.ui.view">
+        <field name="name">telecom.plein.carburant.form</field>
+        <field name="model">telecom.plein.carburant</field>
+        <field name="arch" type="xml">
+            <form string="Plein carburant">
+                <sheet>
+                    <group>
+                        <group string="Identification">
+                            <field name="date"/>
+                            <field name="vehicle_id"/>
+                            <field name="employee_id"/>
+                            <field name="station"/>
+                        </group>
+                        <group string="Montant">
+                            <field name="litres"/>
+                            <field name="prix_litre"/>
+                            <field name="montant"/>
+                            <field name="currency_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Rattachement projet">
+                            <field name="project_id"/>
+                            <field name="lot_id"/>
+                        </group>
+                        <group string="Vehicule">
+                            <field name="kilometrage"/>
+                            <field name="justificatif" filename="justificatif_filename"/>
+                            <field name="justificatif_filename" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Cout genere" invisible="not cost_entry_id">
+                        <field name="cost_entry_id" readonly="1"/>
+                    </group>
+                    <field name="notes" placeholder="Notes complementaires..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Plein Carburant Search -->
+    <record id="view_plein_carburant_search" model="ir.ui.view">
+        <field name="name">telecom.plein.carburant.search</field>
+        <field name="model">telecom.plein.carburant</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="vehicle_id"/>
+                <field name="project_id"/>
+                <field name="employee_id"/>
+                <field name="station"/>
+                <separator/>
+                <filter name="this_month" string="Ce mois"
+                        domain="[('date','&gt;=', (context_today() - relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="last_month" string="Mois dernier"
+                        domain="[('date','&gt;=', (context_today() - relativedelta(months=1, day=1)).strftime('%%Y-%%m-%%d')),
+                                 ('date','&lt;', (context_today() - relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_vehicle" string="Vehicule" context="{'group_by': 'vehicle_id'}"/>
+                    <filter name="group_project" string="Projet" context="{'group_by': 'project_id'}"/>
+                    <filter name="group_employee" string="Conducteur" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_month" string="Mois" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Plein Carburant Pivot -->
+    <record id="view_plein_carburant_pivot" model="ir.ui.view">
+        <field name="name">telecom.plein.carburant.pivot</field>
+        <field name="model">telecom.plein.carburant</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse carburant">
+                <field name="vehicle_id" type="row"/>
+                <field name="date" type="col" interval="month"/>
+                <field name="litres" type="measure"/>
+                <field name="montant" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Plein Carburant Graph -->
+    <record id="view_plein_carburant_graph" model="ir.ui.view">
+        <field name="name">telecom.plein.carburant.graph</field>
+        <field name="model">telecom.plein.carburant</field>
+        <field name="arch" type="xml">
+            <graph string="Consommation carburant" type="bar">
+                <field name="vehicle_id"/>
+                <field name="montant" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_plein_carburant" model="ir.actions.act_window">
+        <field name="name">Pleins carburant</field>
+        <field name="res_model">telecom.plein.carburant</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_plein_carburant_search"/>
+        <field name="context">{'search_default_group_vehicle': 1}</field>
+    </record>
+
+</odoo>

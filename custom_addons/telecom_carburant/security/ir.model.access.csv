@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_plein_carburant_technicien,telecom.plein.carburant technicien,model_telecom_plein_carburant,telecom_base.group_telecom_technicien,1,1,1,0
+access_plein_carburant_chef,telecom.plein.carburant chef,model_telecom_plein_carburant,telecom_base.group_telecom_chef_chantier,1,1,1,1
+access_plein_carburant_admin,telecom.plein.carburant admin,model_telecom_plein_carburant,telecom_base.group_telecom_admin,1,1,1,1

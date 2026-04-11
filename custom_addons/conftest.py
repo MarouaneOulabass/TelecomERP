@@ -50,31 +50,29 @@ def pytest_configure(config):
     import odoo.modules.module as mod_module
     mod_module.initialize_sys_path()
 
-    # Discover all telecom_* modules and pre-import them through odoo.addons
-    for module_dir in sorted(glob.glob(os.path.join(addons_dir, 'telecom_*'))):
-        module_name = os.path.basename(module_dir)
-        odoo_key = f'odoo.addons.{module_name}'
+    # Discover all telecom_* modules and pre-import them through odoo.addons.
+    # Two passes to handle dependency ordering (e.g. telecom_carburant needs telecom_cost).
+    module_dirs = sorted(glob.glob(os.path.join(addons_dir, 'telecom_*')))
+    for _pass in range(2):
+        for module_dir in module_dirs:
+            module_name = os.path.basename(module_dir)
+            odoo_key = f'odoo.addons.{module_name}'
 
-        if odoo_key in sys.modules:
-            # Already imported — just alias
-            sys.modules[module_name] = sys.modules[odoo_key]
-            continue
+            if odoo_key in sys.modules:
+                sys.modules[module_name] = sys.modules[odoo_key]
+                continue
 
-        try:
-            # Import through Odoo namespace
-            mod = __import__(odoo_key, fromlist=[module_name])
-            # Alias so pytest finds it when collecting telecom_*/tests/
-            sys.modules[module_name] = mod
+            try:
+                mod = __import__(odoo_key, fromlist=[module_name])
+                sys.modules[module_name] = mod
 
-            # Also alias sub-packages (models, tests) if already imported
-            for sub_key in list(sys.modules.keys()):
-                if sub_key.startswith(odoo_key + '.'):
-                    short_key = sub_key.replace(f'odoo.addons.', '', 1)
-                    if short_key not in sys.modules:
-                        sys.modules[short_key] = sys.modules[sub_key]
-        except Exception:
-            # Module may not be installable yet — skip, pytest will handle
-            pass
+                for sub_key in list(sys.modules.keys()):
+                    if sub_key.startswith(odoo_key + '.'):
+                        short_key = sub_key.replace('odoo.addons.', '', 1)
+                        if short_key not in sys.modules:
+                            sys.modules[short_key] = sys.modules[sub_key]
+            except Exception:
+                pass
 
 
 # ─────────────────────────────────────────────────────────────────────────────

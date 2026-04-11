@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Cout Financier Tree -->
+    <record id="view_cout_financier_tree" model="ir.ui.view">
+        <field name="name">telecom.cout.financier.tree</field>
+        <field name="model">telecom.cout.financier</field>
+        <field name="arch" type="xml">
+            <tree string="Couts financiers"
+                  decoration-info="financing_type in ('caution_provisoire', 'caution_definitive')">
+                <field name="date"/>
+                <field name="project_id"/>
+                <field name="lot_id" optional="show"/>
+                <field name="financing_type"/>
+                <field name="description"/>
+                <field name="contract_id" optional="show"/>
+                <field name="montant" sum="Total principal"/>
+                <field name="taux_interet" optional="show"/>
+                <field name="montant_interets" sum="Total interets" optional="show"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="date_debut" optional="hide"/>
+                <field name="date_fin" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Cout Financier Form -->
+    <record id="view_cout_financier_form" model="ir.ui.view">
+        <field name="name">telecom.cout.financier.form</field>
+        <field name="model">telecom.cout.financier</field>
+        <field name="arch" type="xml">
+            <form string="Cout financier">
+                <sheet>
+                    <group>
+                        <group string="Identification">
+                            <field name="date"/>
+                            <field name="financing_type"/>
+                            <field name="description"/>
+                            <field name="contract_id"/>
+                        </group>
+                        <group string="Montant">
+                            <field name="montant"/>
+                            <field name="currency_id"/>
+                            <field name="taux_interet"/>
+                            <field name="montant_interets"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Rattachement projet">
+                            <field name="project_id"/>
+                            <field name="lot_id"/>
+                        </group>
+                        <group string="Duree">
+                            <field name="date_debut"/>
+                            <field name="date_fin"/>
+                        </group>
+                    </group>
+                    <group string="Cout genere" invisible="not cost_entry_id">
+                        <field name="cost_entry_id" readonly="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Cout Financier Search -->
+    <record id="view_cout_financier_search" model="ir.ui.view">
+        <field name="name">telecom.cout.financier.search</field>
+        <field name="model">telecom.cout.financier</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="project_id"/>
+                <field name="description"/>
+                <field name="contract_id"/>
+                <separator/>
+                <filter name="credits" string="Credits bancaires"
+                        domain="[('financing_type', '=', 'credit_bancaire')]"/>
+                <filter name="cautions" string="Cautions"
+                        domain="[('financing_type', 'in', ('caution_provisoire', 'caution_definitive'))]"/>
+                <filter name="leasing" string="Leasing"
+                        domain="[('financing_type', '=', 'leasing')]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_project" string="Projet"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter name="group_type" string="Type financement"
+                            context="{'group_by': 'financing_type'}"/>
+                    <filter name="group_month" string="Mois"
+                            context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_cout_financier" model="ir.actions.act_window">
+        <field name="name">Couts financiers</field>
+        <field name="res_model">telecom.cout.financier</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_cout_financier_search"/>
+        <field name="context">{'search_default_group_project': 1}</field>
+    </record>
+
+</odoo>

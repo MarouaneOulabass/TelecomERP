@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cout_financier_technicien,telecom.cout.financier technicien,model_telecom_cout_financier,telecom_base.group_telecom_technicien,1,0,0,0
+access_cout_financier_chef,telecom.cout.financier chef,model_telecom_cout_financier,telecom_base.group_telecom_chef_chantier,1,1,1,0
+access_cout_financier_admin,telecom.cout.financier admin,model_telecom_cout_financier,telecom_base.group_telecom_admin,1,1,1,1
