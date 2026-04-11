@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tenant Tree -->
+    <record id="view_tenant_tree" model="ir.ui.view">
+        <field name="name">telecom.tenant.tree</field>
+        <field name="model">telecom.tenant</field>
+        <field name="arch" type="xml">
+            <tree string="Tenants TelecomERP"
+                  decoration-success="state == 'active'"
+                  decoration-muted="state == 'archived'"
+                  decoration-warning="state == 'suspended'"
+                  decoration-info="state == 'provisioning'">
+                <field name="name"/>
+                <field name="subdomain"/>
+                <field name="db_name"/>
+                <field name="plan"/>
+                <field name="contact_email"/>
+                <field name="city"/>
+                <field name="date_start"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-info="state == 'provisioning'"
+                       decoration-warning="state == 'suspended'"
+                       decoration-muted="state == 'archived'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Tenant Form -->
+    <record id="view_tenant_form" model="ir.ui.view">
+        <field name="name">telecom.tenant.form</field>
+        <field name="model">telecom.tenant</field>
+        <field name="arch" type="xml">
+            <form string="Tenant TelecomERP">
+                <header>
+                    <button name="action_provision" string="Provisionner" type="object"
+                            class="oe_highlight" icon="fa-rocket"
+                            invisible="state != 'draft'"
+                            confirm="Créer la base de données et installer les modules pour ce tenant ?"/>
+                    <button name="action_generate_yaml" string="Générer YAML" type="object"
+                            icon="fa-file-code-o"
+                            invisible="state == 'archived'"/>
+                    <button name="action_suspend" string="Suspendre" type="object"
+                            invisible="state != 'active'"/>
+                    <button name="action_reactivate" string="Réactiver" type="object"
+                            class="oe_highlight"
+                            invisible="state != 'suspended'"/>
+                    <button name="action_archive_tenant" string="Archiver" type="object"
+                            invisible="state not in ('active', 'suspended')"
+                            confirm="Archiver ce tenant ? Il ne sera plus accessible."/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Raison sociale du client"/></h1>
+                        <h3>
+                            <field name="subdomain" placeholder="sous-domaine"/>.telecomerp.ma
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Identité">
+                            <field name="subdomain"/>
+                            <field name="db_name"/>
+                            <field name="ice"/>
+                            <field name="city"/>
+                            <field name="forme_juridique"/>
+                        </group>
+                        <group string="Contact">
+                            <field name="contact_name"/>
+                            <field name="contact_email"/>
+                            <field name="contact_phone"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Configuration">
+                            <field name="language"/>
+                            <field name="currency"/>
+                            <field name="admin_password" password="True"
+                                   invisible="state != 'draft'"/>
+                        </group>
+                        <group string="Abonnement">
+                            <field name="plan"/>
+                            <field name="monthly_price"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                    </group>
+
+                    <separator string="Capabilities activées"/>
+                    <group>
+                        <group>
+                            <field name="cap_site"/>
+                            <field name="cap_intervention"/>
+                            <field name="cap_hr"/>
+                            <field name="cap_equipment"/>
+                            <field name="cap_fleet"/>
+                            <field name="cap_project"/>
+                        </group>
+                        <group>
+                            <field name="cap_ao"/>
+                            <field name="cap_contract"/>
+                            <field name="cap_finance"/>
+                            <field name="cap_cost"/>
+                            <field name="cap_reporting"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Profil YAML" name="yaml">
+                            <field name="yaml_valid" invisible="1"/>
+                            <div class="alert alert-success" invisible="not yaml_valid" role="alert">
+                                YAML valide
+                            </div>
+                            <div class="alert alert-danger" invisible="yaml_valid or not yaml_profile" role="alert">
+                                YAML invalide
+                            </div>
+                            <field name="yaml_profile" widget="ace" options="{'mode': 'yaml'}"/>
+                        </page>
+                        <page string="Log provisioning" name="log"
+                              invisible="not provision_log">
+                            <field name="provision_date"/>
+                            <field name="provision_log" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tenant Search -->
+    <record id="view_tenant_search" model="ir.ui.view">
+        <field name="name">telecom.tenant.search</field>
+        <field name="model">telecom.tenant</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="subdomain"/>
+                <field name="contact_email"/>
+                <filter name="active" string="Actifs" domain="[('state','=','active')]"/>
+                <filter name="suspended" string="Suspendus" domain="[('state','=','suspended')]"/>
+                <filter name="draft" string="Brouillons" domain="[('state','=','draft')]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_plan" string="Formule" context="{'group_by': 'plan'}"/>
+                    <filter name="group_state" string="État" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_telecom_tenant" model="ir.actions.act_window">
+        <field name="name">Tenants</field>
+        <field name="res_model">telecom.tenant</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_tenant_search"/>
+    </record>
+
+</odoo>

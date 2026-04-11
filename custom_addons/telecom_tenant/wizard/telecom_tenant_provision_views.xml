@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_tenant_provision_wizard_form" model="ir.ui.view">
+        <field name="name">telecom.tenant.provision.wizard.form</field>
+        <field name="model">telecom.tenant.provision.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Provisioning depuis YAML">
+                <group>
+                    <field name="yaml_content" widget="ace" options="{'mode': 'yaml'}"/>
+                    <field name="admin_password"/>
+                </group>
+                <footer>
+                    <button name="action_provision_from_yaml" string="Créer le tenant" type="object" class="oe_highlight"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_tenant_provision_wizard" model="ir.actions.act_window">
+        <field name="name">Provisioning YAML</field>
+        <field name="res_model">telecom.tenant.provision.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

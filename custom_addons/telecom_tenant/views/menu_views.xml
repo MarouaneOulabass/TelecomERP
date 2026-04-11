@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_telecom_tenant_root"
+              name="Multi-Tenant"
+              sequence="190"
+              groups="telecom_base.group_telecom_admin"/>
+
+    <menuitem id="menu_tenant_list"
+              name="Tenants"
+              parent="menu_telecom_tenant_root"
+              action="action_telecom_tenant"
+              sequence="10"/>
+
+    <menuitem id="menu_tenant_provision_yaml"
+              name="Provisioning YAML"
+              parent="menu_telecom_tenant_root"
+              action="action_tenant_provision_wizard"
+              sequence="20"/>
+</odoo>
