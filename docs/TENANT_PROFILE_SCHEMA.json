@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://telecomerp.ma/schemas/tenant_profile.schema.json",
+  "title": "TenantProfile",
+  "description": "Schéma de configuration d'un tenant TelecomERP. Tout fichier YAML décrivant un tenant doit valider contre ce schéma. La validation est exécutée par telecom_tenant (futur) au provisioning et par le control plane avant tout déploiement.",
+  "type": "object",
+  "required": ["schema_version", "tenant", "organization", "capabilities"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"],
+      "description": "Version du schéma. Permet la migration des profils existants."
+    },
+    "tenant": {
+      "type": "object",
+      "required": ["name", "subdomain", "language", "country", "currency"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100,
+          "description": "Raison sociale du tenant"
+        },
+        "subdomain": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{1,30}[a-z0-9]$",
+          "description": "Sous-domaine technique : lettres minuscules, chiffres, tirets"
+        },
+        "language": {
+          "type": "string",
+          "enum": ["fr_FR", "ar_001", "en_US"],
+          "default": "fr_FR"
+        },
+        "country": {
+          "type": "string",
+          "enum": ["MA"],
+          "description": "Pour l'instant uniquement le Maroc"
+        },
+        "currency": {
+          "type": "string",
+          "enum": ["MAD"]
+        },
+        "legal": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ice": { "type": "string", "pattern": "^[0-9]{15}$" },
+            "rc": { "type": "string" },
+            "if": { "type": "string" },
+            "patente": { "type": "string" },
+            "cnss": { "type": "string" }
+          }
+        }
+      }
+    },
+    "organization": {
+      "type": "object",
+      "required": ["type", "units"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["flat", "departments", "multi_bu", "hybrid"],
+          "description": "Modèle organisationnel : plat, par départements, multi-BU, ou hybride"
+        },
+        "units": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/orgUnit" }
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "required": ["enabled"],
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^telecom_[a-z_]+$"
+          },
+          "uniqueItems": true,
+          "description": "Liste des capabilities optionnelles activées. Le socle (telecom_base, telecom_localization_ma) est toujours installé."
+        }
+      }
+    },
+    "terminology": {
+      "type": "object",
+      "description": "Surcharge terminologique propre au tenant. Clé = terme générique, valeur = terme local.",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      }
+    },
+    "workflows": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/workflowConfig" }
+    },
+    "branding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "logo": { "type": "string" },
+        "primary_color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+        "secondary_color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+      }
+    },
+    "cost_tracking": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_required": {
+          "type": "boolean",
+          "default": false,
+          "description": "Si true, la saisie d'un coût exige obligatoirement une tâche (pas seulement projet+lot)."
+        },
+        "alert_threshold_pct": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Pourcentage d'écart marge déclenchant une alerte"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "orgUnit": {
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "enum": ["business_unit", "department", "service", "agency", "team"]
+        },
+        "code": { "type": "string" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/orgUnit" }
+        }
+      }
+    },
+    "workflowConfig": {
+      "type": "object",
+      "required": ["levels", "signers"],
+      "additionalProperties": false,
+      "properties": {
+        "levels": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "signers": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}
