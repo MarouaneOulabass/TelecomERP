@@ -54,13 +54,10 @@ with registry.cursor() as cr:
     print("\n[3/5] Utilisateur admin...")
     admin = env['res.users'].browse(2)
 
-    # Set home action to TelecomERP sites (main working view)
-    telecom_action = env.ref('telecom_base.action_telecom_welcome_page', raise_if_not_found=False)
-    if not telecom_action:
-        # Fallback: find the sites action
-        telecom_action = env['ir.actions.act_window'].search([
-            ('res_model', '=', 'telecom.site'),
-        ], limit=1)
+    # Set home action to sites list (main working view)
+    telecom_action = env['ir.actions.act_window'].search([
+        ('res_model', '=', 'telecom.site'),
+    ], limit=1)
 
     admin_vals = {
         'name': 'Administrateur TelecomERP',
