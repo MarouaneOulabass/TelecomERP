@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Margin Tree — the cockpit -->
+    <record id="view_project_margin_tree" model="ir.ui.view">
+        <field name="name">telecom.project.margin.tree</field>
+        <field name="model">telecom.project.margin</field>
+        <field name="arch" type="xml">
+            <tree string="Cockpit de Rentabilité"
+                  decoration-success="health == 'green'"
+                  decoration-warning="health == 'yellow'"
+                  decoration-danger="health == 'red'"
+                  create="0" edit="0" delete="0">
+                <field name="project_id"/>
+                <field name="lot_id"/>
+                <field name="partner_id"/>
+                <field name="budget_prevu" sum="Total Budget"/>
+                <field name="cout_total" sum="Total Coûts"/>
+                <field name="revenu_facture" sum="Total Revenus"/>
+                <field name="marge_absolue" sum="Marge Totale"/>
+                <field name="marge_pct" widget="progressbar"/>
+                <field name="nb_cost_entries"/>
+                <field name="nb_task_missing"/>
+                <field name="health" widget="badge"
+                       decoration-success="health == 'green'"
+                       decoration-warning="health == 'yellow'"
+                       decoration-danger="health == 'red'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Margin Form — detail view -->
+    <record id="view_project_margin_form" model="ir.ui.view">
+        <field name="name">telecom.project.margin.form</field>
+        <field name="model">telecom.project.margin</field>
+        <field name="arch" type="xml">
+            <form string="Rentabilité Projet" create="0" edit="0" delete="0">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="project_id" readonly="1"/></h1>
+                        <h2><field name="lot_id" readonly="1"/></h2>
+                    </div>
+
+                    <div class="alert alert-success" invisible="health != 'green'" role="alert">
+                        <strong>Projet sain</strong> — Marge &gt; 15%
+                    </div>
+                    <div class="alert alert-warning" invisible="health != 'yellow'" role="alert">
+                        <strong>Attention</strong> — Marge entre 5% et 15%
+                    </div>
+                    <div class="alert alert-danger" invisible="health != 'red'" role="alert">
+                        <strong>Critique</strong> — Marge &lt; 5%
+                    </div>
+
+                    <group>
+                        <group string="Budget et revenus">
+                            <field name="budget_prevu"/>
+                            <field name="revenu_facture"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group string="Marge">
+                            <field name="marge_absolue"/>
+                            <field name="marge_pct" widget="progressbar"/>
+                            <field name="health" widget="badge"/>
+                        </group>
+                    </group>
+
+                    <group string="Décomposition des coûts">
+                        <group>
+                            <field name="cout_total"/>
+                            <field name="cout_main_oeuvre"/>
+                            <field name="cout_materiel"/>
+                            <field name="cout_sous_traitance"/>
+                        </group>
+                        <group>
+                            <field name="cout_carburant"/>
+                            <field name="cout_autres"/>
+                            <field name="nb_cost_entries"/>
+                            <field name="nb_task_missing"/>
+                        </group>
+                    </group>
+
+                    <footer>
+                        <button name="action_open_costs" string="Voir les coûts détaillés"
+                                type="object" class="oe_highlight" icon="fa-list"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Margin Pivot -->
+    <record id="view_project_margin_pivot" model="ir.ui.view">
+        <field name="name">telecom.project.margin.pivot</field>
+        <field name="model">telecom.project.margin</field>
+        <field name="arch" type="xml">
+            <pivot string="Rentabilité par projet">
+                <field name="project_id" type="row"/>
+                <field name="cout_total" type="measure"/>
+                <field name="revenu_facture" type="measure"/>
+                <field name="marge_absolue" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Margin Graph -->
+    <record id="view_project_margin_graph" model="ir.ui.view">
+        <field name="name">telecom.project.margin.graph</field>
+        <field name="model">telecom.project.margin</field>
+        <field name="arch" type="xml">
+            <graph string="Marge par projet" type="bar">
+                <field name="project_id"/>
+                <field name="marge_absolue" type="measure"/>
+                <field name="cout_total" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Search -->
+    <record id="view_project_margin_search" model="ir.ui.view">
+        <field name="name">telecom.project.margin.search</field>
+        <field name="model">telecom.project.margin</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="project_id"/>
+                <field name="lot_id"/>
+                <filter name="healthy" string="Sain" domain="[('health','=','green')]"/>
+                <filter name="warning" string="Attention" domain="[('health','=','yellow')]"/>
+                <filter name="critical" string="Critique" domain="[('health','=','red')]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_project" string="Projet" context="{'group_by': 'project_id'}"/>
+                    <filter name="group_health" string="Santé" context="{'group_by': 'health'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_project_margin" model="ir.actions.act_window">
+        <field name="name">Cockpit de Rentabilité</field>
+        <field name="res_model">telecom.project.margin</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_project_margin_search"/>
+    </record>
+
+    <record id="action_project_margin_critical" model="ir.actions.act_window">
+        <field name="name">Projets critiques (&lt; 5% marge)</field>
+        <field name="res_model">telecom.project.margin</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('health', '=', 'red')]</field>
+    </record>
+
+</odoo>

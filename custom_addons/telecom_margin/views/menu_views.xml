@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add to existing Coûts & Rentabilité section -->
+    <menuitem id="menu_margin_cockpit"
+              name="Cockpit de Rentabilité"
+              parent="telecom_cost.menu_section_costs"
+              action="action_project_margin"
+              sequence="1"/>
+
+    <menuitem id="menu_margin_critical"
+              name="Projets critiques"
+              parent="telecom_cost.menu_section_costs"
+              action="action_project_margin_critical"
+              sequence="5"/>
+</odoo>

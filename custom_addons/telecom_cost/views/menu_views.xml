@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menus under TelecomERP root -->
+    <menuitem id="menu_section_costs"
+              name="Coûts &amp; Rentabilité"
+              parent="telecom_base.menu_telecom_root"
+              sequence="85"/>
+
+    <menuitem id="menu_cost_entry"
+              name="Saisie des coûts"
+              parent="menu_section_costs"
+              action="action_cost_entry"
+              sequence="10"/>
+
+    <menuitem id="menu_cost_analysis"
+              name="Analyse des coûts"
+              parent="menu_section_costs"
+              action="action_cost_analysis"
+              sequence="20"/>
+
+    <menuitem id="menu_cost_unlinked"
+              name="Coûts sans tâche"
+              parent="menu_section_costs"
+              action="action_cost_unlinked"
+              sequence="30"/>
+
+    <menuitem id="menu_cost_type"
+              name="Types de coûts"
+              parent="menu_section_costs"
+              action="action_cost_type"
+              sequence="90"
+              groups="telecom_base.group_telecom_admin"/>
+</odoo>

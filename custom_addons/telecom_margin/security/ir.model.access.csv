@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_margin_technicien,telecom.project.margin technicien,model_telecom_project_margin,telecom_base.group_telecom_technicien,1,0,0,0
+access_margin_chef,telecom.project.margin chef,model_telecom_project_margin,telecom_base.group_telecom_chef_chantier,1,0,0,0
+access_margin_admin,telecom.project.margin admin,model_telecom_project_margin,telecom_base.group_telecom_admin,1,0,0,0

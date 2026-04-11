@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="cost_type_main_oeuvre" model="telecom.cost.type">
+            <field name="name">Main d'oeuvre directe</field>
+            <field name="code">MO</field>
+            <field name="category">main_oeuvre</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="cost_type_heures_sup" model="telecom.cost.type">
+            <field name="name">Heures supplémentaires</field>
+            <field name="code">HS</field>
+            <field name="category">main_oeuvre</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="cost_type_materiel" model="telecom.cost.type">
+            <field name="name">Matériel et fournitures</field>
+            <field name="code">MAT</field>
+            <field name="category">materiel</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="cost_type_cable_fibre" model="telecom.cost.type">
+            <field name="name">Câble fibre optique</field>
+            <field name="code">FIB</field>
+            <field name="category">materiel</field>
+            <field name="sequence">11</field>
+        </record>
+        <record id="cost_type_sous_traitance" model="telecom.cost.type">
+            <field name="name">Sous-traitance</field>
+            <field name="code">ST</field>
+            <field name="category">sous_traitance</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="cost_type_carburant" model="telecom.cost.type">
+            <field name="name">Carburant</field>
+            <field name="code">CARB</field>
+            <field name="category">carburant</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="cost_type_deplacement" model="telecom.cost.type">
+            <field name="name">Frais de déplacement</field>
+            <field name="code">DEPL</field>
+            <field name="category">carburant</field>
+            <field name="sequence">31</field>
+        </record>
+        <record id="cost_type_location" model="telecom.cost.type">
+            <field name="name">Location engins / nacelle</field>
+            <field name="code">LOC</field>
+            <field name="category">location</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="cost_type_frais_generaux" model="telecom.cost.type">
+            <field name="name">Frais généraux projet</field>
+            <field name="code">FG</field>
+            <field name="category">frais_generaux</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="cost_type_financier" model="telecom.cost.type">
+            <field name="name">Frais financiers (cautions, crédit)</field>
+            <field name="code">FIN</field>
+            <field name="category">financier</field>
+            <field name="sequence">60</field>
+        </record>
+    </data>
+</odoo>

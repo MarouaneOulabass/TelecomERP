@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Cost Entry Tree -->
+    <record id="view_cost_entry_tree" model="ir.ui.view">
+        <field name="name">telecom.cost.entry.tree</field>
+        <field name="model">telecom.cost.entry</field>
+        <field name="arch" type="xml">
+            <tree string="Coûts projet"
+                  decoration-muted="state == 'draft'"
+                  decoration-warning="task_missing and state == 'confirmed'"
+                  decoration-success="state == 'validated'">
+                <field name="date"/>
+                <field name="project_id"/>
+                <field name="lot_id"/>
+                <field name="cost_type_id"/>
+                <field name="description"/>
+                <field name="montant" sum="Total"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="category" column_invisible="1"/>
+                <field name="source"/>
+                <field name="task_missing" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'confirmed'"
+                       decoration-success="state == 'validated'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Cost Entry Form -->
+    <record id="view_cost_entry_form" model="ir.ui.view">
+        <field name="name">telecom.cost.entry.form</field>
+        <field name="model">telecom.cost.entry</field>
+        <field name="arch" type="xml">
+            <form string="Saisie de coût">
+                <header>
+                    <button name="action_confirm" string="Confirmer" type="object"
+                            class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_validate" string="Valider" type="object"
+                            class="oe_highlight" invisible="state != 'confirmed'"/>
+                    <button name="action_reset_draft" string="Remettre en brouillon" type="object"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,validated"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="not task_missing or state == 'draft'">
+                        <strong>Coût non rattaché à une tâche</strong> — Ce coût sera comptabilisé au niveau Lot mais signalé comme "à rattacher" dans le cockpit de rentabilité.
+                    </div>
+                    <group>
+                        <group string="Identification">
+                            <field name="date"/>
+                            <field name="cost_type_id"/>
+                            <field name="description"/>
+                            <field name="source"/>
+                        </group>
+                        <group string="Montant">
+                            <field name="montant"/>
+                            <field name="currency_id"/>
+                            <field name="justificatif" filename="justificatif_filename"/>
+                            <field name="justificatif_filename" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Rattachement projet (obligatoire)">
+                        <group>
+                            <field name="project_id"/>
+                            <field name="lot_id"/>
+                            <field name="task_id"/>
+                            <field name="task_missing" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="site_id"/>
+                            <field name="employee_id"/>
+                            <field name="vehicle_id"/>
+                            <field name="partner_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Cost Entry Search -->
+    <record id="view_cost_entry_search" model="ir.ui.view">
+        <field name="name">telecom.cost.entry.search</field>
+        <field name="model">telecom.cost.entry</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="project_id"/>
+                <field name="lot_id"/>
+                <field name="cost_type_id"/>
+                <field name="description"/>
+                <filter name="draft" string="Brouillons" domain="[('state','=','draft')]"/>
+                <filter name="confirmed" string="Confirmés" domain="[('state','=','confirmed')]"/>
+                <filter name="validated" string="Validés" domain="[('state','=','validated')]"/>
+                <separator/>
+                <filter name="task_missing" string="Sans tâche" domain="[('task_missing','=',True)]"/>
+                <separator/>
+                <filter name="this_month" string="Ce mois" domain="[('date','>=', (context_today() - relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_project" string="Projet" context="{'group_by': 'project_id'}"/>
+                    <filter name="group_lot" string="Lot" context="{'group_by': 'lot_id'}"/>
+                    <filter name="group_type" string="Type de coût" context="{'group_by': 'cost_type_id'}"/>
+                    <filter name="group_category" string="Catégorie" context="{'group_by': 'category'}"/>
+                    <filter name="group_month" string="Mois" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Cost Entry Pivot -->
+    <record id="view_cost_entry_pivot" model="ir.ui.view">
+        <field name="name">telecom.cost.entry.pivot</field>
+        <field name="model">telecom.cost.entry</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse des coûts">
+                <field name="project_id" type="row"/>
+                <field name="category" type="col"/>
+                <field name="montant" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Cost Entry Graph -->
+    <record id="view_cost_entry_graph" model="ir.ui.view">
+        <field name="name">telecom.cost.entry.graph</field>
+        <field name="model">telecom.cost.entry</field>
+        <field name="arch" type="xml">
+            <graph string="Coûts par projet" type="bar">
+                <field name="project_id"/>
+                <field name="montant" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_cost_entry" model="ir.actions.act_window">
+        <field name="name">Saisie des coûts</field>
+        <field name="res_model">telecom.cost.entry</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_cost_entry_search"/>
+        <field name="context">{'search_default_group_project': 1}</field>
+    </record>
+
+    <record id="action_cost_analysis" model="ir.actions.act_window">
+        <field name="name">Analyse des coûts</field>
+        <field name="res_model">telecom.cost.entry</field>
+        <field name="view_mode">pivot,graph,tree</field>
+        <field name="search_view_id" ref="view_cost_entry_search"/>
+    </record>
+
+    <record id="action_cost_unlinked" model="ir.actions.act_window">
+        <field name="name">Coûts sans tâche</field>
+        <field name="res_model">telecom.cost.entry</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('task_missing', '=', True)]</field>
+    </record>
+
+    <record id="action_cost_type" model="ir.actions.act_window">
+        <field name="name">Types de coûts</field>
+        <field name="res_model">telecom.cost.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>
