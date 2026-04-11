@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Override browser tab title from "Odoo" to "TelecomERP" -->
+    <template id="telecom_web_title" inherit_id="web.webclient_bootstrap" name="TelecomERP Title">
+        <xpath expr="//title" position="replace">
+            <title>TelecomERP</title>
+        </xpath>
+    </template>
+
+</odoo>

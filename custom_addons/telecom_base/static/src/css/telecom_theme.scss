@@ -1,0 +1,149 @@
+/**
+ * TelecomERP — Custom Theme
+ * ===========================
+ * Override Odoo 17 default purple theme with professional dark blue/red.
+ * Colors inspired by telecom industry: dark navy + accent red.
+ */
+
+// ── Primary colors ──────────────────────────────────────────────────
+$o-brand-odoo: #1a1a2e;           // Dark navy (replaces purple)
+$o-brand-primary: #e94560;         // Accent red
+$o-brand-secondary: #16213e;       // Darker navy
+
+// ── Navbar ──────────────────────────────────────────────────────────
+.o_main_navbar {
+    background-color: #1a1a2e !important;
+    border-bottom: 2px solid #e94560;
+
+    .o_menu_brand {
+        color: #ffffff !important;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .o_menu_entry {
+        color: rgba(255, 255, 255, 0.85) !important;
+
+        &:hover, &.active {
+            color: #ffffff !important;
+            background-color: rgba(233, 69, 96, 0.3) !important;
+        }
+    }
+
+    // Hamburger and icons
+    .o_menu_toggle, .o_nav_entry {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+}
+
+// ── Buttons ─────────────────────────────────────────────────────────
+.btn-primary {
+    background-color: #e94560 !important;
+    border-color: #e94560 !important;
+
+    &:hover, &:focus {
+        background-color: #c73a52 !important;
+        border-color: #c73a52 !important;
+    }
+}
+
+.btn-secondary {
+    background-color: #16213e !important;
+    border-color: #16213e !important;
+    color: #ffffff !important;
+
+    &:hover {
+        background-color: #1a1a2e !important;
+    }
+}
+
+// ── Statusbar states ────────────────────────────────────────────────
+.o_statusbar_status {
+    .btn-secondary.o_arrow_button_current {
+        background-color: #e94560 !important;
+        color: #ffffff !important;
+    }
+}
+
+// ── Kanban cards ────────────────────────────────────────────────────
+.o_kanban_view {
+    .o_kanban_group_header {
+        font-weight: 600;
+    }
+
+    .o_kanban_record {
+        border-left: 3px solid transparent;
+        transition: border-color 0.2s;
+
+        &:hover {
+            border-left-color: #e94560;
+        }
+    }
+}
+
+// ── Dashboard cards ─────────────────────────────────────────────────
+.o_dashboard {
+    .o_stat_button {
+        border-color: rgba(233, 69, 96, 0.2);
+
+        &:hover {
+            background-color: rgba(233, 69, 96, 0.05);
+        }
+    }
+}
+
+// ── Form view smart buttons ────────────────────────────────────────
+.oe_stat_button {
+    .o_stat_value {
+        color: #e94560;
+        font-weight: 700;
+    }
+}
+
+// ── Badge colors ────────────────────────────────────────────────────
+.badge.text-bg-success, .bg-success-light {
+    background-color: #4ecca3 !important;
+}
+
+.badge.text-bg-danger, .bg-danger-light {
+    background-color: #e94560 !important;
+}
+
+.badge.text-bg-warning, .bg-warning-light {
+    background-color: #ffc107 !important;
+}
+
+.badge.text-bg-info, .bg-info-light {
+    background-color: #3282b8 !important;
+}
+
+// ── Login page ──────────────────────────────────────────────────────
+.oe_login_form {
+    .btn-primary {
+        background-color: #e94560 !important;
+        border: none !important;
+        font-weight: 600;
+        padding: 10px 20px;
+    }
+}
+
+.o_login_auth {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+}
+
+// ── Chatter ─────────────────────────────────────────────────────────
+.o_FormRenderer_chatterContainer {
+    border-left: 1px solid #e0e0e0;
+}
+
+// ── Scrollbar subtle ────────────────────────────────────────────────
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(26, 26, 46, 0.3);
+    border-radius: 3px;
+}

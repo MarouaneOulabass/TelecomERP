@@ -21,6 +21,7 @@
     'assets': {
         'web.assets_web': [
             'telecom_base/static/src/js/clipboard_fix.js',
+            'telecom_base/static/src/css/telecom_theme.scss',
         ],
     },
     'installable': True,
