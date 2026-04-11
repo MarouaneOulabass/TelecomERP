@@ -20,7 +20,6 @@ Permet au métier de :
         'views/telecom_test_scenario_views.xml',
         'views/telecom_test_run_views.xml',
         'views/telecom_test_feature_views.xml',
-        'views/telecom_test_dashboard_views.xml',
         'views/menu_views.xml',
     ],
     'installable': True,

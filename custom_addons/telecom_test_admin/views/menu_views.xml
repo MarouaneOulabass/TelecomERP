@@ -7,32 +7,25 @@
               sequence="200"
               web_icon="telecom_test_admin,static/description/icon.png"/>
 
-    <!-- Dashboard -->
-    <menuitem id="menu_telecom_test_dashboard"
-              name="Dashboard"
+    <!-- Lancer les tests (en premier, le plus important) -->
+    <menuitem id="menu_telecom_test_runs"
+              name="Lancer les tests"
               parent="menu_telecom_test_root"
-              action="action_telecom_test_dashboard"
+              action="action_telecom_test_run"
               sequence="1"/>
 
-    <!-- Features -->
+    <!-- Scenarios par module -->
+    <menuitem id="menu_telecom_test_scenarios"
+              name="Scénarios (par module)"
+              parent="menu_telecom_test_root"
+              action="action_telecom_test_scenario"
+              sequence="10"/>
+
+    <!-- Fichiers .feature -->
     <menuitem id="menu_telecom_test_features"
               name="Fichiers .feature"
               parent="menu_telecom_test_root"
               action="action_telecom_test_feature"
-              sequence="10"/>
-
-    <!-- Scenarios -->
-    <menuitem id="menu_telecom_test_scenarios"
-              name="Scénarios"
-              parent="menu_telecom_test_root"
-              action="action_telecom_test_scenario"
               sequence="20"/>
-
-    <!-- Run tests -->
-    <menuitem id="menu_telecom_test_runs"
-              name="Exécutions"
-              parent="menu_telecom_test_root"
-              action="action_telecom_test_run"
-              sequence="30"/>
 
 </odoo>

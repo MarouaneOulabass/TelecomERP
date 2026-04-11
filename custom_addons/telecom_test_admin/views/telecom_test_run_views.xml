@@ -15,7 +15,7 @@
                 <field name="passed"/>
                 <field name="failed"/>
                 <field name="pass_rate" widget="progressbar"/>
-                <field name="duration"/>
+                <field name="duration" widget="float_time"/>
                 <field name="state" widget="badge"
                        decoration-success="state == 'done'"
                        decoration-info="state == 'running'"
@@ -33,31 +33,53 @@
                 <header>
                     <button name="action_run_tests"
                             string="Lancer les tests"
-                            type="object" class="oe_highlight"
+                            type="object"
+                            class="oe_highlight"
                             icon="fa-play"
-                            invisible="state == 'running'"/>
+                            invisible="state == 'running'"
+                            confirm="Lancer les tests BDD ? Cela peut prendre 30 secondes."/>
+                    <button name="action_rerun"
+                            string="Relancer"
+                            type="object"
+                            icon="fa-refresh"
+                            invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                 </header>
                 <sheet>
-                    <div class="oe_title">
-                        <h1>
-                            <span invisible="state != 'running'" class="text-info">
-                                Tests en cours...
-                            </span>
-                            <span invisible="state != 'done'">
-                                <field name="passed" class="text-success"/> /
-                                <field name="total_tests"/> tests
-                            </span>
-                        </h1>
+                    <!-- Big result banner -->
+                    <div class="alert alert-success text-center"
+                         invisible="state != 'done' or failed > 0"
+                         role="alert">
+                        <h3 class="mb-0">
+                            <i class="fa fa-check-circle me-2"/>
+                            <field name="passed" readonly="1"/> / <field name="total_tests" readonly="1"/> tests passent
+                        </h3>
                     </div>
+                    <div class="alert alert-danger text-center"
+                         invisible="state != 'done' or failed == 0"
+                         role="alert">
+                        <h3 class="mb-0">
+                            <i class="fa fa-times-circle me-2"/>
+                            <field name="failed" readonly="1"/> test(s) en échec sur <field name="total_tests" readonly="1"/>
+                        </h3>
+                    </div>
+                    <div class="alert alert-info text-center"
+                         invisible="state != 'running'"
+                         role="alert">
+                        <h3 class="mb-0">
+                            <i class="fa fa-spinner fa-spin me-2"/>
+                            Tests en cours d'exécution...
+                        </h3>
+                    </div>
+
                     <group>
                         <group string="Configuration">
                             <field name="module_filter"
-                                   placeholder="Vide = tous les modules"/>
-                            <field name="launched_by"/>
+                                   placeholder="Vide = tous les modules"
+                                   readonly="state == 'running'"/>
+                            <field name="launched_by" readonly="1"/>
                         </group>
                         <group string="Résultats">
-                            <field name="state" widget="badge"/>
-                            <field name="total_tests"/>
                             <field name="passed"/>
                             <field name="failed"/>
                             <field name="errors"/>
@@ -65,18 +87,15 @@
                             <field name="duration" widget="float_time"/>
                         </group>
                     </group>
-                    <group>
-                        <group>
-                            <field name="date_start"/>
-                        </group>
-                        <group>
-                            <field name="date_end"/>
-                        </group>
-                    </group>
-                    <notebook>
-                        <page string="Sortie pytest" name="output">
-                            <field name="output" nolabel="1" readonly="1"
-                                   widget="ace" options="{'mode': 'text'}"/>
+
+                    <notebook invisible="state == 'draft'">
+                        <page string="Tests échoués" name="failures"
+                              invisible="failed == 0">
+                            <field name="failed_details" nolabel="1" readonly="1"
+                                   widget="text"/>
+                        </page>
+                        <page string="Sortie complète" name="output">
+                            <field name="output" nolabel="1" readonly="1"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -88,14 +107,6 @@
         <field name="name">Exécutions de tests</field>
         <field name="res_model">telecom.test.run</field>
         <field name="view_mode">tree,form</field>
-    </record>
-
-    <!-- Quick action: New test run (all modules) -->
-    <record id="action_telecom_test_run_new" model="ir.actions.act_window">
-        <field name="name">Lancer les tests</field>
-        <field name="res_model">telecom.test.run</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
     </record>
 
 </odoo>
