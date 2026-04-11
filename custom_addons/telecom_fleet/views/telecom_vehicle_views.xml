@@ -180,6 +180,11 @@
                         </button>
                     </div>
 
+                    <field name="assurance_expiring" invisible="1"/>
+                    <field name="visite_technique_expiring" invisible="1"/>
+                    <field name="vignette_expiring" invisible="1"/>
+                    <field name="entretien_km_alerte" invisible="1"/>
+
                     <div class="alert alert-warning"
                          invisible="not (assurance_expiring or visite_technique_expiring or vignette_expiring or entretien_km_alerte)">
                         <strong><i class="fa fa-exclamation-triangle me-1"/>Alertes véhicule :</strong>
@@ -203,11 +208,6 @@
                     <field name="photo" widget="image"
                            class="oe_avatar"
                            style="float:right;width:150px;height:150px;object-fit:cover;border-radius:6px;"/>
-
-                    <field name="assurance_expiring" invisible="1"/>
-                    <field name="visite_technique_expiring" invisible="1"/>
-                    <field name="vignette_expiring" invisible="1"/>
-                    <field name="entretien_km_alerte" invisible="1"/>
 
                     <notebook>
 

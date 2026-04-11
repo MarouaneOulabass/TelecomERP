@@ -35,3 +35,4 @@ odoo_data/
 CLAUDE*.md
 !CLAUDE.md
 test-reports/
+.github/

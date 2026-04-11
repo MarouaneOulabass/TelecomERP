@@ -46,6 +46,12 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                 </header>
                 <sheet>
+                    <!-- Hidden fields needed for invisible conditions -->
+                    <field name="state" invisible="1"/>
+                    <field name="failed" invisible="1"/>
+                    <field name="passed" invisible="1"/>
+                    <field name="total_tests" invisible="1"/>
+
                     <!-- Big result banner -->
                     <div class="alert alert-success text-center"
                          invisible="state != 'done' or failed > 0"

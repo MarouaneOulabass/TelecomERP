@@ -73,7 +73,7 @@ def given_task(env, name, context):
     return task
 
 
-@given(parsers.parse('un type de cout "{name}" de categorie "{category}" existe'))
+@given(parsers.parse('un type de coût "{name}" de catégorie "{category}" existe'))
 def given_cost_type(env, name, category, context):
     cost_type = env['telecom.cost.type'].search([
         ('name', '=', name),
@@ -88,7 +88,7 @@ def given_cost_type(env, name, category, context):
 
 
 @given(parsers.parse(
-    'un cout de {amount:f} MAD existe en brouillon pour ce projet et ce lot'
+    'un coût de {amount:f} MAD existe en brouillon pour ce projet et ce lot'
 ))
 def given_draft_cost(env, amount, context):
     cost_type = context.get('cost_type')
@@ -110,7 +110,7 @@ def given_draft_cost(env, amount, context):
 # -------------------------------------------------------------------------
 
 @when(parsers.parse(
-    'je cree un cout de {amount:f} MAD pour ce projet et ce lot'
+    'je créé un coût de {amount:f} MAD pour ce projet et ce lot'
 ))
 def when_create_cost(env, amount, context):
     cost_type = context.get('cost_type')
@@ -124,7 +124,7 @@ def when_create_cost(env, amount, context):
     }), context)
 
 
-@when(parsers.parse('je tente de creer un cout de {amount:f} MAD sans projet'))
+@when(parsers.parse('je tente de creer un coût de {amount:f} MAD sans projet'))
 def when_create_cost_no_project(env, amount, context):
     cost_type = context.get('cost_type')
     lot = context.get('lot')
@@ -138,7 +138,7 @@ def when_create_cost_no_project(env, amount, context):
     }), context)
 
 
-@when(parsers.parse('je tente de creer un cout de {amount:f} MAD sans lot'))
+@when(parsers.parse('je tente de creer un coût de {amount:f} MAD sans lot'))
 def when_create_cost_no_lot(env, amount, context):
     cost_type = context.get('cost_type')
     project = context.get('project')
@@ -153,7 +153,7 @@ def when_create_cost_no_lot(env, amount, context):
 
 
 @when(parsers.parse(
-    'je tente de creer un cout de {amount:f} MAD pour ce projet et ce lot'
+    'je tente de creer un coût de {amount:f} MAD pour ce projet et ce lot'
 ))
 def when_create_cost_negative(env, amount, context):
     cost_type = context.get('cost_type')
@@ -168,7 +168,7 @@ def when_create_cost_negative(env, amount, context):
 
 
 @when(parsers.parse(
-    'je cree un cout de {amount:f} MAD pour ce projet et ce lot sans tache'
+    'je créé un coût de {amount:f} MAD pour ce projet et ce lot sans tache'
 ))
 def when_create_cost_no_task(env, amount, context):
     cost_type = context.get('cost_type')
@@ -184,7 +184,7 @@ def when_create_cost_no_task(env, amount, context):
 
 
 @when(parsers.parse(
-    'je cree un cout de {amount:f} MAD pour ce projet et ce lot avec cette tache'
+    'je créé un coût de {amount:f} MAD pour ce projet et ce lot avec cette tache'
 ))
 def when_create_cost_with_task(env, amount, context):
     cost_type = context.get('cost_type')
@@ -219,13 +219,13 @@ def when_validate_cost(context):
 # Then — Assertions
 # -------------------------------------------------------------------------
 
-@then('le cout est cree avec succes')
+@then('le coût est créé avec succès')
 def then_cost_created(context):
     assert context.get('error') is None, f"Erreur: {context.get('error')}"
     assert context.get('cost_entry') is not None
 
 
-@then(parsers.parse('le montant du cout est {amount:f}'))
+@then(parsers.parse('le montant du coût est {amount:f}'))
 def then_cost_amount(context, amount):
     entry = context['cost_entry']
     assert abs(entry.montant - amount) < 0.01, (
@@ -233,7 +233,7 @@ def then_cost_amount(context, amount):
     )
 
 
-@then('une erreur est levee')
+@then('une erreur est levée')
 def then_error_raised(context):
     assert context.get('error'), (
         "Une erreur etait attendue mais aucune erreur n'a ete levee."
@@ -256,7 +256,7 @@ def then_task_missing_false(context):
     )
 
 
-@then(parsers.parse('l\'etat du cout est "{state}"'))
+@then(parsers.parse('l\'etat du coût est "{state}"'))
 def then_cost_state(context, state):
     entry = context['cost_entry']
     assert entry.state == state, (
