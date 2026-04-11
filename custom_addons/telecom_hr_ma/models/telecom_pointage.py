@@ -13,7 +13,7 @@ Features:
 - mail.thread for chatter tracking
 """
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 
@@ -176,7 +176,7 @@ class TelecomPointageChantier(models.Model):
         for rec in self:
             if rec.state != 'draft':
                 raise UserError(
-                    f"Le pointage '{rec.name}' ne peut être validé que depuis l'état Brouillon."
+                    _("Le pointage '%s' ne peut être validé que depuis l'état Brouillon.") % rec.name
                 )
             rec.state = 'valide'
         return True
@@ -186,7 +186,7 @@ class TelecomPointageChantier(models.Model):
         for rec in self:
             if rec.state != 'draft':
                 raise UserError(
-                    f"Le pointage '{rec.name}' ne peut être refusé que depuis l'état Brouillon."
+                    _("Le pointage '%s' ne peut être refusé que depuis l'état Brouillon.") % rec.name
                 )
             rec.state = 'refuse'
         return True
@@ -218,7 +218,7 @@ class TelecomPointageChantier(models.Model):
         for rec in self:
             if rec.heure_fin <= rec.heure_debut:
                 raise UserError(
-                    "L'heure de fin doit être postérieure à l'heure de début."
+                    _("L'heure de fin doit être postérieure à l'heure de début.")
                 )
             if not (0.0 <= rec.heure_debut <= 24.0) or not (0.0 <= rec.heure_fin <= 24.0):
-                raise UserError("Les heures doivent être comprises entre 0 et 24.")
+                raise UserError(_("Les heures doivent être comprises entre 0 et 24."))

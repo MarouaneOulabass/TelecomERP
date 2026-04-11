@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 from datetime import date
 
@@ -72,5 +72,5 @@ class TelecomCertification(models.Model):
             if rec.date_obtention and rec.date_expiration:
                 if rec.date_expiration < rec.date_obtention:
                     raise ValidationError(
-                        "La date d'expiration doit être postérieure à la date d'obtention."
+                        _("La date d'expiration doit être postérieure à la date d'obtention.")
                     )

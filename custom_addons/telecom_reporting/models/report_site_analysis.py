@@ -128,6 +128,7 @@ class ReportTelecomSiteAnalysis(models.Model):
 
     def init(self):
         """Create or replace the PostgreSQL view backing this model."""
+        # SQL direct : create/replace the SQL view backing this read-only analysis model
         self._cr.execute("""
             CREATE OR REPLACE VIEW report_telecom_site_analysis AS (
                 SELECT

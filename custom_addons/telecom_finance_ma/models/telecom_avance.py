@@ -69,7 +69,7 @@ class TelecomAvanceRemboursement(models.Model):
         required=True,
         default=fields.Date.today,
     )
-    montant = fields.Monetary(
+    amount = fields.Monetary(
         string='Montant remboursé',
         currency_field='currency_id',
     )
@@ -263,10 +263,10 @@ class TelecomAvanceDemarrage(models.Model):
         for rec in self:
             rec.montant_avance = rec.montant_marche * rec.taux_avance / 100.0
 
-    @api.depends('remboursement_ids', 'remboursement_ids.montant', 'montant_verse')
+    @api.depends('remboursement_ids', 'remboursement_ids.amount', 'montant_verse')
     def _compute_remboursement(self):
         for rec in self:
-            total = sum(rec.remboursement_ids.mapped('montant'))
+            total = sum(rec.remboursement_ids.mapped('amount'))
             rec.total_rembourse = total
             rec.solde_restant = rec.montant_verse - total
 

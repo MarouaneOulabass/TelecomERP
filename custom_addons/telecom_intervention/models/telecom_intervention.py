@@ -9,7 +9,7 @@ Models defined here:
 - telecom.intervention.photo : photos attached to a BI
 """
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 
 
@@ -432,11 +432,11 @@ class TelecomIntervention(models.Model):
         for rec in self:
             if rec.state != 'draft':
                 raise UserError(
-                    "Seuls les bons en brouillon peuvent être planifiés."
+                    _("Seuls les bons en brouillon peuvent être planifiés.")
                 )
             if not rec.date_planifiee:
                 raise UserError(
-                    "Veuillez renseigner la date planifiée avant de planifier le bon."
+                    _("Veuillez renseigner la date planifiée avant de planifier le bon.")
                 )
         self.write({'state': 'planifie'})
 
@@ -445,7 +445,7 @@ class TelecomIntervention(models.Model):
         for rec in self:
             if rec.state != 'planifie':
                 raise UserError(
-                    "Seuls les bons planifiés peuvent être démarrés."
+                    _("Seuls les bons planifiés peuvent être démarrés.")
                 )
         self.write({
             'state': 'en_cours',
@@ -457,7 +457,7 @@ class TelecomIntervention(models.Model):
         for rec in self:
             if rec.state != 'en_cours':
                 raise UserError(
-                    "Seuls les bons en cours peuvent être terminés."
+                    _("Seuls les bons en cours peuvent être terminés.")
                 )
         self.write({
             'state': 'termine',
@@ -478,13 +478,13 @@ class TelecomIntervention(models.Model):
 
         if not any(g in user_groups for g in allowed_groups):
             raise UserError(
-                "Seul un chef de chantier, responsable ou administrateur "
-                "peut valider un bon d'intervention."
+                _("Seul un chef de chantier, responsable ou administrateur "
+                  "peut valider un bon d'intervention.")
             )
         for rec in self:
             if rec.state != 'termine':
                 raise UserError(
-                    "Seuls les bons terminés peuvent être validés."
+                    _("Seuls les bons terminés peuvent être validés.")
                 )
         self.write({'state': 'valide'})
 
@@ -493,7 +493,7 @@ class TelecomIntervention(models.Model):
         for rec in self:
             if rec.state == 'facture':
                 raise UserError(
-                    "Un bon déjà facturé ne peut pas être annulé."
+                    _("Un bon déjà facturé ne peut pas être annulé.")
                 )
         self.write({'state': 'annule'})
 
@@ -502,7 +502,7 @@ class TelecomIntervention(models.Model):
         for rec in self:
             if rec.state != 'annule':
                 raise UserError(
-                    "Seuls les bons annulés peuvent être remis en brouillon."
+                    _("Seuls les bons annulés peuvent être remis en brouillon.")
                 )
         self.write({'state': 'draft'})
 
@@ -540,7 +540,7 @@ class TelecomIntervention(models.Model):
             if rec.date_debut_reel and rec.date_fin_reel:
                 if rec.date_fin_reel < rec.date_debut_reel:
                     raise ValidationError(
-                        "La date de fin réelle doit être postérieure à la date de début réelle."
+                        _("La date de fin réelle doit être postérieure à la date de début réelle.")
                     )
 
 

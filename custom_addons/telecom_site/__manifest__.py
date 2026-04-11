@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'TelecomERP — Sites',
-    'version': '17.0.1.0.0',
+    'version': '17.0.1.0.1',
     'category': 'TelecomERP',
     'summary': 'Gestion des sites télécom : pylônes, rooftops, shelters, FTTH, etc.',
     'description': """

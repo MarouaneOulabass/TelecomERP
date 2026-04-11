@@ -195,7 +195,7 @@
                                                 <td><t t-esc="c.reference_bancaire"/></td>
                                                 <td><t t-esc="c.banque"/></td>
                                                 <td class="text-end">
-                                                    <t t-esc="c.montant"
+                                                    <t t-esc="c.amount"
                                                        t-options='{"widget": "monetary", "display_currency": c.currency_id}'/>
                                                 </td>
                                                 <td>

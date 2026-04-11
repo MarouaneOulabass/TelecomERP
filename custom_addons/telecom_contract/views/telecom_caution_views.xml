@@ -17,7 +17,7 @@
                 <field name="reference_bancaire"/>
                 <field name="contract_id"/>
                 <field name="caution_type"/>
-                <field name="montant"/>
+                <field name="amount"/>
                 <field name="currency_id" column_invisible="1"/>
                 <field name="banque"/>
                 <field name="date_emission" optional="show"/>
@@ -64,7 +64,7 @@
                         </group>
                         <group string="Montant &amp; Dates">
                             <field name="currency_id" groups="base.group_multi_currency"/>
-                            <field name="montant"/>
+                            <field name="amount"/>
                             <field name="date_emission"/>
                             <field name="date_expiration"/>
                             <field name="date_liberation"/>

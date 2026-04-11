@@ -46,9 +46,9 @@ def _catch(fn, context):
 # Background
 # ─────────────────────────────────────────────────────────────────────────────
 
-@given("un partenaire opérateur \"Maroc Telecom\" de type \"operator\" existe")
+@given("un partenaire opérateur \"Opérateur Test Alpha\" de type \"operator\" existe")
 def partner_operator(env, context):
-    p = env['res.partner'].create({'name': 'Maroc Telecom', 'partner_type': 'operator'})
+    p = env['res.partner'].create({'name': 'Opérateur Test Alpha', 'partner_type': 'operator'})
     context['operator'] = p
 
 

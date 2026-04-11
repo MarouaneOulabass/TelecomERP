@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 import re
 
@@ -83,7 +83,7 @@ class ResPartner(models.Model):
     def _check_ice(self):
         for rec in self:
             if rec.ice and (len(rec.ice) != 15 or not rec.ice.isdigit()):
-                raise ValidationError("L'ICE doit contenir exactement 15 chiffres.")
+                raise ValidationError(_("L'ICE doit contenir exactement 15 chiffres."))
 
     def action_view_certifications(self):
         self.ensure_one()

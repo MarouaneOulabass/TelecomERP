@@ -1,6 +1,6 @@
 {
     'name': 'TelecomERP — Rattachement des coûts',
-    'version': '17.0.1.0.0',
+    'version': '17.0.1.0.1',
     'category': 'TelecomERP',
     'summary': 'Rattachement obligatoire des coûts aux projets et lots',
     'description': """

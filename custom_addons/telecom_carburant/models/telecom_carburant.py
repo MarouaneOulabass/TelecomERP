@@ -59,8 +59,8 @@ class TelecomPleinCarburant(models.Model):
     prix_litre = fields.Float(
         string='Prix / litre (MAD)', digits=(10, 3),
     )
-    montant = fields.Monetary(
-        string='Montant HT', compute='_compute_montant',
+    amount = fields.Monetary(
+        string='Montant HT', compute='_compute_amount',
         store=True, currency_field='currency_id',
     )
     currency_id = fields.Many2one(
@@ -97,11 +97,11 @@ class TelecomPleinCarburant(models.Model):
 
     # -- Computed --
     @api.depends('litres', 'prix_litre')
-    def _compute_montant(self):
+    def _compute_amount(self):
         for rec in self:
-            rec.montant = rec.litres * rec.prix_litre
+            rec.amount = rec.litres * rec.prix_litre
 
-    @api.depends('date', 'vehicle_id', 'montant')
+    @api.depends('date', 'vehicle_id', 'amount')
     def _compute_display_name(self):
         for rec in self:
             parts = []
@@ -109,8 +109,8 @@ class TelecomPleinCarburant(models.Model):
                 parts.append(str(rec.date))
             if rec.vehicle_id:
                 parts.append(rec.vehicle_id.display_name or '')
-            if rec.montant:
-                parts.append(f'{rec.montant:,.0f} MAD')
+            if rec.amount:
+                parts.append(f'{rec.amount:,.0f} MAD')
             rec.display_name = ' — '.join(parts) or _('Nouveau plein')
 
     # -- Constraints --
@@ -157,7 +157,7 @@ class TelecomPleinCarburant(models.Model):
             ),
             'project_id': self.project_id.id,
             'lot_id': self.lot_id.id if self.lot_id else False,
-            'montant': self.montant or 0.0,
+            'amount': self.amount or 0.0,
             'currency_id': self.currency_id.id,
             'source': 'fuel',
             'vehicle_id': self.vehicle_id.id,

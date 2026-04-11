@@ -220,7 +220,7 @@ def when_add_caution(env, caution_type, montant, banque, context):
         'banque': banque,
         'reference_bancaire': f'REF-{caution_type.upper()}-001',
         'date_emission': date.today().isoformat(),
-        'montant': float(montant),
+        'amount': float(montant),
     })
     c.invalidate_recordset()
 

@@ -138,7 +138,7 @@
                                 <group>
                                     <field name="wilaya"/>
                                     <field name="commune"/>
-                                    <field name="adresse"/>
+                                    <field name="address"/>
                                 </group>
                             </group>
                             <group string="Opérateurs &amp; Bailleur">

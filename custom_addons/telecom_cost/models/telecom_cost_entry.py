@@ -55,7 +55,7 @@ class TelecomCostEntry(models.Model):
     )
 
     # -- Montant --
-    montant = fields.Monetary(
+    amount = fields.Monetary(
         string='Montant HT', required=True,
         currency_field='currency_id', tracking=True,
     )
@@ -113,7 +113,7 @@ class TelecomCostEntry(models.Model):
     )
 
     # -- Computed --
-    @api.depends('date', 'cost_type_id', 'montant', 'project_id')
+    @api.depends('date', 'cost_type_id', 'amount', 'project_id')
     def _compute_display_name(self):
         for rec in self:
             parts = []
@@ -121,8 +121,8 @@ class TelecomCostEntry(models.Model):
                 parts.append(str(rec.date))
             if rec.cost_type_id:
                 parts.append(rec.cost_type_id.name)
-            if rec.montant:
-                parts.append(f'{rec.montant:,.0f} MAD')
+            if rec.amount:
+                parts.append(f'{rec.amount:,.0f} MAD')
             rec.display_name = ' — '.join(parts) or _('Nouveau coût')
 
     @api.depends('task_id')
@@ -131,10 +131,10 @@ class TelecomCostEntry(models.Model):
             rec.task_missing = not rec.task_id
 
     # -- Constraints --
-    @api.constrains('montant')
-    def _check_montant(self):
+    @api.constrains('amount')
+    def _check_amount(self):
         for rec in self:
-            if rec.montant <= 0:
+            if rec.amount <= 0:
                 raise ValidationError(_('Le montant doit être strictement positif.'))
 
     # -- Workflow --

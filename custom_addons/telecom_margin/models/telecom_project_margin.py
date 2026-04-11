@@ -50,6 +50,7 @@ class TelecomProjectMargin(models.Model):
 
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
+        # SQL direct : create/replace the SQL view backing this read-only model (_auto = False)
         self.env.cr.execute(f"""
             CREATE OR REPLACE VIEW {self._table} AS (
                 SELECT
@@ -69,12 +70,12 @@ class TelecomProjectMargin(models.Model):
                     ) AS budget_prevu,
 
                     -- Costs by category
-                    COALESCE(SUM(ce.montant), 0) AS cout_total,
-                    COALESCE(SUM(CASE WHEN ct.category = 'main_oeuvre' THEN ce.montant ELSE 0 END), 0) AS cout_main_oeuvre,
-                    COALESCE(SUM(CASE WHEN ct.category = 'materiel' THEN ce.montant ELSE 0 END), 0) AS cout_materiel,
-                    COALESCE(SUM(CASE WHEN ct.category = 'sous_traitance' THEN ce.montant ELSE 0 END), 0) AS cout_sous_traitance,
-                    COALESCE(SUM(CASE WHEN ct.category = 'carburant' THEN ce.montant ELSE 0 END), 0) AS cout_carburant,
-                    COALESCE(SUM(CASE WHEN ct.category NOT IN ('main_oeuvre','materiel','sous_traitance','carburant') THEN ce.montant ELSE 0 END), 0) AS cout_autres,
+                    COALESCE(SUM(ce.amount), 0) AS cout_total,
+                    COALESCE(SUM(CASE WHEN ct.category = 'main_oeuvre' THEN ce.amount ELSE 0 END), 0) AS cout_main_oeuvre,
+                    COALESCE(SUM(CASE WHEN ct.category = 'materiel' THEN ce.amount ELSE 0 END), 0) AS cout_materiel,
+                    COALESCE(SUM(CASE WHEN ct.category = 'sous_traitance' THEN ce.amount ELSE 0 END), 0) AS cout_sous_traitance,
+                    COALESCE(SUM(CASE WHEN ct.category = 'carburant' THEN ce.amount ELSE 0 END), 0) AS cout_carburant,
+                    COALESCE(SUM(CASE WHEN ct.category NOT IN ('main_oeuvre','materiel','sous_traitance','carburant') THEN ce.amount ELSE 0 END), 0) AS cout_autres,
                     COUNT(ce.id) AS nb_cost_entries,
                     COALESCE(SUM(CASE WHEN ce.task_id IS NULL THEN 1 ELSE 0 END), 0) AS nb_task_missing,
 
@@ -92,7 +93,7 @@ class TelecomProjectMargin(models.Model):
                          FROM telecom_situation s
                          WHERE s.project_id = p.id AND s.state IN ('facture','paye')),
                         0
-                    ) - COALESCE(SUM(ce.montant), 0) AS marge_absolue,
+                    ) - COALESCE(SUM(ce.amount), 0) AS marge_absolue,
 
                     CASE
                         WHEN COALESCE(
@@ -107,7 +108,7 @@ class TelecomProjectMargin(models.Model):
                                      FROM telecom_situation s
                                      WHERE s.project_id = p.id AND s.state IN ('facture','paye')),
                                     0
-                                ) - COALESCE(SUM(ce.montant), 0)
+                                ) - COALESCE(SUM(ce.amount), 0)
                             ) / NULLIF(
                                 COALESCE(
                                     (SELECT SUM(s.montant_situation_ht)
@@ -134,7 +135,7 @@ class TelecomProjectMargin(models.Model):
                                  FROM telecom_situation s
                                  WHERE s.project_id = p.id AND s.state IN ('facture','paye')),
                                 0
-                            ) - COALESCE(SUM(ce.montant), 0)
+                            ) - COALESCE(SUM(ce.amount), 0)
                         ) / NULLIF(
                             COALESCE(
                                 (SELECT c.montant_total
@@ -151,7 +152,7 @@ class TelecomProjectMargin(models.Model):
                                  FROM telecom_situation s
                                  WHERE s.project_id = p.id AND s.state IN ('facture','paye')),
                                 0
-                            ) - COALESCE(SUM(ce.montant), 0)
+                            ) - COALESCE(SUM(ce.amount), 0)
                         ) / NULLIF(
                             COALESCE(
                                 (SELECT c.montant_total

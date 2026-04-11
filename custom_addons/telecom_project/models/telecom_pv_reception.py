@@ -13,7 +13,7 @@ Two PV types:
 Workflow: draft → signe → approuve
 """
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 
@@ -255,15 +255,15 @@ class TelecomPvReception(models.Model):
         for rec in self:
             if rec.state != 'draft':
                 raise UserError(
-                    "Seuls les PV en brouillon peuvent être signés."
+                    _("Seuls les PV en brouillon peuvent être signés.")
                 )
             if not rec.signature_entreprise:
                 raise UserError(
-                    "La signature de l'entreprise est requise avant de signer le PV."
+                    _("La signature de l'entreprise est requise avant de signer le PV.")
                 )
             if not rec.signature_client:
                 raise UserError(
-                    "La signature du client est requise avant de signer le PV."
+                    _("La signature du client est requise avant de signer le PV.")
                 )
         self.write({
             'state': 'signe',
@@ -278,7 +278,7 @@ class TelecomPvReception(models.Model):
         for rec in self:
             if rec.state != 'signe':
                 raise UserError(
-                    "Seuls les PV signés peuvent être approuvés."
+                    _("Seuls les PV signés peuvent être approuvés.")
                 )
         for rec in self:
             rec.state = 'approuve'
@@ -296,7 +296,7 @@ class TelecomPvReception(models.Model):
         )
         if admin_group and admin_group not in self.env.user.groups_id:
             raise UserError(
-                "Seul un administrateur TelecomERP peut remettre un PV en brouillon."
+                _("Seul un administrateur TelecomERP peut remettre un PV en brouillon.")
             )
         self.write({'state': 'draft'})
 

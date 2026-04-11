@@ -15,7 +15,7 @@ import io
 from datetime import date
 import calendar
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 
@@ -93,8 +93,8 @@ class DamancomExportWizard(models.TransientModel):
 
         if not bulletins:
             raise UserError(
-                f"Aucun bulletin de paie trouvé pour la période "
-                f"{dict(MONTH_SELECTION).get(self.mois)} {year}."
+                _("Aucun bulletin de paie trouvé pour la période %s %s.")
+                % (dict(MONTH_SELECTION).get(self.mois), year)
             )
 
         # Generate CSV content

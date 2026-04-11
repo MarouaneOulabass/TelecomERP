@@ -47,7 +47,7 @@ def given_project_with_costs(env, name, amount, context):
         'description': 'Cout test marge',
         'project_id': project.id,
         'lot_id': lot.id,
-        'montant': amount,
+        'amount': amount,
     })
     context['project'] = project
     context['expected_cost'] = amount

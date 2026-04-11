@@ -9,7 +9,7 @@ Two models:
 
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 
@@ -156,7 +156,7 @@ class TelecomEpiDotation(models.Model):
             if rec.date_dotation and rec.date_expiration:
                 if rec.date_expiration < rec.date_dotation:
                     raise ValidationError(
-                        "La date d'expiration doit être postérieure à la date de dotation."
+                        _("La date d'expiration doit être postérieure à la date de dotation.")
                     )
 
     # ------------------------------------------------------------------

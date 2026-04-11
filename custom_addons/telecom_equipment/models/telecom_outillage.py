@@ -12,7 +12,7 @@ Examples: OTDR Yokogawa AQ7275, Rohde & Schwarz spectrum analyzer,
 """
 
 from datetime import date, timedelta
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 
 
@@ -232,11 +232,11 @@ class TelecomOutillage(models.Model):
         for tool in self:
             if tool.state != 'disponible':
                 raise UserError(
-                    "Seul un outillage disponible peut être affecté à un technicien."
+                    _("Seul un outillage disponible peut être affecté à un technicien.")
                 )
             if not tool.affecte_a:
                 raise UserError(
-                    "Veuillez renseigner le technicien avant d'affecter l'outillage."
+                    _("Veuillez renseigner le technicien avant d'affecter l'outillage.")
                 )
         self.write({
             'state': 'en_mission',
@@ -248,7 +248,7 @@ class TelecomOutillage(models.Model):
         for tool in self:
             if tool.state != 'en_mission':
                 raise UserError(
-                    "Seul un outillage en mission peut être retourné."
+                    _("Seul un outillage en mission peut être retourné.")
                 )
         self.write({
             'state': 'disponible',
@@ -261,7 +261,7 @@ class TelecomOutillage(models.Model):
         for tool in self:
             if tool.state not in ('disponible', 'en_mission'):
                 raise UserError(
-                    "L'outillage doit être disponible ou en mission pour être envoyé en étalonnage."
+                    _("L'outillage doit être disponible ou en mission pour être envoyé en étalonnage.")
                 )
         self.write({'state': 'en_etalonnage'})
 
@@ -294,7 +294,7 @@ class TelecomOutillage(models.Model):
             if tool.date_affectation and tool.date_retour_prevu:
                 if tool.date_retour_prevu < tool.date_affectation:
                     raise ValidationError(
-                        "La date de retour prévue doit être postérieure à la date d'affectation."
+                        _("La date de retour prévue doit être postérieure à la date d'affectation.")
                     )
 
     @api.constrains('periodicite_etalonnage_mois')
@@ -302,5 +302,5 @@ class TelecomOutillage(models.Model):
         for tool in self:
             if tool.periodicite_etalonnage_mois <= 0:
                 raise ValidationError(
-                    "La périodicité d'étalonnage doit être strictement positive."
+                    _("La périodicité d'étalonnage doit être strictement positive.")
                 )

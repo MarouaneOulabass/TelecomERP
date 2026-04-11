@@ -6,7 +6,7 @@ Fonctionnalité: Création et gestion d'un site télécom
 
   Contexte:
     Soit la société courante est initialisée
-    Et un partenaire opérateur "Maroc Telecom" de type "operator" existe
+    Et un partenaire opérateur "Opérateur Test Alpha" de type "operator" existe
     Et un partenaire bailleur "Propriétaire Foncier SA" de type "lessor" existe
 
   # ── Création nominale ────────────────────────────────────────────────────

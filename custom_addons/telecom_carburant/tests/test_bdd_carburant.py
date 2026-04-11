@@ -117,8 +117,8 @@ def then_fillup_created(context):
 @then(parsers.parse('le montant du plein est {amount:f}'))
 def then_fillup_amount(context, amount):
     plein = context['plein']
-    assert abs(plein.montant - amount) < 0.01, (
-        f"Montant attendu: {amount}, obtenu: {plein.montant}"
+    assert abs(plein.amount - amount) < 0.01, (
+        f"Montant attendu: {amount}, obtenu: {plein.amount}"
     )
 
 

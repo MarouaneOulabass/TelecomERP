@@ -131,8 +131,10 @@ class ReportTelecomFinanceAnalysis(models.Model):
         # Set a savepoint so that a failed CREATE VIEW can be rolled back
         # without aborting the whole transaction (allows module install to
         # continue even when telecom_finance_ma tables are absent).
+        # SQL direct : savepoint to allow graceful failure if dependent tables are absent
         self._cr.execute("SAVEPOINT report_finance_view")
         try:
+            # SQL direct : create/replace the SQL view backing this read-only analysis model
             self._cr.execute("""
                 CREATE OR REPLACE VIEW report_telecom_finance_analysis AS (
                     SELECT
@@ -175,6 +177,7 @@ class ReportTelecomFinanceAnalysis(models.Model):
                     WHERE dec.state NOT IN ('annule', 'brouillon')
                 )
             """)
+            # SQL direct : release savepoint on success
             self._cr.execute("RELEASE SAVEPOINT report_finance_view")
         except Exception as exc:
             # Source tables from telecom_finance_ma may not exist yet.
@@ -182,6 +185,7 @@ class ReportTelecomFinanceAnalysis(models.Model):
             # log a warning, and continue — the view will be (re)created
             # when telecom_finance_ma is properly installed and this module
             # is upgraded.
+            # SQL direct : rollback savepoint on failure (dependent tables missing)
             self._cr.execute("ROLLBACK TO SAVEPOINT report_finance_view")
             _logger.warning(
                 "report.telecom.finance.analysis: could not create SQL view "

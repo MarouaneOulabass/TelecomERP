@@ -14,9 +14,9 @@
                 <field name="financing_type"/>
                 <field name="description"/>
                 <field name="contract_id" optional="show"/>
-                <field name="montant" sum="Total principal"/>
+                <field name="amount" sum="Total principal"/>
                 <field name="taux_interet" optional="show"/>
-                <field name="montant_interets" sum="Total interets" optional="show"/>
+                <field name="interest_amount" sum="Total interets" optional="show"/>
                 <field name="currency_id" column_invisible="1"/>
                 <field name="date_debut" optional="hide"/>
                 <field name="date_fin" optional="hide"/>
@@ -39,10 +39,10 @@
                             <field name="contract_id"/>
                         </group>
                         <group string="Montant">
-                            <field name="montant"/>
+                            <field name="amount"/>
                             <field name="currency_id"/>
                             <field name="taux_interet"/>
-                            <field name="montant_interets"/>
+                            <field name="interest_amount"/>
                         </group>
                     </group>
                     <group>

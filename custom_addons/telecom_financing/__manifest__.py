@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'TelecomERP — Couts Financiers',
-    'version': '17.0.1.0.0',
+    'version': '17.0.1.0.1',
     'category': 'TelecomERP',
     'summary': 'Integration des couts financiers dans la marge projet',
     'description': """

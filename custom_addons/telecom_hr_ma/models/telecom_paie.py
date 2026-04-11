@@ -17,7 +17,7 @@ Implements 2024 Moroccan payroll rules:
 
 from datetime import date
 import calendar
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 
 
@@ -481,7 +481,7 @@ class TelecomPaieBulletin(models.Model):
         for rec in self:
             if rec.state != 'draft':
                 raise UserError(
-                    f"Le bulletin '{rec.name}' est déjà confirmé ou dans un état ultérieur."
+                    _("Le bulletin '%s' est déjà confirmé ou dans un état ultérieur.") % rec.name
                 )
             if not rec.sequence_number:
                 seq = self.env['ir.sequence'].next_by_code('telecom.paie.bulletin') or '/'
@@ -494,7 +494,7 @@ class TelecomPaieBulletin(models.Model):
         for rec in self:
             if rec.state != 'confirme':
                 raise UserError(
-                    "Le bulletin doit être confirmé avant d'être validé."
+                    _("Le bulletin doit être confirmé avant d'être validé.")
                 )
             rec.state = 'valide'
         return True
@@ -504,7 +504,7 @@ class TelecomPaieBulletin(models.Model):
         for rec in self:
             if rec.state != 'valide':
                 raise UserError(
-                    "Le bulletin doit être validé avant d'être marqué payé."
+                    _("Le bulletin doit être validé avant d'être marqué payé.")
                 )
             rec.state = 'paye'
         return True
@@ -514,7 +514,7 @@ class TelecomPaieBulletin(models.Model):
         for rec in self:
             if rec.state not in ('confirme',):
                 raise UserError(
-                    "Seul un bulletin confirmé peut être remis en brouillon."
+                    _("Seul un bulletin confirmé peut être remis en brouillon.")
                 )
             rec.state = 'draft'
         return True
@@ -529,14 +529,14 @@ class TelecomPaieBulletin(models.Model):
             if rec.date_from and rec.date_to:
                 if rec.date_to < rec.date_from:
                     raise ValidationError(
-                        "La date de fin doit être postérieure à la date de début."
+                        _("La date de fin doit être postérieure à la date de début.")
                     )
 
     @api.constrains('salaire_base')
     def _check_salaire_base(self):
         for rec in self:
             if rec.salaire_base < 0:
-                raise ValidationError("Le salaire de base ne peut pas être négatif.")
+                raise ValidationError(_("Le salaire de base ne peut pas être négatif."))
 
     _sql_constraints = [
         (

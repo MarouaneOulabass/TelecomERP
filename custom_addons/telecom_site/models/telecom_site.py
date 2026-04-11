@@ -12,7 +12,7 @@ Models defined here:
 """
 
 from datetime import date, timedelta
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 
@@ -140,7 +140,7 @@ class TelecomSite(models.Model):
     code_operateur = fields.Char(
         string='Code opérateur',
         tracking=True,
-        help="Code attribué par l'opérateur hébergeur (ex : IAM-CASA-001)",
+        help="Code attribué par l'opérateur hébergeur (ex : OP-VILLE-001)",
     )
     site_type = fields.Selection(
         selection=SITE_TYPE_SELECTION,
@@ -183,7 +183,7 @@ class TelecomSite(models.Model):
     commune = fields.Char(
         string='Commune / Ville',
     )
-    adresse = fields.Char(
+    address = fields.Char(
         string='Adresse complète',
     )
     gps_lat = fields.Float(
@@ -382,7 +382,7 @@ class TelecomSite(models.Model):
             if site.bail_date_debut and site.bail_date_fin:
                 if site.bail_date_fin < site.bail_date_debut:
                     raise ValidationError(
-                        "La date de fin de bail doit être postérieure à la date de début."
+                        _("La date de fin de bail doit être postérieure à la date de début.")
                     )
 
     @api.constrains('gps_lat')
@@ -390,7 +390,7 @@ class TelecomSite(models.Model):
         for site in self:
             if site.gps_lat and not (-90.0 <= site.gps_lat <= 90.0):
                 raise ValidationError(
-                    "La latitude GPS doit être comprise entre -90 et 90."
+                    _("La latitude GPS doit être comprise entre -90 et 90.")
                 )
 
     @api.constrains('gps_lng')
@@ -398,7 +398,7 @@ class TelecomSite(models.Model):
         for site in self:
             if site.gps_lng and not (-180.0 <= site.gps_lng <= 180.0):
                 raise ValidationError(
-                    "La longitude GPS doit être comprise entre -180 et 180."
+                    _("La longitude GPS doit être comprise entre -180 et 180.")
                 )
 
     # ------------------------------------------------------------------
@@ -440,7 +440,7 @@ class TelecomSite(models.Model):
         self.ensure_one()
         if not self.gps_lat or not self.gps_lng:
             raise ValidationError(
-                "Les coordonnées GPS de ce site ne sont pas renseignées."
+                _("Les coordonnées GPS de ce site ne sont pas renseignées.")
             )
         url = f"https://maps.google.com/?q={self.gps_lat},{self.gps_lng}"
         return {

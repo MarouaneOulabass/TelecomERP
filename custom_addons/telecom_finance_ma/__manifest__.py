@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'TelecomERP — Finance & Décomptes Maroc',
-    'version': '17.0.1.0.0',
+    'version': '17.0.1.0.1',
     'category': 'TelecomERP',
     'summary': 'Situations de travaux, décomptes CCAG, avances de démarrage, retenues de garantie',
     'description': """

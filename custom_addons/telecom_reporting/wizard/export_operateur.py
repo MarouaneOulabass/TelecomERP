@@ -3,7 +3,7 @@
 export_operateur.py
 ===================
 Wizard that exports intervention data in CSV format suitable for telecom
-operators (Maroc Telecom, Orange, Inwi).
+opérateurs hébergeurs (référencés via res.partner).
 
 Output columns:
   Code_Site, Date_Intervention, Type, Duree_Heures, Statut, Technicien
@@ -13,7 +13,7 @@ import base64
 import csv
 import io
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 
@@ -73,7 +73,7 @@ class ExportOperateurWizard(models.TransientModel):
         self.ensure_one()
 
         if self.date_to < self.date_from:
-            raise UserError("La date de fin doit être postérieure à la date de début.")
+            raise UserError(_("La date de fin doit être postérieure à la date de début."))
 
         # Build search domain
         domain = [
@@ -89,7 +89,7 @@ class ExportOperateurWizard(models.TransientModel):
 
         if not interventions:
             raise UserError(
-                "Aucune intervention trouvée pour la période et l'opérateur sélectionnés."
+                _("Aucune intervention trouvée pour la période et l'opérateur sélectionnés.")
             )
 
         # State label mapping

@@ -9,7 +9,7 @@ designation for non-catalogued parts.  The stock_move_id field is a
 placeholder for future automated stock movement generation.
 """
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 
@@ -104,5 +104,5 @@ class TelecomMaterielConsomme(models.Model):
         for rec in self:
             if rec.quantite <= 0:
                 raise ValidationError(
-                    "La quantité doit être strictement positive."
+                    _("La quantité doit être strictement positive.")
                 )

@@ -185,6 +185,7 @@ def then_cimr_pat(context, expected):
 def _read_sql(env, model, record_id, field):
     """Read a field value directly from SQL, bypassing ORM recomputation."""
     table = model.replace('.', '_')
+    # SQL direct : bypass ORM recomputation to read raw stored value for assertion
     env.cr.execute(f"SELECT {field} FROM {table} WHERE id = %s", (record_id,))
     row = env.cr.fetchone()
     return row[0] if row else None
@@ -282,7 +283,7 @@ def given_ir_brut(env, ir_brut, context):
     # Create bulletin with 1 part IR, then force the ir_mensuel via SQL
     emp.write({'nbr_parts_ir': 1.0})
     b = _make_bulletin(env, emp, 10000)
-    # Force the ir_mensuel value via SQL (bypass computed field)
+    # SQL direct : force the ir_mensuel value bypassing computed field for test scenario
     env.cr.execute(
         "UPDATE telecom_paie_bulletin SET ir_mensuel = %s WHERE id = %s",
         (target_ir, b.id),
@@ -345,6 +346,7 @@ def given_bulletin_with_table(env, context, datatable):
             sql_overrides['salaire_imposable_ir'] = round(sir, 2)
         sets = ', '.join(f'{k} = %s' for k in sql_overrides)
         params = list(sql_overrides.values()) + [b.id]
+        # SQL direct : force computed field values for deterministic BDD assertions
         env.cr.execute(
             f"UPDATE telecom_paie_bulletin SET {sets} WHERE id = %s",
             params,
@@ -366,7 +368,7 @@ def given_parts_ir(env, context, parts):
     if ir_brut and b:
         # Recompute to apply the new deductions based on parts
         b.invalidate_recordset()
-        # Force: ir_mensuel = ir_brut - deduction_charges
+        # SQL direct : force ir_mensuel = ir_brut - deduction_charges for test scenario
         deduction = max(0, (float(parts) - 1.0)) * 30.0
         ir_net = max(0, ir_brut - deduction)
         env.cr.execute(

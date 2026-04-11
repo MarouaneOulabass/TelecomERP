@@ -15,7 +15,7 @@
                 <field name="station" optional="hide"/>
                 <field name="litres" sum="Total litres"/>
                 <field name="prix_litre" optional="hide"/>
-                <field name="montant" sum="Total"/>
+                <field name="amount" sum="Total"/>
                 <field name="currency_id" column_invisible="1"/>
                 <field name="kilometrage" optional="hide"/>
             </tree>
@@ -39,7 +39,7 @@
                         <group string="Montant">
                             <field name="litres"/>
                             <field name="prix_litre"/>
-                            <field name="montant"/>
+                            <field name="amount"/>
                             <field name="currency_id"/>
                         </group>
                     </group>
@@ -99,7 +99,7 @@
                 <field name="vehicle_id" type="row"/>
                 <field name="date" type="col" interval="month"/>
                 <field name="litres" type="measure"/>
-                <field name="montant" type="measure"/>
+                <field name="amount" type="measure"/>
             </pivot>
         </field>
     </record>
@@ -111,7 +111,7 @@
         <field name="arch" type="xml">
             <graph string="Consommation carburant" type="bar">
                 <field name="vehicle_id"/>
-                <field name="montant" type="measure"/>
+                <field name="amount" type="measure"/>
             </graph>
         </field>
     </record>

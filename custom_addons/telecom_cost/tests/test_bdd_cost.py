@@ -98,7 +98,7 @@ def given_draft_cost(env, amount, context):
         'description': 'Cout test brouillon',
         'project_id': context['project'].id,
         'lot_id': context['lot'].id,
-        'montant': amount,
+        'amount': amount,
     })
     assert entry.state == 'draft'
     context['cost_entry'] = entry
@@ -120,7 +120,7 @@ def when_create_cost(env, amount, context):
         'description': 'Cout test nominal',
         'project_id': context['project'].id,
         'lot_id': context['lot'].id,
-        'montant': amount,
+        'amount': amount,
     }), context)
 
 
@@ -134,7 +134,7 @@ def when_create_cost_no_project(env, amount, context):
         'description': 'Cout sans projet',
         'project_id': False,
         'lot_id': lot.id if lot else False,
-        'montant': amount,
+        'amount': amount,
     }), context)
 
 
@@ -148,7 +148,7 @@ def when_create_cost_no_lot(env, amount, context):
         'description': 'Cout sans lot',
         'project_id': project.id,
         'lot_id': False,
-        'montant': amount,
+        'amount': amount,
     }), context)
 
 
@@ -163,7 +163,7 @@ def when_create_cost_negative(env, amount, context):
         'description': 'Cout montant negatif',
         'project_id': context['project'].id,
         'lot_id': context['lot'].id,
-        'montant': amount,
+        'amount': amount,
     }), context)
 
 
@@ -178,7 +178,7 @@ def when_create_cost_no_task(env, amount, context):
         'description': 'Cout sans tache',
         'project_id': context['project'].id,
         'lot_id': context['lot'].id,
-        'montant': amount,
+        'amount': amount,
         'task_id': False,
     }), context)
 
@@ -194,7 +194,7 @@ def when_create_cost_with_task(env, amount, context):
         'description': 'Cout avec tache',
         'project_id': context['project'].id,
         'lot_id': context['lot'].id,
-        'montant': amount,
+        'amount': amount,
         'task_id': context['task'].id,
     }), context)
 
@@ -228,8 +228,8 @@ def then_cost_created(context):
 @then(parsers.parse('le montant du coût est {amount:f}'))
 def then_cost_amount(context, amount):
     entry = context['cost_entry']
-    assert abs(entry.montant - amount) < 0.01, (
-        f"Montant attendu: {amount}, obtenu: {entry.montant}"
+    assert abs(entry.amount - amount) < 0.01, (
+        f"Montant attendu: {amount}, obtenu: {entry.amount}"
     )
 
 

@@ -56,7 +56,7 @@ class TelecomCoutFinancier(models.Model):
     )
 
     # -- Amount --
-    montant = fields.Monetary(
+    amount = fields.Monetary(
         string='Montant principal', required=True,
         currency_field='currency_id', tracking=True,
     )
@@ -78,9 +78,9 @@ class TelecomCoutFinancier(models.Model):
     date_fin = fields.Date(string='Date fin')
 
     # -- Computed interest --
-    montant_interets = fields.Monetary(
+    interest_amount = fields.Monetary(
         string='Montant des interets',
-        compute='_compute_montant_interets', store=True,
+        compute='_compute_interest_amount', store=True,
         currency_field='currency_id',
     )
 
@@ -96,27 +96,27 @@ class TelecomCoutFinancier(models.Model):
     )
 
     # -- Computed --
-    @api.depends('montant', 'taux_interet', 'date_debut', 'date_fin')
-    def _compute_montant_interets(self):
+    @api.depends('amount', 'taux_interet', 'date_debut', 'date_fin')
+    def _compute_interest_amount(self):
         for rec in self:
-            if rec.montant and rec.taux_interet and rec.date_debut and rec.date_fin:
+            if rec.amount and rec.taux_interet and rec.date_debut and rec.date_fin:
                 # Duration in years (approximate: days / 365)
                 d_start = rec.date_debut
                 d_end = rec.date_fin
                 if d_end > d_start:
                     duration_days = (d_end - d_start).days
                     duration_years = duration_days / 365.0
-                    rec.montant_interets = rec.montant * (rec.taux_interet / 100.0) * duration_years
+                    rec.interest_amount = rec.amount * (rec.taux_interet / 100.0) * duration_years
                 else:
-                    rec.montant_interets = 0.0
+                    rec.interest_amount = 0.0
             else:
-                rec.montant_interets = 0.0
+                rec.interest_amount = 0.0
 
     # -- Constraints --
-    @api.constrains('montant')
-    def _check_montant(self):
+    @api.constrains('amount')
+    def _check_amount(self):
         for rec in self:
-            if rec.montant <= 0:
+            if rec.amount <= 0:
                 raise ValidationError(
                     _('Le montant doit etre strictement positif.')
                 )
@@ -149,14 +149,14 @@ class TelecomCoutFinancier(models.Model):
                 [('category', '=', 'financier')], limit=1,
             )
         # Use total including interest if available
-        total = self.montant + (self.montant_interets or 0.0)
+        total = self.amount + (self.interest_amount or 0.0)
         vals = {
             'date': self.date,
             'cost_type_id': cost_type.id if cost_type else False,
             'description': _('Cout financier — %s') % self.description,
             'project_id': self.project_id.id,
             'lot_id': self.lot_id.id if self.lot_id else False,
-            'montant': total,
+            'amount': total,
             'currency_id': self.currency_id.id,
             'source': 'manual',
             'company_id': self.company_id.id,

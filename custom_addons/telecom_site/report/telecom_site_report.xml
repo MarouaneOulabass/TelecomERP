@@ -87,7 +87,7 @@
                                 </tr>
                                 <tr>
                                     <th style="background-color: #f8f9fa;">Adresse</th>
-                                    <td colspan="3"><t t-esc="site.adresse or '—'"/></td>
+                                    <td colspan="3"><t t-esc="site.address or '—'"/></td>
                                 </tr>
                                 <tr>
                                     <th style="background-color: #f8f9fa;">Opérateurs hébergés</th>

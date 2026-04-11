@@ -9,6 +9,7 @@ Run:
 """
 import pytest
 from pytest_bdd import scenarios, given, when, then, parsers
+from odoo import _
 from odoo.exceptions import ValidationError, UserError
 
 pytestmark = pytest.mark.base
@@ -61,7 +62,7 @@ def when_create_partner_invalid_ice(env, ice, context):
         import re
         if ice and not re.match(r'^\d{15}$', ice):
             from odoo.exceptions import ValidationError
-            raise ValidationError("L'ICE doit contenir exactement 15 chiffres.")
+            raise ValidationError(_("L'ICE doit contenir exactement 15 chiffres."))
         return env['res.partner'].create({
             'name': 'Test ICE', 'partner_type': 'operator', 'ice': ice,
         })

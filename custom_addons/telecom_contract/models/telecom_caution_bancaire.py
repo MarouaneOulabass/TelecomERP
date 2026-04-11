@@ -65,7 +65,7 @@ class TelecomCautionBancaire(models.Model):
         default=lambda self: self.env.ref('base.MAD', raise_if_not_found=False)
                              or self.env['res.currency'].search([('name', '=', 'MAD')], limit=1),
     )
-    montant = fields.Monetary(
+    amount = fields.Monetary(
         string='Montant',
         currency_field='currency_id',
     )

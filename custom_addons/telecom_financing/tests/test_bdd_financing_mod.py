@@ -66,7 +66,7 @@ def when_create_financial_cost(env, amount, ftype, context):
         'lot_id': lot.id if lot else False,
         'financing_type': ftype,
         'description': f'Test {ftype}',
-        'montant': amount,
+        'amount': amount,
     }), context)
 
 
@@ -82,7 +82,7 @@ def when_create_financial_cost_with_interest(env, amount, taux, date_debut, date
         'lot_id': lot.id if lot else False,
         'financing_type': 'credit_bancaire',
         'description': 'Test interet',
-        'montant': amount,
+        'amount': amount,
         'taux_interet': taux,
         'date_debut': date_debut,
         'date_fin': date_fin,
@@ -101,7 +101,7 @@ def when_create_financial_cost_negative(env, amount, ftype, context):
         'lot_id': lot.id if lot else False,
         'financing_type': ftype,
         'description': f'Test negatif {ftype}',
-        'montant': amount,
+        'amount': amount,
     }), context)
 
 
@@ -120,8 +120,8 @@ def then_interest_amount(context, amount):
     rec = context['cout_financier']
     # Allow 1% tolerance for day-count differences
     tolerance = amount * 0.05
-    assert abs(rec.montant_interets - amount) < tolerance, (
-        f"Interets attendus: ~{amount}, obtenus: {rec.montant_interets}"
+    assert abs(rec.interest_amount - amount) < tolerance, (
+        f"Interets attendus: ~{amount}, obtenus: {rec.interest_amount}"
     )
 
 

@@ -116,7 +116,7 @@
                                 <tree editable="bottom">
                                     <field name="date"/>
                                     <field name="situation_id"/>
-                                    <field name="montant" sum="Total remboursé"/>
+                                    <field name="amount" sum="Total remboursé"/>
                                     <field name="notes"/>
                                     <field name="currency_id" column_invisible="True"/>
                                 </tree>

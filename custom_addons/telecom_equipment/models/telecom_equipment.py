@@ -10,7 +10,7 @@ Models defined here:
 """
 
 from datetime import date, timedelta
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 
 
@@ -326,7 +326,7 @@ class TelecomEquipment(models.Model):
         for eq in self:
             if not eq.site_id:
                 raise UserError(
-                    "Veuillez renseigner le site d'installation avant d'installer l'équipement."
+                    _("Veuillez renseigner le site d'installation avant d'installer l'équipement.")
                 )
         self.write({'state': 'installe'})
         if not self[0].date_installation:
@@ -337,7 +337,7 @@ class TelecomEquipment(models.Model):
         for eq in self:
             if eq.state not in ('installe',):
                 raise UserError(
-                    "Seul un équipement installé peut être déclaré en panne."
+                    _("Seul un équipement installé peut être déclaré en panne.")
                 )
         self.write({'state': 'en_panne'})
 
@@ -346,7 +346,7 @@ class TelecomEquipment(models.Model):
         for eq in self:
             if eq.state not in ('en_panne', 'installe'):
                 raise UserError(
-                    "L'équipement doit être en panne ou installé pour être envoyé en réparation."
+                    _("L'équipement doit être en panne ou installé pour être envoyé en réparation.")
                 )
         self.write({'state': 'en_reparation'})
 
@@ -355,11 +355,11 @@ class TelecomEquipment(models.Model):
         for eq in self:
             if eq.state not in ('en_reparation', 'en_stock'):
                 raise UserError(
-                    "L'équipement doit être en réparation ou en stock pour être remis en service."
+                    _("L'équipement doit être en réparation ou en stock pour être remis en service.")
                 )
             if not eq.site_id:
                 raise UserError(
-                    "Veuillez renseigner le site d'installation avant de remettre en service."
+                    _("Veuillez renseigner le site d'installation avant de remettre en service.")
                 )
         self.write({'state': 'installe'})
 
@@ -368,7 +368,7 @@ class TelecomEquipment(models.Model):
         for eq in self:
             if eq.state in ('mis_au_rebut',):
                 raise UserError(
-                    "Un équipement mis au rebut ne peut pas être retiré du service."
+                    _("Un équipement mis au rebut ne peut pas être retiré du service.")
                 )
         self.write({'state': 'retire'})
 
@@ -401,7 +401,7 @@ class TelecomEquipment(models.Model):
             if eq.date_achat and eq.date_installation:
                 if eq.date_installation < eq.date_achat:
                     raise ValidationError(
-                        "La date d'installation ne peut pas être antérieure à la date d'achat."
+                        _("La date d'installation ne peut pas être antérieure à la date d'achat.")
                     )
 
     @api.constrains('date_achat', 'date_fin_garantie')
@@ -410,7 +410,7 @@ class TelecomEquipment(models.Model):
             if eq.date_achat and eq.date_fin_garantie:
                 if eq.date_fin_garantie < eq.date_achat:
                     raise ValidationError(
-                        "La date de fin de garantie doit être postérieure à la date d'achat."
+                        _("La date de fin de garantie doit être postérieure à la date d'achat.")
                     )
 
 

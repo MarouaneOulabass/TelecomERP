@@ -183,7 +183,7 @@
                                     <field name="caution_type"/>
                                     <field name="reference_bancaire"/>
                                     <field name="banque"/>
-                                    <field name="montant"/>
+                                    <field name="amount"/>
                                     <field name="currency_id" column_invisible="1"/>
                                     <field name="date_emission"/>
                                     <field name="date_expiration"/>
