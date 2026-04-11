@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        TelecomERP — Navigation unifiée
+        ================================
+        Tous les modules regroupés sous un seul menu racine.
+        Structure: TelecomERP > Section > Action
+    -->
+
+    <!-- ══════════════════════════════════════════════════════════════
+         1. SITES & INFRASTRUCTURE
+    ══════════════════════════════════════════════════════════════ -->
+    <menuitem id="menu_section_sites"
+              name="Sites &amp; Infrastructure"
+              parent="menu_telecom_root"
+              sequence="10"/>
+
+    <menuitem id="menu_nav_sites"
+              name="Sites télécom"
+              parent="menu_section_sites"
+              action="telecom_site.action_telecom_site"
+              sequence="10"/>
+
+    <menuitem id="menu_nav_technologies"
+              name="Technologies"
+              parent="menu_section_sites"
+              action="telecom_site.action_telecom_technologie"
+              sequence="20"/>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         2. INTERVENTIONS
+    ══════════════════════════════════════════════════════════════ -->
+    <!-- Already exists: telecom_intervention.menu_telecom_intervention_root -->
+
+    <!-- ══════════════════════════════════════════════════════════════
+         3. RH & TERRAIN
+    ══════════════════════════════════════════════════════════════ -->
+    <menuitem id="menu_section_rh"
+              name="RH &amp; Terrain"
+              parent="menu_telecom_root"
+              sequence="30"/>
+
+    <menuitem id="menu_nav_employes"
+              name="Techniciens"
+              parent="menu_section_rh"
+              action="telecom_hr_ma.action_paie_bulletin"
+              sequence="5"/>
+
+    <menuitem id="menu_nav_bulletins"
+              name="Bulletins de paie"
+              parent="menu_section_rh"
+              action="telecom_hr_ma.action_paie_bulletin"
+              sequence="10"/>
+
+    <menuitem id="menu_nav_pointage"
+              name="Pointage chantier"
+              parent="menu_section_rh"
+              action="telecom_hr_ma.action_pointage_chantier"
+              sequence="20"/>
+
+    <menuitem id="menu_nav_habilitations"
+              name="Habilitations"
+              parent="menu_section_rh"
+              action="telecom_hr_ma.action_habilitation_employee"
+              sequence="30"/>
+
+    <menuitem id="menu_nav_epi"
+              name="Dotations EPI"
+              parent="menu_section_rh"
+              action="telecom_hr_ma.action_epi_dotation"
+              sequence="40"/>
+
+    <menuitem id="menu_nav_damancom"
+              name="Export DAMANCOM"
+              parent="menu_section_rh"
+              action="telecom_hr_ma.action_damancom_export_wizard"
+              sequence="50"/>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         4. ÉQUIPEMENTS
+    ══════════════════════════════════════════════════════════════ -->
+    <menuitem id="menu_section_equipements"
+              name="Équipements"
+              parent="menu_telecom_root"
+              sequence="40"/>
+
+    <menuitem id="menu_nav_equipements"
+              name="Équipements"
+              parent="menu_section_equipements"
+              action="telecom_equipment.action_telecom_equipment"
+              sequence="10"/>
+
+    <menuitem id="menu_nav_outillages"
+              name="Outillages terrain"
+              parent="menu_section_equipements"
+              action="telecom_equipment.action_telecom_outillage"
+              sequence="20"/>
+
+    <menuitem id="menu_nav_categories_equip"
+              name="Catégories"
+              parent="menu_section_equipements"
+              action="telecom_equipment.action_telecom_equipment_category"
+              sequence="30"/>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         5. FLOTTE — Already exists under TelecomERP
+    ══════════════════════════════════════════════════════════════ -->
+
+    <!-- ══════════════════════════════════════════════════════════════
+         6. PROJETS & CHANTIERS
+    ══════════════════════════════════════════════════════════════ -->
+    <menuitem id="menu_section_projets"
+              name="Projets &amp; Chantiers"
+              parent="menu_telecom_root"
+              sequence="50"/>
+
+    <menuitem id="menu_nav_lots"
+              name="Lots"
+              parent="menu_section_projets"
+              action="telecom_project.action_telecom_lot"
+              sequence="10"/>
+
+    <menuitem id="menu_nav_sites_projet"
+              name="Sites de projet"
+              parent="menu_section_projets"
+              action="telecom_project.action_telecom_project_site"
+              sequence="20"/>
+
+    <menuitem id="menu_nav_pv"
+              name="PV de réception"
+              parent="menu_section_projets"
+              action="telecom_project.action_telecom_pv_reception"
+              sequence="30"/>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         7. COMMERCIAL — AO
+    ══════════════════════════════════════════════════════════════ -->
+    <menuitem id="menu_section_commercial"
+              name="Commercial"
+              parent="menu_telecom_root"
+              sequence="60"/>
+
+    <menuitem id="menu_nav_ao"
+              name="Appels d'Offres"
+              parent="menu_section_commercial"
+              action="telecom_ao.action_telecom_ao"
+              sequence="10"/>
+
+    <menuitem id="menu_nav_bpu"
+              name="Lignes BPU"
+              parent="menu_section_commercial"
+              action="telecom_ao.action_telecom_bpu_ligne"
+              sequence="20"/>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         8. CONTRATS
+    ══════════════════════════════════════════════════════════════ -->
+    <menuitem id="menu_section_contrats"
+              name="Contrats"
+              parent="menu_telecom_root"
+              sequence="70"/>
+
+    <menuitem id="menu_nav_contrats"
+              name="Contrats"
+              parent="menu_section_contrats"
+              action="telecom_contract.action_telecom_contract"
+              sequence="10"/>
+
+    <menuitem id="menu_nav_cautions"
+              name="Cautions bancaires"
+              parent="menu_section_contrats"
+              action="telecom_contract.action_telecom_caution_bancaire"
+              sequence="20"/>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         9. FINANCE
+    ══════════════════════════════════════════════════════════════ -->
+    <menuitem id="menu_section_finance"
+              name="Finance"
+              parent="menu_telecom_root"
+              sequence="80"/>
+
+    <menuitem id="menu_nav_situations"
+              name="Situations de travaux"
+              parent="menu_section_finance"
+              action="telecom_finance_ma.action_telecom_situation"
+              sequence="10"/>
+
+    <menuitem id="menu_nav_decomptes"
+              name="Décomptes"
+              parent="menu_section_finance"
+              action="telecom_finance_ma.action_telecom_decompte"
+              sequence="20"/>
+
+    <menuitem id="menu_nav_avances"
+              name="Avances de démarrage"
+              parent="menu_section_finance"
+              action="telecom_finance_ma.action_telecom_avance_demarrage"
+              sequence="30"/>
+
+    <menuitem id="menu_nav_alertes_delai"
+              name="Alertes délais paiement"
+              parent="menu_section_finance"
+              action="telecom_finance_ma.action_telecom_situation_alertes"
+              sequence="40"/>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         10. REPORTING
+    ══════════════════════════════════════════════════════════════ -->
+    <menuitem id="menu_section_reporting"
+              name="Reporting"
+              parent="menu_telecom_root"
+              sequence="90"/>
+
+    <menuitem id="menu_nav_dashboard_direction"
+              name="Direction — CA"
+              parent="menu_section_reporting"
+              action="telecom_reporting.action_dashboard_direction_finance"
+              sequence="10"/>
+
+    <menuitem id="menu_nav_dashboard_sites"
+              name="Direction — Sites"
+              parent="menu_section_reporting"
+              action="telecom_reporting.action_dashboard_direction_sites"
+              sequence="15"/>
+
+    <menuitem id="menu_nav_dashboard_inter"
+              name="Direction — Interventions"
+              parent="menu_section_reporting"
+              action="telecom_reporting.action_dashboard_direction_interventions"
+              sequence="20"/>
+
+    <menuitem id="menu_nav_rh_pointage"
+              name="RH — Présences du jour"
+              parent="menu_section_reporting"
+              action="telecom_reporting.action_dashboard_rh_pointage_today"
+              sequence="30"/>
+
+    <menuitem id="menu_nav_rh_habilitations"
+              name="RH — Habilitations"
+              parent="menu_section_reporting"
+              action="telecom_reporting.action_dashboard_rh_habilitations_expiring"
+              sequence="35"/>
+
+    <menuitem id="menu_nav_rh_epi"
+              name="RH — EPI à renouveler"
+              parent="menu_section_reporting"
+              action="telecom_reporting.action_dashboard_rh_epi_renew"
+              sequence="38"/>
+
+    <menuitem id="menu_nav_export_operateur"
+              name="Export opérateur"
+              parent="menu_section_reporting"
+              action="telecom_reporting.action_export_operateur_wizard"
+              sequence="40"/>
+
+    <menuitem id="menu_nav_bilan_cnss"
+              name="Bilan social CNSS"
+              parent="menu_section_reporting"
+              action="telecom_reporting.action_bilan_social_cnss"
+              sequence="50"/>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         HIDE: Invoicing (native) — finance is in our module
+    ══════════════════════════════════════════════════════════════ -->
+    <record id="account.menu_finance" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+</odoo>
