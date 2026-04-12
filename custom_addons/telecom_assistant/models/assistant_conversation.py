@@ -145,15 +145,26 @@ class AssistantConversation(models.Model):
         tools = registry.get_all_tools()
 
         try:
+            # Budget check: limit total tokens per tenant per month
+            monthly_limit = int(self.env['ir.config_parameter'].sudo().get_param(
+                'telecom.assistant_monthly_token_limit', '500000'
+            ))
+            if monthly_limit > 0 and self.total_tokens > monthly_limit:
+                raise UserError(_(
+                    "Budget mensuel de l'assistant dépassé (%d tokens / %d max).\n"
+                    "Contactez l'administrateur."
+                ) % (self.total_tokens, monthly_limit))
+
             client = self._get_claude_client()
 
-            # Call Claude with tools
+            # Call Claude with tools — timeout via httpx (anthropic client default: 600s)
             response = client.messages.create(
                 model='claude-sonnet-4-20250514',
                 max_tokens=2048,
                 system=SYSTEM_PROMPT,
                 messages=messages,
                 tools=tools if tools else None,
+                timeout=30.0,  # 30s timeout per API call
             )
 
             # Process response — handle tool use

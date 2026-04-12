@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <menuitem id="menu_assistant_root"
-              name="Assistant IA"
-              sequence="5"
-              web_icon="telecom_assistant,static/description/icon.png"/>
+    <!--
+        L'assistant n'a PAS de menu racine. L'accès se fait uniquement
+        via le widget popup flottant (FAB en bas à droite).
 
-    <menuitem id="menu_assistant_new"
-              name="Nouvelle conversation"
-              parent="menu_assistant_root"
-              action="action_assistant_new"
-              sequence="1"/>
+        Seule exception : l'historique des conversations, accessible
+        depuis le widget lui-même via le lien "Historique".
+    -->
 
-    <menuitem id="menu_assistant_history"
-              name="Historique"
-              parent="menu_assistant_root"
-              action="action_assistant_conversation"
-              sequence="10"/>
+    <!-- Action historique (appelée depuis le widget, pas depuis un menu principal) -->
+    <!-- L'action existe dans telecom_assistant_views.xml : action_assistant_conversation -->
 </odoo>
