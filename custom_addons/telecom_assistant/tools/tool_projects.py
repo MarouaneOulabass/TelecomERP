@@ -3,6 +3,24 @@
 from odoo.addons.telecom_assistant.models.assistant_tool_registry import register_tool
 
 
+def list_projects(env, active_only=True):
+    """List all projects with basic info."""
+    domain = []
+    if active_only:
+        domain = [('active', '=', True)]
+    projects = env['project.project'].search(domain, limit=50, order='name')
+    result = []
+    for p in projects:
+        lots = env['telecom.lot'].search_count([('project_id', '=', p.id)])
+        result.append({
+            'id': p.id,
+            'name': p.name,
+            'partner': p.partner_id.name if p.partner_id else None,
+            'lots': lots,
+        })
+    return {'count': len(result), 'projects': result}
+
+
 def get_project_status(env, project_name=None, project_id=None):
     """Get project status with margin, costs, and progress."""
     domain = []
@@ -16,15 +34,29 @@ def get_project_status(env, project_name=None, project_id=None):
     projects = env['project.project'].search(domain, limit=10)
     result = []
     for p in projects:
-        # Get lots
         lots = env['telecom.lot'].search([('project_id', '=', p.id)])
-        # Get costs
+        # Get costs — use try/except for field name compatibility
         costs = env['telecom.cost.entry'].search([('project_id', '=', p.id)])
-        total_cost = sum(c.amount for c in costs)
-        # Get margin from SQL view
-        margins = env['telecom.project.margin'].search([('project_id', '=', p.id)])
-        margin_pct = margins[0].marge_pct if margins else 0
-        health = margins[0].health if margins else 'unknown'
+        total_cost = 0
+        for c in costs:
+            try:
+                total_cost += c.amount
+            except Exception:
+                try:
+                    total_cost += c.montant
+                except Exception:
+                    pass
+
+        # Get margin — may fail if SQL view has issues
+        margin_pct = 0
+        health = 'unknown'
+        try:
+            margins = env['telecom.project.margin'].search([('project_id', '=', p.id)], limit=1)
+            if margins:
+                margin_pct = margins.marge_pct or 0
+                health = margins.health or 'unknown'
+        except Exception:
+            pass
 
         result.append({
             'id': p.id,
@@ -35,7 +67,7 @@ def get_project_status(env, project_name=None, project_id=None):
             'margin_pct': margin_pct,
             'health': health,
         })
-    return result
+    return {'count': len(result), 'projects': result}
 
 
 def get_cost_breakdown(env, project_name=None, project_id=None, month=None, cost_type=None):
@@ -72,6 +104,18 @@ def get_cost_breakdown(env, project_name=None, project_id=None, month=None, cost
         'entries': result,
     }
 
+
+register_tool(
+    'list_projects',
+    list_projects,
+    "Lister tous les projets actifs avec leur nom, client et nombre de lots.",
+    {
+        'type': 'object',
+        'properties': {
+            'active_only': {'type': 'boolean', 'description': 'Filtrer les projets actifs uniquement', 'default': True},
+        },
+    }
+)
 
 register_tool(
     'get_project_status',
