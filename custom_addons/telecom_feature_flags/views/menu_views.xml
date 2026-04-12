@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu under TelecomERP > Configuration — admin only -->
+    <menuitem id="menu_feature_flags"
+              name="Feature Flags"
+              parent="telecom_base.menu_telecom_config"
+              action="action_feature_flag"
+              sequence="50"
+              groups="telecom_base.group_telecom_admin"/>
+
+</odoo>

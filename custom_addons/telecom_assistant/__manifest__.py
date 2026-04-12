@@ -17,6 +17,7 @@ Assistant conversationnel contextuel TelecomERP
     'license': 'OPL-1',
     'depends': [
         'telecom_base',
+        'telecom_feature_flags',
         'telecom_site',
         'telecom_intervention',
         'telecom_project',

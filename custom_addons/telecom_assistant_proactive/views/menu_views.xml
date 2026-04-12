@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sub-menu under TelecomERP root -->
+    <menuitem id="menu_proactive_root"
+              name="Alertes Proactives"
+              parent="telecom_base.menu_telecom_root"
+              sequence="45"
+              groups="telecom_base.group_telecom_responsable"/>
+
+    <menuitem id="menu_proactive_notifications"
+              name="Notifications"
+              parent="menu_proactive_root"
+              action="action_proactive_notification"
+              sequence="1"/>
+
+    <menuitem id="menu_proactive_watchers"
+              name="Configuration Watchers"
+              parent="menu_proactive_root"
+              action="action_proactive_watcher"
+              sequence="10"
+              groups="telecom_base.group_telecom_admin"/>
+
+</odoo>

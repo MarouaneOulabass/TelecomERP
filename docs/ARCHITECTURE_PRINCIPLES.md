@@ -233,7 +233,21 @@ Vérifié par lint custom dans le harnais (recherche de patterns interdits).
 
 ---
 
-## 16. Ce qui n'est pas dans ce document
+## 17. Règles sur les feature flags
+
+NON-NEGOTIABLE
+
+1. Tout comportement optionnel ou évolutif d'une capability est contrôlé par un feature flag déclaré dans son fichier `feature_flags.py`.
+2. Les feature flags remplacent tout paramètre de configuration modifiable à chaud. Jamais de paramètre en dur ni en code.
+3. Chaque flag a une valeur par défaut sûre (généralement `False` pour les nouvelles features non encore éprouvées).
+4. L'activation d'un flag ne nécessite jamais un redéploiement ni une modification du `tenant_profile.yaml`.
+5. Tout test métier peut forcer un flag via un décorateur de test standardisé `@with_feature_flag('code', active=True/False)`.
+6. Tout flag est documenté : à quoi il sert, quel comportement il active, quel est l'impact quand il est inactif.
+7. Un flag jamais activé par aucun tenant pendant 12 mois doit être signalé pour décommissionnement (éviter la dette de code mort).
+
+---
+
+## 18. Ce qui n'est pas dans ce document
 
 Pour éviter les confusions :
 

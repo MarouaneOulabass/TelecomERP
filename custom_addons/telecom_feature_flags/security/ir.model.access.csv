@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_feature_flag_responsable,feature.flag responsable,model_feature_flag,telecom_base.group_telecom_responsable,1,0,0,0
+access_feature_flag_admin,feature.flag admin,model_feature_flag,telecom_base.group_telecom_admin,1,1,1,1
+access_feature_flag_history_responsable,feature.flag.history responsable,model_feature_flag_history,telecom_base.group_telecom_responsable,1,0,0,0
+access_feature_flag_history_admin,feature.flag.history admin,model_feature_flag_history,telecom_base.group_telecom_admin,1,1,1,1

@@ -85,6 +85,10 @@ Scénario : Cockpit fonctionne sans telecom_financing (future) activé
 | `test_no_disabled_tests` | Aucun `@pytest.skip` sans ticket | §15 |
 | `test_cost_creation_only_via_pivot` | Aucun `CostEntry.create()` hors `telecom_cost (future)` | §8 |
 
+| `test_feature_flags_declared` | Tout module avec comportement conditionnel à un flag l'a enregistré dans son `feature_flags.py` | §17 |
+| `test_no_undeclared_flag_references` | Aucun code de production ne référence un flag par un `code` non déclaré | §17 |
+| `test_feature_flags_both_states_tested` | Tout flag déclaré a au moins un test qui vérifie les deux états (actif/inactif) | §17 |
+
 ### Implémentation
 Tous ces tests vivent dans `tests/architecture/` et tournent en CI à chaque commit. Un seul échec = build rouge.
 

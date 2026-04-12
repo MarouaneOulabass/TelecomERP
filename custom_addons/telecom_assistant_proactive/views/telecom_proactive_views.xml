@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         Proactive Watcher — Tree View
+    ============================================================ -->
+    <record id="view_proactive_watcher_tree" model="ir.ui.view">
+        <field name="name">telecom.proactive.watcher.tree</field>
+        <field name="model">telecom.proactive.watcher</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="watcher_type"/>
+                <field name="threshold_value"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="last_run"/>
+                <field name="notification_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         Proactive Watcher — Form View
+    ============================================================ -->
+    <record id="view_proactive_watcher_form" model="ir.ui.view">
+        <field name="name">telecom.proactive.watcher.form</field>
+        <field name="model">telecom.proactive.watcher</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="watcher_type"/>
+                            <field name="threshold_value"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="last_run" readonly="1"/>
+                            <field name="notification_count"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         Proactive Watcher — Action
+    ============================================================ -->
+    <record id="action_proactive_watcher" model="ir.actions.act_window">
+        <field name="name">Watchers</field>
+        <field name="res_model">telecom.proactive.watcher</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ============================================================
+         Proactive Notification — Tree View
+    ============================================================ -->
+    <record id="view_proactive_notification_tree" model="ir.ui.view">
+        <field name="name">telecom.proactive.notification.tree</field>
+        <field name="model">telecom.proactive.notification</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="create_date"/>
+                <field name="title"/>
+                <field name="severity" widget="badge"
+                       decoration-info="severity == 'info'"
+                       decoration-warning="severity == 'warning'"
+                       decoration-danger="severity == 'critical'"/>
+                <field name="watcher_id"/>
+                <field name="user_id"/>
+                <field name="is_read"/>
+                <field name="channel"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         Proactive Notification — Form View
+    ============================================================ -->
+    <record id="view_proactive_notification_form" model="ir.ui.view">
+        <field name="name">telecom.proactive.notification.form</field>
+        <field name="model">telecom.proactive.notification</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_mark_read" type="object"
+                            string="Mark as Read"
+                            invisible="is_read"/>
+                    <button name="action_open_source" type="object"
+                            string="Open Source Record"
+                            invisible="not record_model"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="title"/>
+                            <field name="severity"/>
+                            <field name="watcher_id"/>
+                            <field name="channel"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="is_read"/>
+                            <field name="record_model"/>
+                            <field name="record_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="message"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         Proactive Notification — Search View
+    ============================================================ -->
+    <record id="view_proactive_notification_search" model="ir.ui.view">
+        <field name="name">telecom.proactive.notification.search</field>
+        <field name="model">telecom.proactive.notification</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="title"/>
+                <field name="watcher_id"/>
+                <field name="user_id"/>
+                <separator/>
+                <filter string="Unread" name="filter_unread"
+                        domain="[('is_read', '=', False)]"/>
+                <filter string="Critical" name="filter_critical"
+                        domain="[('severity', '=', 'critical')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Severity" name="groupby_severity"
+                            context="{'group_by': 'severity'}"/>
+                    <filter string="Watcher" name="groupby_watcher"
+                            context="{'group_by': 'watcher_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         Proactive Notification — Action
+    ============================================================ -->
+    <record id="action_proactive_notification" model="ir.actions.act_window">
+        <field name="name">Notifications</field>
+        <field name="res_model">telecom.proactive.notification</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_proactive_notification_search"/>
+        <field name="context">{'search_default_filter_unread': 1}</field>
+    </record>
+
+</odoo>

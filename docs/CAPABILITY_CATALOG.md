@@ -36,7 +36,8 @@
 | 2 | telecom_tenant (future) | Profil tenant | 1 | MVP | Socle |
 | 3 | telecom_localization_ma | Localisation Maroc | 1 | MVP | Socle |
 | 4 | telecom_base (security) | Sécurité et accès | 1 | MVP | Socle |
-| 5 | telecom_project | Projets et lots | 2 | MVP | Optionnelle |
+| 5 | telecom_feature_flags | Feature Flags | 1 | MVP | Socle |
+| 6 | telecom_project | Projets et lots | 2 | MVP | Optionnelle |
 | 6 | telecom_cost (future) | Rattachement des coûts | 2 | MVP | Optionnelle |
 | 7 | telecom_margin (future) | Cockpit de rentabilité | 2 | MVP | Optionnelle |
 | 8 | telecom_finance_ma | Situations de travaux et CCAG | 2 | MVP | Optionnelle |
@@ -158,6 +159,27 @@ Scénario : Provisioning avec YAML invalide
 **Critères d'acceptation** :
 - Aucune donnée d'un tenant n'est jamais accessible depuis un autre tenant
 - Test d'isolation multi-tenant automatisé dans le harnais
+
+---
+
+### 5. telecom_feature_flags — Feature Flags
+
+**Vague** : MVP — **Statut** : Socle obligatoire
+
+**Rôle** : mécanisme de feature flags runtime permettant aux administrateurs d'activer ou désactiver des sous-fonctionnalités à chaud, sans redéploiement. Distinct des capabilities du catalogue : les capabilities définissent ce qui est installé, les feature flags définissent ce qui est actif dans une capability installée.
+
+**Modèle de données** :
+- `FeatureFlag` : code unique, nom, description, capability source, catégorie, valeur par défaut, état actif, traçabilité des changements.
+- `FeatureFlagHistory` : journal d'audit de chaque changement d'état d'un flag.
+
+**Dépendances dures** : telecom_base
+
+**Critères d'acceptation** :
+- Toute capability peut déclarer ses flags dans un fichier `feature_flags.py` à sa racine
+- Les flags sont enregistrés automatiquement à l'installation (idempotent)
+- Le décorateur `@feature_flag('code')` bloque l'exécution si le flag est inactif
+- L'écran d'administration est accessible uniquement au groupe Administrateur TelecomERP
+- Toute modification d'un flag génère une entrée dans l'historique
 
 ---
 

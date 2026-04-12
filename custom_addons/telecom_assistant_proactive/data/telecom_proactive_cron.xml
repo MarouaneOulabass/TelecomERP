@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="cron_run_proactive_watchers" model="ir.cron">
+            <field name="name">TelecomERP: Run proactive watchers</field>
+            <field name="model_id" ref="model_telecom_proactive_watcher"/>
+            <field name="state">code</field>
+            <field name="code">model.run_all_watchers()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

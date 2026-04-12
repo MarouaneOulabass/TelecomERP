@@ -78,6 +78,8 @@ Le produit ne résout pas chacune de ces douleurs comme un outil isolé : il les
 
 **Joindre le spécifique au général** — un produit standard qui, par sa configuration, ressemble à du sur-mesure pour chaque client, sans en avoir le coût ni la dette technique.
 
+TelecomERP s'adapte à chaque entreprise à deux niveaux. Le profil d'installation définit la **structure** : quelles capabilities sont activées, quelle est l'organisation, quels sont les workflows. Les **feature flags** permettent ensuite à l'administrateur du tenant d'activer ou désactiver finement les comportements à tout moment, sans redéploiement ni intervention technique. Cette double adaptabilité est ce qui permet au produit de joindre le spécifique au général.
+
 ---
 
 ## 6. Les alternatives actuelles et le positionnement contre elles

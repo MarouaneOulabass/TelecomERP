@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_watcher_responsable,telecom.proactive.watcher responsable,model_telecom_proactive_watcher,telecom_base.group_telecom_responsable,1,0,0,0
+access_watcher_admin,telecom.proactive.watcher admin,model_telecom_proactive_watcher,telecom_base.group_telecom_admin,1,1,1,1
+access_notification_technicien,telecom.proactive.notification technicien,model_telecom_proactive_notification,telecom_base.group_telecom_technicien,1,1,0,0
+access_notification_admin,telecom.proactive.notification admin,model_telecom_proactive_notification,telecom_base.group_telecom_admin,1,1,1,1

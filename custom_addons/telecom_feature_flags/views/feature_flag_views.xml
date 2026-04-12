@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         Feature Flag — Tree View
+    ============================================================ -->
+    <record id="view_feature_flag_tree" model="ir.ui.view">
+        <field name="name">feature.flag.tree</field>
+        <field name="model">feature.flag</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="capability"/>
+                <field name="last_changed_by"/>
+                <field name="last_changed_at"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         Feature Flag — Kanban View (grouped by capability)
+    ============================================================ -->
+    <record id="view_feature_flag_kanban" model="ir.ui.view">
+        <field name="name">feature.flag.kanban</field>
+        <field name="model">feature.flag</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="capability">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="active"/>
+                <field name="category"/>
+                <field name="capability"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <strong><field name="name"/></strong>
+                                <div class="text-muted"><field name="code"/></div>
+                                <div>
+                                    <field name="category" widget="badge"/>
+                                    <field name="active" widget="boolean_toggle"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         Feature Flag — Form View
+    ============================================================ -->
+    <record id="view_feature_flag_form" model="ir.ui.view">
+        <field name="name">feature.flag.form</field>
+        <field name="model">feature.flag</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code" readonly="1"/>
+                            <field name="capability" readonly="1"/>
+                            <field name="category" readonly="1"/>
+                            <field name="default_value" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="last_changed_by" readonly="1"/>
+                            <field name="last_changed_at" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Change History" name="history">
+                            <field name="history_ids" readonly="1">
+                                <tree>
+                                    <field name="changed_at"/>
+                                    <field name="changed_by"/>
+                                    <field name="old_value"/>
+                                    <field name="new_value"/>
+                                    <field name="reason"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         Feature Flag — Search View
+    ============================================================ -->
+    <record id="view_feature_flag_search" model="ir.ui.view">
+        <field name="name">feature.flag.search</field>
+        <field name="model">feature.flag</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="capability"/>
+                <field name="category"/>
+                <separator/>
+                <filter string="Active Flags" name="filter_active"
+                        domain="[('active', '=', True)]"/>
+                <filter string="Inactive Flags" name="filter_inactive"
+                        domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Recently Changed" name="filter_recent"
+                        domain="[('last_changed_at', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Capability" name="groupby_capability"
+                            context="{'group_by': 'capability'}"/>
+                    <filter string="Category" name="groupby_category"
+                            context="{'group_by': 'category'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         Feature Flag — Action
+    ============================================================ -->
+    <record id="action_feature_flag" model="ir.actions.act_window">
+        <field name="name">Feature Flags</field>
+        <field name="res_model">feature.flag</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="search_view_id" ref="view_feature_flag_search"/>
+        <field name="context">{'active_test': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No feature flags registered yet.
+            </p>
+            <p>
+                Feature flags are registered automatically by capabilities
+                that declare a <code>feature_flags.py</code> file.
+            </p>
+        </field>
+    </record>
+
+</odoo>
