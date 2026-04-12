@@ -10,6 +10,29 @@ ADMIN_LOGIN = "admin"
 ADMIN_PASSWORD = "admin"
 
 
+def click_menu(page, section_text, item_text=None):
+    """Click a TelecomERP section menu, then optionally a submenu item.
+
+    In Odoo 17 the top navbar uses:
+      - ``a.o_menu_brand`` for the app name (TelecomERP)
+      - ``.o_menu_sections button.dropdown-toggle`` for each section
+      - ``.dropdown-menu .dropdown-item`` for submenu items
+    """
+    section = page.locator(
+        f'.o_menu_sections button.dropdown-toggle:has-text("{section_text}")'
+    )
+    if section.count() > 0:
+        section.first.click()
+        page.wait_for_timeout(500)
+        if item_text:
+            item = page.locator(
+                f'.dropdown-menu .dropdown-item:has-text("{item_text}")'
+            )
+            if item.count() > 0:
+                item.first.click()
+                page.wait_for_timeout(2000)
+
+
 @pytest.fixture(scope="session")
 def browser_context_args():
     return {

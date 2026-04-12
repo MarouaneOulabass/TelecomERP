@@ -3,12 +3,11 @@
 
 
 def test_telecom_main_menu_visible(logged_in_page):
-    """TelecomERP menu is in the top bar."""
+    """TelecomERP brand is in the top bar."""
     page = logged_in_page
-    # Click on TelecomERP in navbar
-    telecom_menu = page.locator('.o_menu_entry:has-text("TelecomERP")')
-    if telecom_menu.count() > 0:
-        assert telecom_menu.first.is_visible()
+    telecom_brand = page.locator('a.o_menu_brand:has-text("TelecomERP")')
+    if telecom_brand.count() > 0:
+        assert telecom_brand.first.is_visible()
 
 
 def test_navigate_sites(logged_in_page):

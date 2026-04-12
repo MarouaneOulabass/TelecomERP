@@ -1,51 +1,44 @@
 # -*- coding: utf-8 -*-
 """Test 10: Global — no error dialogs on any page navigation."""
 import pytest
+from conftest import click_menu
 
 
-# All sidebar menu items to click through
+# All section > submenu item pairs to click through
 MENU_PATHS = [
-    ["Sites télécom"],
-    ["Bons d'Intervention"],
-    ["Bulletins de paie"],
-    ["Pointage chantier"],
-    ["Habilitations"],
-    ["Dotations EPI"],
-    ["Équipements"],
-    ["Outillages terrain"],
-    ["Véhicules"],
-    ["Lots"],
-    ["PV de réception"],
-    ["Appels d'Offres"],
-    ["Contrats"],
-    ["Cautions bancaires"],
-    ["Situations de travaux"],
-    ["Décomptes"],
-    ["Avances de démarrage"],
-    ["Saisie des coûts"],
-    ["Cockpit de Rentabilité"],
+    ("Sites", "Sites télécom"),
+    ("Interventions", "Bons d'Intervention"),
+    ("RH Terrain", "Bulletins de paie"),
+    ("RH Terrain", "Pointage chantier"),
+    ("Équipements", "Équipements"),
+    ("Flotte", "Véhicules"),
+    ("Commercial", "Appels d'Offres"),
+    ("Contrats", "Contrats"),
+    ("Finance", "Situations de travaux"),
+    ("Finance", "Décomptes"),
+    ("Coûts", "Saisie des coûts"),
+    ("Coûts", "Cockpit de Rentabilité"),
+    ("Reporting", "Direction — CA"),
 ]
 
 
-@pytest.mark.parametrize("menu_text", [m[0] for m in MENU_PATHS])
-def test_menu_no_error(logged_in_page, menu_text):
+@pytest.mark.parametrize(
+    "section,item_text",
+    MENU_PATHS,
+    ids=[f"{s} > {i}" for s, i in MENU_PATHS],
+)
+def test_menu_no_error(logged_in_page, section, item_text):
     """Each menu item loads without error dialog."""
     page = logged_in_page
-    # Open TelecomERP menu
-    page.click('.o_menu_entry:has-text("TelecomERP")')
-    page.wait_for_timeout(500)
 
-    # Try to find and click the menu item
-    menu_item = page.locator(f'a:has-text("{menu_text}")')
-    if menu_item.count() > 0:
-        menu_item.first.click()
-        page.wait_for_timeout(2000)
-        page.wait_for_load_state("networkidle")
+    click_menu(page, section, item_text)
+    page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(2000)
 
-        # Check no error dialog
-        error_count = page.locator('.o_error_dialog').count()
-        assert error_count == 0, f"Error dialog on '{menu_text}'"
+    # Check no error dialog
+    error_count = page.locator('.o_error_dialog').count()
+    assert error_count == 0, f"Error dialog on '{section} > {item_text}'"
 
-        # Check no "Internal Server Error" text
-        content = page.content()
-        assert "Internal Server Error" not in content, f"500 error on '{menu_text}'"
+    # Check no "Internal Server Error" text
+    content = page.content()
+    assert "Internal Server Error" not in content, f"500 error on '{section} > {item_text}'"
