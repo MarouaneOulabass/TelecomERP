@@ -31,6 +31,13 @@ Assistant conversationnel contextuel TelecomERP
         'views/telecom_assistant_views.xml',
         'views/menu_views.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'telecom_assistant/static/src/components/assistant_popup.css',
+            'telecom_assistant/static/src/components/assistant_popup.js',
+            'telecom_assistant/static/src/components/assistant_popup.xml',
+        ],
+    },
     'external_dependencies': {
         'python': ['anthropic'],
     },

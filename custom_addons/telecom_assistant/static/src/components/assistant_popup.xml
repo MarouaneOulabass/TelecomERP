@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="telecom_assistant.AssistantPopup" owl="1">
+        <!-- FAB Button -->
+        <div class="telecom-assistant-fab" t-on-click="togglePanel">
+            <i class="fa fa-robot fa-lg" style="font-size: 1.4rem;">&#x1F916;</i>
+        </div>
+
+        <!-- Chat Panel -->
+        <div t-if="state.isOpen" class="telecom-assistant-panel">
+            <!-- Header -->
+            <div class="telecom-assistant-header">
+                <span class="telecom-assistant-title">
+                    Assistant TelecomERP
+                </span>
+                <div class="telecom-assistant-header-actions">
+                    <button class="btn btn-sm btn-link text-white" t-on-click="newConversation"
+                            title="Nouvelle conversation">
+                        <i class="fa fa-plus"/>
+                    </button>
+                    <button class="btn btn-sm btn-link text-white" t-on-click="closePanel"
+                            title="Fermer">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="telecom-assistant-messages">
+                <t t-if="state.messages.length === 0">
+                    <div class="telecom-assistant-welcome">
+                        <p><strong>Bonjour !</strong></p>
+                        <p>Posez-moi une question sur vos données :</p>
+                        <ul>
+                            <li>Quelle est la marge du projet X ?</li>
+                            <li>Combien d'interventions ce mois ?</li>
+                            <li>Quelles habilitations expirent ?</li>
+                        </ul>
+                    </div>
+                </t>
+                <t t-foreach="state.messages" t-as="msg" t-key="msg_index">
+                    <div t-attf-class="telecom-assistant-msg telecom-assistant-msg-{{ msg.role }}">
+                        <div class="telecom-assistant-msg-content">
+                            <t t-esc="msg.content"/>
+                        </div>
+                        <t t-if="msg.toolCalls and msg.toolCalls.length">
+                            <div class="telecom-assistant-tools">
+                                <small class="text-muted">
+                                    <i class="fa fa-cogs me-1"/>
+                                    <t t-foreach="msg.toolCalls" t-as="tc" t-key="tc_index">
+                                        <span class="badge bg-secondary me-1">
+                                            <t t-esc="tc.tool"/>
+                                            (<t t-esc="tc.duration_ms"/>ms)
+                                        </span>
+                                    </t>
+                                </small>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+                <t t-if="state.isLoading">
+                    <div class="telecom-assistant-msg telecom-assistant-msg-assistant">
+                        <div class="telecom-assistant-typing">
+                            <span/><span/><span/>
+                        </div>
+                    </div>
+                </t>
+                <div t-ref="messagesEnd"/>
+            </div>
+
+            <!-- Input -->
+            <div class="telecom-assistant-input">
+                <input type="text"
+                       t-model="state.inputText"
+                       t-on-keydown="onInputKeydown"
+                       placeholder="Posez votre question..."
+                       t-att-disabled="state.isLoading"/>
+                <button class="telecom-assistant-send" t-on-click="sendMessage"
+                        t-att-disabled="state.isLoading || !state.inputText.trim()">
+                    <i class="fa fa-paper-plane"/>
+                </button>
+            </div>
+        </div>
+    </t>
+
+</templates>
