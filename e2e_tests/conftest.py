@@ -26,15 +26,15 @@ def base_url():
 @pytest.fixture
 def logged_in_page(page, base_url):
     """Login and return authenticated page."""
-    page.goto(f"{base_url}/web/login")
-    page.wait_for_load_state("networkidle")
+    page.goto(f"{base_url}/web/login", timeout=30000)
+    page.wait_for_load_state("networkidle", timeout=15000)
 
-    # Fill login form
     page.fill('input[name="login"]', ADMIN_LOGIN)
     page.fill('input[name="password"]', ADMIN_PASSWORD)
     page.click('button[type="submit"]')
 
-    # Wait for main interface to load
-    page.wait_for_load_state("networkidle")
+    # Wait for Odoo web client to load (navbar visible = logged in)
+    page.wait_for_selector('.o_main_navbar', timeout=60000)
     page.wait_for_timeout(2000)
+
     return page
