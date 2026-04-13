@@ -235,6 +235,7 @@ class AssistantConversation(models.Model):
                         system=SYSTEM_PROMPT,
                         messages=current_messages,
                         tools=tools if tools else None,
+                        timeout=30.0,  # Same timeout for tool-use continuation
                     )
                     tokens += current_response.usage.input_tokens + current_response.usage.output_tokens
                 else:
