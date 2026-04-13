@@ -104,10 +104,11 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <record id="action_assistant_new" model="ir.actions.act_window">
-        <field name="name">Nouvelle conversation</field>
-        <field name="res_model">telecom.assistant.conversation</field>
-        <field name="view_mode">form</field>
-    </record>
+    <!--
+        action_assistant_new supprimée : l'assistant n'a aucune page dédiée.
+        Les conversations sont créées exclusivement via le widget popup (FAB).
+        Seul action_assistant_conversation est conservé pour l'accès à l'historique
+        depuis le widget lui-même.
+    -->
 
 </odoo>
