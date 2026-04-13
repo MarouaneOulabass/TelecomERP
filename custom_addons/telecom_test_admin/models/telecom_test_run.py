@@ -110,7 +110,7 @@ class TelecomTestRun(models.Model):
             'errors': 0,
             'total_tests': 0,
         })
-        self.env.cr.commit()
+        # Removed: self.env.cr.commit() — anti-pattern, let Odoo manage transactions
 
         try:
             result = subprocess.run(
@@ -141,7 +141,7 @@ class TelecomTestRun(models.Model):
             self.duration = (self.date_end - self.date_start).total_seconds()
 
         self._update_feature_status()
-        self.env.cr.commit()
+        # Removed: self.env.cr.commit() — anti-pattern, let Odoo manage transactions
 
         return True
 

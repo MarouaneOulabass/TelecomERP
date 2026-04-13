@@ -228,7 +228,6 @@ class TelecomTenant(models.Model):
             raise UserError(_('Le sous-domaine est obligatoire.'))
 
         self.write({'state': 'provisioning'})
-        self.env.cr.commit()
 
         log_lines = []
         try:

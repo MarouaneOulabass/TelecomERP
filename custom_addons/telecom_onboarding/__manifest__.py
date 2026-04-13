@@ -24,7 +24,7 @@ Agent IA d'onboarding TelecomERP
         'python': ['anthropic'],
     },
     'installable': True,
-    'application': True,
+    'application': False,
     'auto_install': False,
     'sequence': 0,
 }

@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Root menu -->
-    <menuitem id="menu_telecom_test_root"
+    <!-- Nested under TelecomERP > Configuration (no root menu) -->
+    <menuitem id="menu_telecom_test_config"
               name="Tests BDD"
-              sequence="200"
-              web_icon="telecom_test_admin,static/description/icon.png"/>
+              parent="telecom_base.menu_telecom_config"
+              sequence="90"
+              groups="telecom_base.group_telecom_admin"/>
 
-    <!-- Lancer les tests (en premier, le plus important) -->
+    <!-- Lancer les tests -->
     <menuitem id="menu_telecom_test_runs"
               name="Lancer les tests"
-              parent="menu_telecom_test_root"
+              parent="menu_telecom_test_config"
               action="action_telecom_test_run"
               sequence="1"/>
 
     <!-- Scenarios par module -->
     <menuitem id="menu_telecom_test_scenarios"
               name="Scénarios (par module)"
-              parent="menu_telecom_test_root"
+              parent="menu_telecom_test_config"
               action="action_telecom_test_scenario"
               sequence="10"/>
 
     <!-- Fichiers .feature -->
     <menuitem id="menu_telecom_test_features"
               name="Fichiers .feature"
-              parent="menu_telecom_test_root"
+              parent="menu_telecom_test_config"
               action="action_telecom_test_feature"
               sequence="20"/>
 

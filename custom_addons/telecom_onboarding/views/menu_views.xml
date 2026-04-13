@@ -2,7 +2,7 @@
 <odoo>
     <menuitem id="menu_onboarding_root"
               name="Onboarding IA"
-              parent="telecom_tenant.menu_telecom_tenant_root"
+              parent="telecom_tenant.menu_telecom_tenant_config"
               action="action_onboarding_session"
               sequence="5"/>
 </odoo>

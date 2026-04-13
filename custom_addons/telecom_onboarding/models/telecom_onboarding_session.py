@@ -227,7 +227,6 @@ class TelecomOnboardingSession(models.Model):
             raise UserError(_('Veuillez uploader au moins un document.'))
 
         self.state = 'extracting'
-        self.env.cr.commit()
 
         system_prompt = """Tu es un assistant spécialisé dans l'extraction d'informations
 depuis des documents d'entreprise marocains. Tu extrais les données suivantes
@@ -344,8 +343,6 @@ Si une info n'est pas lisible, mets null. Ne devine pas. Indique les infos manqu
             })
             self.state = 'review'
 
-        self.env.cr.commit()
-
     def action_send_message(self):
         """Send user message and get AI response."""
         self.ensure_one()
@@ -414,8 +411,6 @@ Réponds en français, de manière professionnelle et concise.""" % (
                 'sequence': seq + 5,
             })
 
-        self.env.cr.commit()
-
     def action_generate_and_provision(self):
         """Generate YAML and create tenant."""
         self.ensure_one()
@@ -427,7 +422,6 @@ Réponds en français, de manière professionnelle et concise.""" % (
             self.subdomain = re.sub(r'[^a-z0-9]', '-', self.company_name.lower())[:30].strip('-')
 
         self.state = 'provisioning'
-        self.env.cr.commit()
 
         # Build capabilities list
         caps = ['telecom_base', 'telecom_localization_ma']
@@ -513,8 +507,6 @@ Réponds en français, de manière professionnelle et concise.""" % (
                 'content': 'Erreur de provisioning : %s' % str(e),
                 'sequence': 999,
             })
-
-        self.env.cr.commit()
 
     def action_reset(self):
         self.ensure_one()
