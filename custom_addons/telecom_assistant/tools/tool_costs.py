@@ -5,19 +5,26 @@ from odoo.addons.telecom_assistant.models.assistant_tool_registry import registe
 
 def get_fuel_consumption(env, project_name=None, vehicle_plate=None, month=None, limit=30):
     """Get fuel consumption records."""
+    FuelRecord = env.get('telecom.plein.carburant')
+    if FuelRecord is None:
+        return {'count': 0, 'total_mad': 0, 'records': [], 'info': 'Module carburant non installé'}
     domain = []
     if project_name:
-        projects = env['project.project'].search([('name', 'ilike', project_name)], limit=1)
-        if projects:
-            domain.append(('project_id', '=', projects.id))
+        Project = env.get('project.project')
+        if Project:
+            projects = Project.search([('name', 'ilike', project_name)], limit=1)
+            if projects:
+                domain.append(('project_id', '=', projects.id))
     if vehicle_plate:
-        vehicles = env['telecom.vehicle'].search([('immatriculation', 'ilike', vehicle_plate)])
-        domain.append(('vehicle_id', 'in', vehicles.ids))
+        Vehicle = env.get('telecom.vehicle')
+        if Vehicle:
+            vehicles = Vehicle.search([('immatriculation', 'ilike', vehicle_plate)])
+            domain.append(('vehicle_id', 'in', vehicles.ids))
     if month:
         domain.append(('date', '>=', month + '-01'))
         domain.append(('date', '<=', month + '-31'))
 
-    records = env['telecom.plein.carburant'].search(domain, order='date desc', limit=limit)
+    records = FuelRecord.search(domain, order='date desc', limit=limit)
     result = []
     total = 0
     for r in records:

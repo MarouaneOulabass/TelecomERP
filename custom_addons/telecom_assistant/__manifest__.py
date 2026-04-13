@@ -1,6 +1,6 @@
 {
     'name': 'TelecomERP — Assistant Conversationnel',
-    'version': '17.0.1.0.0',
+    'version': '17.0.1.1.0',
     'category': 'TelecomERP',
     'summary': 'Assistant IA contextuel avec tool-use pour interroger les données ERP',
     'description': """
@@ -18,13 +18,6 @@ Assistant conversationnel contextuel TelecomERP
     'depends': [
         'telecom_base',
         'telecom_feature_flags',
-        'telecom_site',
-        'telecom_intervention',
-        'telecom_project',
-        'telecom_cost',
-        'telecom_margin',
-        'telecom_contract',
-        'telecom_hr_ma',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -42,7 +35,7 @@ Assistant conversationnel contextuel TelecomERP
         'python': ['anthropic'],
     },
     'installable': True,
-    'application': True,
+    'application': False,
     'auto_install': False,
     'sequence': 5,
 }

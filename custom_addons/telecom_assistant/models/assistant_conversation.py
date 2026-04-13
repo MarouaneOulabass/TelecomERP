@@ -7,11 +7,15 @@ import time
 import os
 import logging
 
+from datetime import date as date_type
+
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from . import assistant_tool_registry as registry
 
 _logger = logging.getLogger(__name__)
+
+DEFAULT_MODEL = 'claude-sonnet-4-20250514'
 
 SYSTEM_PROMPT = """Tu es l'assistant TelecomERP, un assistant professionnel pour les entreprises
 télécom marocaines. Tu réponds en français (ou arabe/darija si l'utilisateur le demande).
@@ -118,6 +122,25 @@ class AssistantConversation(models.Model):
             ))
         return anthropic.Anthropic(api_key=api_key)
 
+    def _get_model_name(self):
+        """Read the LLM model from config, with fallback to default."""
+        return self.env['ir.config_parameter'].sudo().get_param(
+            'telecom.assistant_model', DEFAULT_MODEL
+        )
+
+    def _get_monthly_token_usage(self):
+        """Aggregate total tokens across ALL conversations this month for this tenant."""
+        today = date_type.today()
+        first_of_month = today.replace(day=1)
+        self.env.cr.execute("""
+            SELECT COALESCE(SUM(m.tokens_used), 0)
+            FROM telecom_assistant_message m
+            JOIN telecom_assistant_conversation c ON c.id = m.conversation_id
+            WHERE c.company_id = %s
+              AND m.timestamp >= %s
+        """, (self.company_id.id, first_of_month))
+        return self.env.cr.fetchone()[0]
+
     def action_send(self):
         """Send user message, call tools, get response."""
         self.ensure_one()
@@ -129,7 +152,7 @@ class AssistantConversation(models.Model):
         seq = len(self.message_ids) * 10 + 10
 
         # Save user message
-        user_msg = self.env['telecom.assistant.message'].create({
+        self.env['telecom.assistant.message'].create({
             'conversation_id': self.id,
             'role': 'user',
             'content': question,
@@ -144,27 +167,30 @@ class AssistantConversation(models.Model):
         # Get available tools
         tools = registry.get_all_tools()
 
+        model_name = self._get_model_name()
+
         try:
-            # Budget check: limit total tokens per tenant per month
+            # Budget check: aggregate tokens across ALL conversations this month
             monthly_limit = int(self.env['ir.config_parameter'].sudo().get_param(
                 'telecom.assistant_monthly_token_limit', '500000'
             ))
-            if monthly_limit > 0 and self.total_tokens > monthly_limit:
-                raise UserError(_(
-                    "Budget mensuel de l'assistant dépassé (%d tokens / %d max).\n"
-                    "Contactez l'administrateur."
-                ) % (self.total_tokens, monthly_limit))
+            if monthly_limit > 0:
+                monthly_usage = self._get_monthly_token_usage()
+                if monthly_usage > monthly_limit:
+                    raise UserError(_(
+                        "Budget mensuel de l'assistant dépassé (%d tokens / %d max).\n"
+                        "Contactez l'administrateur."
+                    ) % (monthly_usage, monthly_limit))
 
             client = self._get_claude_client()
 
-            # Call Claude with tools — timeout via httpx (anthropic client default: 600s)
             response = client.messages.create(
-                model='claude-sonnet-4-20250514',
+                model=model_name,
                 max_tokens=2048,
                 system=SYSTEM_PROMPT,
                 messages=messages,
                 tools=tools if tools else None,
-                timeout=30.0,  # 30s timeout per API call
+                timeout=30.0,
             )
 
             # Process response — handle tool use
@@ -190,7 +216,6 @@ class AssistantConversation(models.Model):
                             # Call the tool
                             start = time.time()
                             try:
-                                # SQL direct : tool execution must use user's env for record rule isolation
                                 result = registry.call_tool(tool_name, self.env, tool_input)
                                 duration = int((time.time() - start) * 1000)
                                 result_json = json.dumps(result, ensure_ascii=False, default=str)
@@ -230,12 +255,12 @@ class AssistantConversation(models.Model):
                     current_messages.append({'role': 'user', 'content': tool_results})
 
                     current_response = client.messages.create(
-                        model='claude-sonnet-4-20250514',
+                        model=model_name,
                         max_tokens=2048,
                         system=SYSTEM_PROMPT,
                         messages=current_messages,
                         tools=tools if tools else None,
-                        timeout=30.0,  # Same timeout for tool-use continuation
+                        timeout=30.0,
                     )
                     tokens += current_response.usage.input_tokens + current_response.usage.output_tokens
                 else:
@@ -266,5 +291,3 @@ class AssistantConversation(models.Model):
                 'content': 'Erreur : %s' % str(e),
                 'sequence': seq + 5,
             })
-
-        self.env.cr.commit()

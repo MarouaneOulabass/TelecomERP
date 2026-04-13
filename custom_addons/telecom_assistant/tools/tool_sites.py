@@ -5,6 +5,9 @@ from odoo.addons.telecom_assistant.models.assistant_tool_registry import registe
 
 def get_sites(env, name=None, code=None, wilaya=None, state=None, limit=20):
     """Search telecom sites."""
+    Site = env.get('telecom.site')
+    if Site is None:
+        return {'count': 0, 'sites': [], 'info': 'Module site non installé'}
     domain = []
     if name:
         domain.append(('name', 'ilike', name))
@@ -15,7 +18,7 @@ def get_sites(env, name=None, code=None, wilaya=None, state=None, limit=20):
     if state:
         domain.append(('state', '=', state))
 
-    sites = env['telecom.site'].search(domain, limit=limit)
+    sites = Site.search(domain, limit=limit)
     result = []
     for s in sites:
         result.append({

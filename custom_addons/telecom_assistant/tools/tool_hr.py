@@ -5,13 +5,20 @@ from odoo.addons.telecom_assistant.models.assistant_tool_registry import registe
 
 def get_pointages(env, site_name=None, employee_name=None, date=None, week=None):
     """Get field attendance records."""
+    Pointage = env.get('telecom.pointage.chantier')
+    if Pointage is None:
+        return {'count': 0, 'pointages': [], 'info': 'Module pointage non installé'}
     domain = []
     if site_name:
-        sites = env['telecom.site'].search([('name', 'ilike', site_name)])
-        domain.append(('site_id', 'in', sites.ids))
+        Site = env.get('telecom.site')
+        if Site:
+            sites = Site.search([('name', 'ilike', site_name)])
+            domain.append(('site_id', 'in', sites.ids))
     if employee_name:
-        emps = env['hr.employee'].search([('name', 'ilike', employee_name)])
-        domain.append(('employee_id', 'in', emps.ids))
+        Employee = env.get('hr.employee')
+        if Employee:
+            emps = Employee.search([('name', 'ilike', employee_name)])
+            domain.append(('employee_id', 'in', emps.ids))
     if date:
         domain.append(('date', '=', date))
     if week:
@@ -22,7 +29,7 @@ def get_pointages(env, site_name=None, employee_name=None, date=None, week=None)
         domain.append(('date', '>=', start.strftime('%Y-%m-%d')))
         domain.append(('date', '<=', end.strftime('%Y-%m-%d')))
 
-    records = env['telecom.pointage.chantier'].search(domain, order='date desc', limit=50)
+    records = Pointage.search(domain, order='date desc', limit=50)
     result = []
     for p in records:
         result.append({
@@ -38,7 +45,10 @@ def get_pointages(env, site_name=None, employee_name=None, date=None, week=None)
 
 def get_expiring_habilitations(env, days=60):
     """Get habilitations expiring soon or already expired."""
-    habs = env['telecom.habilitation.employee'].search([
+    Hab = env.get('telecom.habilitation.employee')
+    if Hab is None:
+        return {'count': 0, 'habilitations': [], 'info': 'Module habilitations non installé'}
+    habs = Hab.search([
         ('state', 'in', ['expiring_soon', 'expired']),
     ])
     result = []

@@ -5,13 +5,20 @@ from odoo.addons.telecom_assistant.models.assistant_tool_registry import registe
 
 def get_interventions(env, site_name=None, technician_name=None, status=None, date_from=None, date_to=None, limit=20):
     """Get field interventions filtered by various criteria."""
+    Intervention = env.get('telecom.intervention')
+    if Intervention is None:
+        return {'count': 0, 'interventions': [], 'info': 'Module intervention non installé'}
     domain = [('active', '=', True)]
     if site_name:
-        sites = env['telecom.site'].search([('name', 'ilike', site_name)])
-        domain.append(('site_id', 'in', sites.ids))
+        Site = env.get('telecom.site')
+        if Site:
+            sites = Site.search([('name', 'ilike', site_name)])
+            domain.append(('site_id', 'in', sites.ids))
     if technician_name:
-        techs = env['hr.employee'].search([('name', 'ilike', technician_name)])
-        domain.append(('technician_ids', 'in', techs.ids))
+        Employee = env.get('hr.employee')
+        if Employee:
+            techs = Employee.search([('name', 'ilike', technician_name)])
+            domain.append(('technician_ids', 'in', techs.ids))
     if status:
         domain.append(('state', '=', status))
     if date_from:
@@ -19,7 +26,7 @@ def get_interventions(env, site_name=None, technician_name=None, status=None, da
     if date_to:
         domain.append(('date_planifiee', '<=', date_to))
 
-    interventions = env['telecom.intervention'].search(domain, order='date_planifiee desc', limit=limit)
+    interventions = Intervention.search(domain, order='date_planifiee desc', limit=limit)
     result = []
     for bi in interventions:
         result.append({
