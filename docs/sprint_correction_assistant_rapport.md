@@ -184,17 +184,17 @@ L'intégration Claude API dans `models/assistant_conversation.py` est **un vrai 
 
 ### Anomalies identifiées (non corrigées dans ce sprint)
 
-1. **Modèle LLM hardcodé** : `assistant_conversation.py` utilise `claude-sonnet-4-20250514` en dur au lieu de lire depuis le tenant_profile (`assistant.model`). Cela empêche la configuration par tenant (Haiku vs Sonnet vs Opus).
+1. **Modèle LLM hardcodé** : `assistant_conversation.py` utilise `claude-sonnet-4-20250514` en dur au lieu de lire depuis le tenant_profile (`assistant.model`). Cela empêche la configuration par tenant (Haiku vs Sonnet vs Opus). **CORRIGE** dans `013cc2b`.
 
-2. **Budget mensuel calculé par conversation** : le check de budget à la ligne 152 compare `self.total_tokens` (tokens de la conversation courante) au budget mensuel. Cela ne bloque pas si l'utilisateur crée une nouvelle conversation chaque fois. Le calcul devrait agréger les tokens de **toutes les conversations du mois** pour le tenant.
+2. **Budget mensuel calculé par conversation** : le check de budget à la ligne 152 compare `self.total_tokens` (tokens de la conversation courante) au budget mensuel. Cela ne bloque pas si l'utilisateur crée une nouvelle conversation chaque fois. Le calcul devrait agréger les tokens de **toutes les conversations du mois** pour le tenant. **CORRIGE** dans `013cc2b`.
 
-3. **`self.env.cr.commit()` explicite** : ligne 269 de `assistant_conversation.py`. C'est un anti-pattern Odoo — les commits explicites cassent les transactions de test (rollback impossible) et peuvent créer des incohérences. Devrait être supprimé.
+3. **`self.env.cr.commit()` explicite** : ligne 269 de `assistant_conversation.py`. C'est un anti-pattern Odoo — les commits explicites cassent les transactions de test (rollback impossible) et peuvent créer des incohérences. Devrait être supprimé. **CORRIGE** dans `013cc2b`.
 
-4. **`__manifest__.py` déclare `application=True`** : cela fait apparaître `telecom_assistant` dans le sélecteur d'applications Odoo, ce qui est une forme de "page dédiée" dans le menu Apps. Devrait être `False`.
+4. **`__manifest__.py` déclare `application=True`** : cela fait apparaître `telecom_assistant` dans le sélecteur d'applications Odoo, ce qui est une forme de "page dédiée" dans le menu Apps. Devrait être `False`. **CORRIGE** dans `013cc2b`.
 
 5. **Ancien rapport incomplet conservé** : le fichier `sprint_correction_assistant_rapport.md` existant (du sprint précédent) a été écrasé par ce rapport. L'ancien rapport déclarait les corrections comme "COMPLÉTÉES" alors qu'elles étaient incomplètes.
 
-6. **Dépendances du manifest trop larges** : le `__manifest__.py` dépend de 8 modules dont `telecom_cost` et `telecom_margin`. Selon la fiche capability, les dépendances dures sont uniquement `telecom_base` et `telecom_feature_flags`. Les autres sont des dépendances souples (chacune ajoute des outils au registry) et ne devraient pas être des `depends` du manifest.
+6. **Dépendances du manifest trop larges** : le `__manifest__.py` dépend de 8 modules dont `telecom_cost` et `telecom_margin`. Selon la fiche capability, les dépendances dures sont uniquement `telecom_base` et `telecom_feature_flags`. Les autres sont des dépendances souples (chacune ajoute des outils au registry) et ne devraient pas être des `depends` du manifest. **CORRIGE** dans `013cc2b`.
 
 ### Recommandations pour les sprints suivants
 
@@ -204,6 +204,32 @@ L'intégration Claude API dans `models/assistant_conversation.py` est **un vrai 
 4. **Passer `application=False`** dans le manifest pour éviter l'apparition dans le sélecteur d'apps.
 5. **Exécuter la suite de tests complète** via Docker pour mesurer la couverture réelle.
 6. **Réduire les dépendances du manifest** aux seules dépendances dures.
+
+---
+
+## Section 6 — Corrections complementaires post-audit
+
+> **Commit** : `013cc2b`
+> **Perimetre** : 5 corrections issues des anomalies identifiees en section 5.
+
+| # | Anomalie corrigee | Description de la correction | Fichier(s) concerne(s) |
+|---|---|---|---|
+| 1 | `self.env.cr.commit()` explicite (anomalie 3) | Suppression de l'appel `self.env.cr.commit()` qui constituait un anti-pattern Odoo. Les commits explicites empechent le rollback des transactions de test et peuvent provoquer des incoherences en cas d'erreur. Le framework ORM gere desormais les commits de maniere standard. | `models/assistant_conversation.py` |
+| 2 | `application=True` dans le manifest (anomalie 4) | Passage de `application=True` a `application=False` dans `__manifest__.py`. Le module n'apparait plus dans le selecteur d'applications Odoo, conformement au principe "aucune page dediee" de la fiche capability. | `__manifest__.py` |
+| 3 | Dependances manifest trop larges (anomalie 6) | Reduction des dependances dures de 8 a 2 : seuls `telecom_base` et `telecom_feature_flags` restent en `depends`. Tous les outils utilisent desormais `self.env.get('nom.modele')` pour acceder aux modeles optionnels et degradent gracieusement si le module n'est pas installe (retour d'un message explicite au lieu d'un crash). | `__manifest__.py`, `models/assistant_conversation.py` |
+| 4 | Modele LLM hardcode (anomalie 1) | Le modele LLM est desormais configurable via `ir.config_parameter` avec la cle `telecom.assistant_model`. La valeur par defaut reste `claude-sonnet-4-20250514` si le parametre n'est pas defini, mais chaque tenant peut configurer son propre modele sans modifier le code. | `models/assistant_conversation.py` |
+| 5 | Budget mensuel calcule par conversation (anomalie 2) | Le calcul du budget mensuel agregue desormais les tokens consommes sur **toutes les conversations** du tenant (filtrees par `company_id`) pour le mois en cours, via une requete SQL. Auparavant, seul le champ `total_tokens` de la conversation courante etait verifie, ce qui permettait de contourner le budget en creant de nouvelles conversations. | `models/assistant_conversation.py` |
+
+### Bilan des anomalies section 5
+
+| Anomalie | Statut |
+|---|---|
+| 1 — Modele LLM hardcode | CORRIGE |
+| 2 — Budget par conversation | CORRIGE |
+| 3 — `cr.commit()` explicite | CORRIGE |
+| 4 — `application=True` | CORRIGE |
+| 5 — Ancien rapport incomplet | Non applicable (ecrase par le present rapport) |
+| 6 — Dependances manifest | CORRIGE |
 
 ---
 
