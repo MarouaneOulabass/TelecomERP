@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         telecom.relance — Form view
+    ================================================================ -->
+    <record id="view_telecom_relance_form" model="ir.ui.view">
+        <field name="name">telecom.relance.form</field>
+        <field name="model">telecom.relance</field>
+        <field name="arch" type="xml">
+            <form string="Relance de paiement">
+                <header>
+                    <button name="action_send" type="object"
+                            string="Envoyer la relance"
+                            class="btn-primary"
+                            invisible="state == 'sent'"/>
+                    <button name="action_reset_draft" type="object"
+                            string="Remettre en brouillon"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,sent"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Relance">
+                            <field name="invoice_id"/>
+                            <field name="partner_id"/>
+                            <field name="date"/>
+                        </group>
+                        <group string="Paramètres">
+                            <field name="level"/>
+                            <field name="mode"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount_residual" widget="monetary"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1" colspan="2"
+                               placeholder="Observations sur la relance..."/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.relance — Tree view
+    ================================================================ -->
+    <record id="view_telecom_relance_tree" model="ir.ui.view">
+        <field name="name">telecom.relance.tree</field>
+        <field name="model">telecom.relance</field>
+        <field name="arch" type="xml">
+            <tree string="Relances de paiement"
+                  decoration-success="state == 'sent'"
+                  decoration-warning="state == 'draft'">
+                <field name="date"/>
+                <field name="invoice_id"/>
+                <field name="partner_id"/>
+                <field name="level"/>
+                <field name="mode"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="amount_residual" widget="monetary"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'sent'"
+                       decoration-warning="state == 'draft'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.relance — Search view
+    ================================================================ -->
+    <record id="view_telecom_relance_search" model="ir.ui.view">
+        <field name="name">telecom.relance.search</field>
+        <field name="model">telecom.relance</field>
+        <field name="arch" type="xml">
+            <search string="Recherche relances">
+                <field name="invoice_id"/>
+                <field name="partner_id"/>
+                <separator/>
+                <filter name="filter_draft" string="Brouillons"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_sent" string="Envoyées"
+                        domain="[('state', '=', 'sent')]"/>
+                <separator/>
+                <filter name="filter_mise_demeure" string="Mise en demeure"
+                        domain="[('level', '=', 'mise_en_demeure')]"/>
+                <separator/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_partner" string="Client"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_level" string="Niveau"
+                            context="{'group_by': 'level'}"/>
+                    <filter name="group_state" string="État"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Date"
+                            context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         telecom.relance — Action
+    ================================================================ -->
+    <record id="action_telecom_relance" model="ir.actions.act_window">
+        <field name="name">Relances</field>
+        <field name="res_model">telecom.relance</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer une première relance de paiement
+            </p>
+            <p>
+                Suivez les relances clients pour les factures impayées :
+                relance amiable, formelle ou mise en demeure.
+            </p>
+        </field>
+    </record>
+
+</odoo>

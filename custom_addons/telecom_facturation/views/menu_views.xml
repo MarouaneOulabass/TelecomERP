@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Facturation parent menu — under TelecomERP root -->
+    <menuitem id="menu_telecom_facturation"
+              name="Facturation"
+              parent="telecom_base.menu_telecom_root"
+              sequence="40"/>
+
+    <!-- Sub-menus -->
+    <menuitem id="menu_telecom_facturation_overdue"
+              name="Factures en retard"
+              parent="menu_telecom_facturation"
+              action="action_telecom_facturation_overdue"
+              sequence="10"/>
+
+    <menuitem id="menu_telecom_facturation_alert"
+              name="Alertes loi 69-21"
+              parent="menu_telecom_facturation"
+              action="action_telecom_facturation_alert_60"
+              sequence="20"/>
+
+    <menuitem id="menu_telecom_relance"
+              name="Relances"
+              parent="menu_telecom_facturation"
+              action="action_telecom_relance"
+              sequence="30"/>
+
+</odoo>
