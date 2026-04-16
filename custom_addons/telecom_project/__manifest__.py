@@ -9,7 +9,6 @@
     'depends': [
         'telecom_base',
         'telecom_site',
-        'telecom_hr_ma',
         'project',
         'mail',
     ],

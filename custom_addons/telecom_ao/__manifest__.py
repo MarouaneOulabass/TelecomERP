@@ -9,8 +9,6 @@
     'depends': [
         'telecom_base',
         'telecom_site',
-        'crm',
-        'sale',
         'mail',
     ],
     'data': [

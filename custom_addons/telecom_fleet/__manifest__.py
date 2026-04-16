@@ -22,7 +22,6 @@ Dépend de telecom_base (groupes sécurité) et telecom_hr_ma (techniciens terra
     'license': 'OPL-1',
     'depends': [
         'telecom_base',
-        'telecom_hr_ma',
         'hr',
         'stock',
         'mail',

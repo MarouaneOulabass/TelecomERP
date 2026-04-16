@@ -18,17 +18,11 @@
     'author': 'TelecomERP',
     'license': 'OPL-1',
     'depends': [
-        'telecom_base',
         'telecom_site',
         'telecom_intervention',
         'telecom_hr_ma',
         'telecom_project',
-        'telecom_ao',
-        'telecom_contract',
-        'telecom_equipment',
-        'telecom_fleet',
         'telecom_finance_ma',
-        'mail',
     ],
     'data': [
         # Security first
