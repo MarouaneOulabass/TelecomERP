@@ -137,3 +137,12 @@ def then_fillup_linked_to_vehicle(context, immatriculation):
         f"Vehicule attendu: {immatriculation}, "
         f"obtenu: {plein.vehicle_id.immatriculation}"
     )
+
+
+@then(parsers.parse("le montant de l'écriture de coût est {amount:f}"))
+def then_cost_entry_amount(context, amount):
+    plein = context['plein']
+    assert plein.cost_entry_id, "Pas d'ecriture de cout"
+    assert abs(plein.cost_entry_id.amount - amount) < 0.01, (
+        "Montant cout attendu: %s, obtenu: %s" % (amount, plein.cost_entry_id.amount)
+    )

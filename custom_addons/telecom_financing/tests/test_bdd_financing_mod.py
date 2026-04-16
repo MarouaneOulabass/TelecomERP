@@ -145,3 +145,16 @@ def then_financing_types_available(env):
         assert t in available_types, (
             f"Type '{t}' manquant. Disponibles: {available_types}"
         )
+
+
+@then("le montant de l'écriture de coût inclut les intérêts")
+def then_cost_entry_includes_interest(context):
+    rec = context['cout_financier']
+    assert rec.cost_entry_id, "Pas d'ecriture de cout"
+    # Cost entry amount should be principal + interest
+    expected_total = rec.amount + rec.interest_amount
+    assert abs(rec.cost_entry_id.amount - expected_total) < 0.01, (
+        "Cout total attendu: %s (principal %s + interets %s), obtenu: %s" % (
+            expected_total, rec.amount, rec.interest_amount, rec.cost_entry_id.amount
+        )
+    )

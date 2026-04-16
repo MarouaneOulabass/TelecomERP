@@ -34,3 +34,12 @@ Fonctionnalité: Gestion des coûts financiers projet
       | avance_client        |
       | escompte             |
       | autre                |
+
+  Scénario: L'écriture de coût contient le principal plus les intérêts
+    Quand je crée un coût financier de 100000.00 MAD à 6.0% du "2026-01-01" au "2026-12-31" pour ce projet
+    Alors une écriture de coût financier est créée automatiquement
+    Et le montant de l'écriture de coût inclut les intérêts
+
+  Scénario: Taux d'intérêt à zéro donne zéro intérêts
+    Quand je crée un coût financier de 50000.00 MAD à 0.0% du "2026-01-01" au "2026-06-30" pour ce projet
+    Alors le montant des intérêts est d'environ 0.00 MAD
